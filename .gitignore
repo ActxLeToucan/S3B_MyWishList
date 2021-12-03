@@ -1,4 +1,4 @@
 /.idea/
 projet.iml
-Initialisation.init
+src/conf/conf.init.dist
 /vendor/

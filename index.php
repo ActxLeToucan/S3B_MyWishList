@@ -16,7 +16,7 @@ use wishlist\models\Liste;
 
 require 'vendor/autoload.php';
 
-$tabFile = parse_ini_file("Initialisation.init");
+$tabFile = parse_ini_file("src\conf\conf.init.dist");
 
 $db = new DB();
 
@@ -71,7 +71,19 @@ $app->get('/item[/]',
     }
 );
 
-$app->get('/list/{id}[/]',
+//q3
+$app->get('/list/{id}/new',
+    function (Request $rq, Response $rs, $args):Response {
+        $nomItem = $_GET['nomItem'];
+        $id = $args['id'];
+        $nomListe = Liste::where('no','=',$id)->first();
+        $rs->getBody()->write("Création d'un nouvel item dans la liste \"".$nomListe->titre."\" avec le nom \"".$nomItem."\"");
+        $nomListe->insert;
+        return $rs;
+    }
+);
+
+/*$app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $id = $args['id'];
         $rs->getBody()->write("Liste des items de la liste " . $id . " :");
@@ -83,8 +95,9 @@ $app->get('/list/{id}[/]',
         $rs->getBody()->write("</ol>");
         return $rs;
     }
-);
+);*/
 
+//q4
 $app->get('/item/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $id = $args['id'];
