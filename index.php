@@ -69,7 +69,7 @@ $app->get('/item[/]',
         $rs->getBody()->write("</ol>");
         return $rs;
     }
-)->setName('Items');;
+)->setName('Items');
 
 //q3 créé un nouvel item dans une liste donnée
 $app->get('/list/{id}/new',
@@ -82,11 +82,12 @@ $app->get('/list/{id}/new',
         $newItem = new Item();
         $newItem->nom = $nomItem;
         $newItem->liste_id = $id;
+        $newItem->descr = 'oui oui omelette du fromage';
         $newItem->save();
 
         return $rs;
     }
-)->setName('New_Item');;
+)->setName('New_Item');
 
 /*$app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
@@ -117,7 +118,6 @@ $app->get('/item/{id}[/]',
     }
 )->setName('Item_ID');
 
-$app->run();
 
 try {
     $app->run();
