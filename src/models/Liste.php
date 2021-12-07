@@ -8,5 +8,6 @@ class Liste extends Model {
 
     protected $table = 'Liste';
     protected $primaryKey = 'no';
-    public $timestamps = 'false' ;
+    public $timestamps = false ;
+    protected $fillable = ['no','user_id'];
 }

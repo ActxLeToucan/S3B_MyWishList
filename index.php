@@ -44,7 +44,7 @@ $c = new \Slim\Container($configuration);
 
 $app = new \Slim\App($c);
 
-//q1
+//q1 affiche toutes les listes
 $app->get('/list[/]',
     function (Request $rq, Response $rs, $args):Response {
         $rs->getBody()->write("Liste des listes :");
@@ -56,8 +56,8 @@ $app->get('/list[/]',
         $rs->getBody()->write("</ol>");
         return $rs;
     }
-);
-//q2
+)->setName('Listes');
+//q2 affiche tous les items
 $app->get('/item[/]',
     function (Request $rq, Response $rs, $args):Response {
         $rs->getBody()->write("Liste des items :");
@@ -69,19 +69,24 @@ $app->get('/item[/]',
         $rs->getBody()->write("</ol>");
         return $rs;
     }
-);
+)->setName('Items');;
 
-//q3
+//q3 créé un nouvel item dans une liste donnée
 $app->get('/list/{id}/new',
     function (Request $rq, Response $rs, $args):Response {
         $nomItem = $_GET['nomItem'];
         $id = $args['id'];
         $nomListe = Liste::where('no','=',$id)->first();
         $rs->getBody()->write("Création d'un nouvel item dans la liste \"".$nomListe->titre."\" avec le nom \"".$nomItem."\"");
-        $nomListe->insert;
+
+        $newItem = new Item();
+        $newItem->nom = $nomItem;
+        $newItem->liste_id = $id;
+        $newItem->save();
+
         return $rs;
     }
-);
+)->setName('New_Item');;
 
 /*$app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
@@ -97,20 +102,20 @@ $app->get('/list/{id}/new',
     }
 );*/
 
-//q4
+//q4 donne un item avec un id donné
 $app->get('/item/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $id = $args['id'];
         $rs->getBody()->write("Item " . $id . " :");
-        $res = Liste::where( 'no', '=', $id )
-            ->first() ;
+        $res = Liste::where('no', '=', $id)
+            ->first();
 
         $titre = $res->titre;
 
-        $rs->getBody()->write("item dans la liste avec l'id ".$id. " est : ".$titre);
+        $rs->getBody()->write("item dans la liste avec l'id " . $id . " est : " . $titre);
         return $rs;
     }
-);
+)->setName('Item_ID');
 
 $app->run();
 
