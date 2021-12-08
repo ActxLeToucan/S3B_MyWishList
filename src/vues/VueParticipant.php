@@ -2,37 +2,17 @@
 
 namespace wishlist\vues;
 
+use wishlist\controlers\ListeControler;
+
 class VueParticipant {
-    private $tab = array();
+    private $tab;
     private $selecteur;
-    public function __construct(array $t, $s) {
+    public function __construct(Iterable $t, $s) {
         $this->tab = $t;
         $this->selecteur = $s;
     }
 
-    public function render() {
-        switch ($this->selecteur) {
-            case LIST_VIEW : {
-                $content = $this->affichage();
-                break;
-            }
-            case ITEM_VIEW : {
-                $content = $this->htmlUnItem();
-                break;
-            }
-        }
-        $html = <<<END
-            <!DOCTYPE html> <html>
-            <body> …
-            <div class="content">
-            $content
-            </div>
-            </body><html>
-        END ;
-        return $html;
-    }
-
-    private function affichage() : string {
+    private function affichageListes() : string {
         $str = "<section><ol>";
         foreach ($this->tab as $value) {
             $str = $str . "<li>".$value->titre."</li>";
@@ -41,4 +21,37 @@ class VueParticipant {
 
         return $str;
     }
+
+    private function affichageItems() : string {
+        $str = "<section><ol>";
+        foreach ($this->tab as $value) {
+            $str = $str . "<li>".$value->nom."</li>";
+        }
+        $str = $str . "</ol></section>";
+
+        return $str;
+    }
+
+    public function render() {
+        switch ($this->selecteur) {
+            case ListeControler::LIST_VIEW : {
+                $content = $this->affichageListes();
+                break;
+            }
+            case ListeControler::ITEM_VIEW : {
+                $content = $this->affichageItems();
+                break;
+            }
+        }
+        $html = <<<END
+            <!DOCTYPE html> <html>
+            <body>
+            <div class="content">
+            $content
+            </div>
+            </body><html>
+        END ;
+        return $html;
+    }
+
 }

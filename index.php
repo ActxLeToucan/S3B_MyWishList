@@ -44,37 +44,40 @@ $c = new \Slim\Container($configuration);
 
 $app = new \Slim\App($c);
 
+
+
+
+
 //q1 affiche toutes les listes
 $app->get('/list[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $rs->getBody()->write("Liste des listes :");
-        $rs->getBody()->write("<ol>");
-        $res = Liste::select('titre')->get();
-        foreach ($res as $value){
-            $rs->getBody()->write("<li>".$value->titre."</li>");
-        }
-        $rs->getBody()->write("</ol>");
-        return $rs;
+        //$rs->getBody()->write("Liste des listes :");
+        $controller = new \wishlist\controlers\ListeControler($this);
+        return $controller->getAllListe($rq, $rs, $args);
     }
 )->setName('Listes');
+
+
+/*$rs->getBody()->write("<ol>");
+$res = Liste::select('titre')->get();
+foreach ($res as $value){
+    $rs->getBody()->write("<li>".$value->titre."</li>");
+}
+$rs->getBody()->write("</ol>");*/
+
 //q2 affiche tous les items
 $app->get('/item[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $rs->getBody()->write("Liste des items :");
-        $rs->getBody()->write("<ol>");
-        $res = Item::select('nom')->get();
-        foreach ($res as $value){
-            $rs->getBody()->write("<li>".$value->nom."</li>");
-        }
-        $rs->getBody()->write("</ol>");
-        return $rs;
+
+        $controller = new \wishlist\controlers\ListeControler($this);
+        return $controller->getAllItem($rq, $rs, $args);
     }
 )->setName('Items');
 
 //q3 créé un nouvel item dans une liste donnée
 $app->get('/list/{id}/new',
     function (Request $rq, Response $rs, $args):Response {
-        $nomItem = $_GET['nomItem'];
+        $nomItem = $_GET['nomItem']; //a faire avec POST plus tard
         $id = $args['id'];
         $nomListe = Liste::where('no','=',$id)->first();
         $rs->getBody()->write("Création d'un nouvel item dans la liste \"".$nomListe->titre."\" avec le nom \"".$nomItem."\"");
@@ -117,6 +120,7 @@ $app->get('/item/{id}[/]',
         return $rs;
     }
 )->setName('Item_ID');
+
 
 
 try {
