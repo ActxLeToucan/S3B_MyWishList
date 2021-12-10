@@ -46,7 +46,12 @@ $app = new \Slim\App($c);
 
 
 
-
+$app->get('[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $file =  "HTML/index.html";
+        return $rs->write(file_get_contents($file));
+    }
+)->setName("home");
 
 //q1 affiche toutes les listes
 $app->get('/list[/]',
