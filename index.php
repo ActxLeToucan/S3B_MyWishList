@@ -45,6 +45,17 @@ $c = new \Slim\Container($configuration);
 $app = new \Slim\App($c);
 
 
+function RandomString()
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randstring = '';
+    for ($i = 0; $i < 10; $i++) {
+        $randstring = $randstring.$characters[Rand(0, strlen($characters))];
+    }
+    return $randstring;
+}
+
+
 
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {
@@ -93,11 +104,18 @@ $app->get('/item[/]',
 //q3 créé un nouvel item dans une liste donnée
 $app->post('/new',
     function (Request $rq, Response $rs, $args):Response {
-        $nomItem = $_POST['nom']; //a faire avec POST plus tard
+        $content = $rq->getParsedBody();
+        $nomItem = $content['nom'];
 
-        $nomImage = $_POST['photo'];
-        $uploadfile = './img/'.$nomImage;
-        $allo = move_uploaded_file($nomImage, $uploadfile);
+        //$nomImage = $_POST['photo'];
+
+
+        $extension = $_FILES['photo']['type'];
+        $cheminServeur = $_FILES['photo']['tmp_name'];
+        $uploadfile = './img/'.str_replace('image/',RandomString().'.',$extension);
+
+
+        $allo = move_uploaded_file($cheminServeur, $uploadfile);
 
 
         if($allo){
@@ -108,7 +126,7 @@ $app->post('/new',
 
         //$id = $args['id'];
         //$nomListe = Liste::where('no','=',$id)->first();
-        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom ".$nomItem ." ".$_POST["photo"]);
+        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom ".$nomItem ." ");
 
         //$newItem = new Item();
         //$newItem->nom = $nomItem;
