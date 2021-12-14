@@ -94,10 +94,21 @@ $app->get('/item[/]',
 $app->post('/new',
     function (Request $rq, Response $rs, $args):Response {
         $nomItem = $_POST['nom']; //a faire avec POST plus tard
-        $img = $_FILES['image'];
+
+        $nomImage = $_POST['photo'];
+        $uploadfile = './img/'.$nomImage;
+        $allo = move_uploaded_file($nomImage, $uploadfile);
+
+
+        if($allo){
+            $rs->getBody()->write('fichier téléchargé');
+        }else{
+            $rs->getBody()->write('fichier ???????');
+        }
+
         //$id = $args['id'];
         //$nomListe = Liste::where('no','=',$id)->first();
-        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom \"".$nomItem.$img."\"");
+        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom ".$nomItem ." ".$_POST["photo"]);
 
         //$newItem = new Item();
         //$newItem->nom = $nomItem;
