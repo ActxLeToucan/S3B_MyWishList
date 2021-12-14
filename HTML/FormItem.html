@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="Style/FormItemStyle.css">
+    <meta charset="UTF-8">
+    <title>Nouvel Item</title>
+</head>
+<body>
+<form action="./new" method="post">
+    <div class="nom">
+        <label for="nom">Nom de l'item :</label>
+        <input type="text" id="nom" name="nom">
+    </div>
+
+
+    <br>
+
+    <div class="description">
+        <label for="descr">Description de l'item :</label>
+        <textarea id="descr"> </textarea>
+    </div>
+
+
+    <br>
+
+    <div class="tarif">
+        <label for="tarif">Tarif de l'item :</label>
+        <input type="text" id="tarif">
+    </div>
+
+
+
+    <br>
+
+    <div class="image">
+        <label for="image">Image associée à l'item</label>
+        <input type="file"
+               id="image"
+               name="image"
+               accept="image/png, image/jpeg, image/pdf">
+    </div>
+
+
+    <br>
+
+    <div class="liste">
+        <label>Dans quelle liste voulez vous ajouter l'item :</label>
+    </div>
+
+    <button type="submit">Créer l'item </button>
+
+
+</form>
+</body>
+</html>

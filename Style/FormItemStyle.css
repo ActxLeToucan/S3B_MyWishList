@@ -1,0 +1,35 @@
+body {
+    background-color: #3d3d3b;
+    color: azure;
+}
+
+input {
+    margin-top: 40px;
+}
+
+label {
+    margin-top: 40px;
+}
+
+textarea {
+    margin-top: 40px;
+}
+
+button {
+    padding: 10px;
+    font-size: 22px;
+    background-color: #111114;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid white;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+button:hover {
+    transition: all 0.3s ease;
+    background-color: white;
+    color: #0E0E10;
+    border-color: #0E0E10;
+}

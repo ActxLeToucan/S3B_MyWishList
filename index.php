@@ -53,6 +53,17 @@ $app->get('[/]',
     }
 )->setName("home");
 
+
+
+$app->get('/formulaireItem[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $file =  "HTML/FormItem.html";
+        return $rs->write(file_get_contents($file));
+    }
+)->setName("formulaireItem");
+
+
+
 //q1 affiche toutes les listes
 $app->get('/list[/]',
     function (Request $rq, Response $rs, $args):Response {
@@ -80,18 +91,19 @@ $app->get('/item[/]',
 )->setName('Items');
 
 //q3 créé un nouvel item dans une liste donnée
-$app->get('/list/{id}/new',
+$app->post('/new',
     function (Request $rq, Response $rs, $args):Response {
-        $nomItem = $_GET['nomItem']; //a faire avec POST plus tard
-        $id = $args['id'];
-        $nomListe = Liste::where('no','=',$id)->first();
-        $rs->getBody()->write("Création d'un nouvel item dans la liste \"".$nomListe->titre."\" avec le nom \"".$nomItem."\"");
+        $nomItem = $_POST['nom']; //a faire avec POST plus tard
+        $img = $_FILES['image'];
+        //$id = $args['id'];
+        //$nomListe = Liste::where('no','=',$id)->first();
+        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom \"".$nomItem.$img."\"");
 
-        $newItem = new Item();
-        $newItem->nom = $nomItem;
-        $newItem->liste_id = $id;
-        $newItem->descr = 'oui oui omelette du fromage';
-        $newItem->save();
+        //$newItem = new Item();
+        //$newItem->nom = $nomItem;
+        //$newItem->liste_id = $id;
+        //$newItem->descr = 'oui oui omelette du fromage';
+        //$newItem->save();
 
         return $rs;
     }

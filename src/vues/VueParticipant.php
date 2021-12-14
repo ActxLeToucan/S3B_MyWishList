@@ -36,12 +36,13 @@ class VueParticipant {
         switch ($this->selecteur) {
             case ListeControler::LIST_VIEW : {
                 $content = $this->affichageListes();
-
+                $title = 'Listes';
                 break;
             }
             case ListeControler::ITEM_VIEW : {
                 $content = $this->affichageItems();
                 $from = 'ItemsStyle.css';
+                $title = 'Items';
                 break;
             }
         }
@@ -49,7 +50,7 @@ class VueParticipant {
             <!DOCTYPE html> <html>
             <head>
                 <meta charset="UTF-8">
-                <title>Accueil</title>
+                <title>$title</title>
                 <link rel="stylesheet" href="Style/$from">
             </head>
             <body>
