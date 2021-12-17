@@ -1,12 +1,12 @@
 <?php
 
-namespace wishlist\controlers;
+namespace wishlist\controllers;
 
 use wishlist\models\Item;
 use wishlist\models\Liste;
 use wishlist\vues\VueParticipant;
 
-class ListeControler {
+class ListeController {
     const LIST_VIEW = 'listes';
     const ITEM_VIEW = 'items';
     private $c;
@@ -27,7 +27,7 @@ class ListeControler {
         $url = $base . $route_uri ;
 
         $lists = Liste::select()->get();
-        $v = new VueParticipant($lists, ListeControler::LIST_VIEW);
+        $v = new VueParticipant($lists, ListeController::LIST_VIEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }
@@ -39,7 +39,7 @@ class ListeControler {
         $url = $base . $route_uri ;
 
         $items = Item::select()->get();
-        $v = new VueParticipant($items, ListeControler::ITEM_VIEW);
+        $v = new VueParticipant($items, ListeController::ITEM_VIEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

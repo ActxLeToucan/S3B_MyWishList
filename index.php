@@ -79,7 +79,7 @@ $app->get('/formulaireItem[/]',
 $app->get('/list[/]',
     function (Request $rq, Response $rs, $args):Response {
         //$rs->getBody()->write("Liste des listes :");
-        $controller = new \wishlist\controlers\ListeControler($this);
+        $controller = new \wishlist\controllers\ListeController($this);
         return $controller->getAllListe($rq, $rs, $args);
     }
 )->setName('Listes');
@@ -96,7 +96,7 @@ $rs->getBody()->write("</ol>");*/
 $app->get('/item[/]',
     function (Request $rq, Response $rs, $args):Response {
 
-        $controller = new \wishlist\controlers\ListeControler($this);
+        $controller = new \wishlist\controllers\ListeController($this);
         return $controller->getAllItem($rq, $rs, $args);
     }
 )->setName('Items');
@@ -112,7 +112,7 @@ $app->post('/new',
 
         $extension = $_FILES['photo']['type'];
         $cheminServeur = $_FILES['photo']['tmp_name'];
-        $uploadfile = './img/'.str_replace('image/',RandomString().'.',$extension);
+        $uploadfile = './img/'.str_replace('image/',time()."_".RandomString().'.',$extension);
 
 
         $allo = move_uploaded_file($cheminServeur, $uploadfile);

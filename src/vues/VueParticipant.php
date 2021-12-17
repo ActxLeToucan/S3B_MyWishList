@@ -2,7 +2,7 @@
 
 namespace wishlist\vues;
 
-use wishlist\controlers\ListeControler;
+use wishlist\controllers\ListeController;
 
 class VueParticipant {
     private $tab;
@@ -34,12 +34,12 @@ class VueParticipant {
 
     public function render() {
         switch ($this->selecteur) {
-            case ListeControler::LIST_VIEW : {
+            case ListeController::LIST_VIEW : {
                 $content = $this->affichageListes();
                 $title = 'Listes';
                 break;
             }
-            case ListeControler::ITEM_VIEW : {
+            case ListeController::ITEM_VIEW : {
                 $content = $this->affichageItems();
                 $from = 'ItemsStyle.css';
                 $title = 'Items';
