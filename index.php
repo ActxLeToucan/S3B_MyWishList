@@ -137,20 +137,21 @@ $app->post('/new',
         return $rs;
     }
 )->setName('New_Item');
-
-/*$app->get('/list/{id}[/]',
+//TD 10 Q2.2 lister les items d'une liste donnée dont l'id est passé en paramètre.
+$app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $id = $args['id'];
         $rs->getBody()->write("Liste des items de la liste " . $id . " :");
         $rs->getBody()->write("<ol>");
-        $res = Item::select('nom')->where('liste.id', '=', $id)->get();
+        $l= Liste::where('no','=',$id)->first();
+        $res=$l->items;
         foreach ($res as $value){
             $rs->getBody()->write("<li>".$value->nom."</li>");
         }
         $rs->getBody()->write("</ol>");
         return $rs;
     }
-);*/
+);
 
 //q4 donne un item avec un id donné
 $app->get('/item/{id}[/]',
@@ -167,7 +168,24 @@ $app->get('/item/{id}[/]',
     }
 )->setName('Item_ID');
 
-
+//TD10 Q2.1 indiquer le nom de la liste de souhait dans la liste des items
+$app->get('/item/liste/items[/]',
+    function (Request $rq, Response $rs,$args):Response{
+        $rs->getBody()->write("Liste des items :");
+        $rs->getBody()->write("<ol>");
+        $res = Item::select()->get();
+        foreach ($res as $value){
+            $listetest=$value->liste;
+            //$rs->getBody()->write("On test pour voir si c'est null:".$value->liste .'oui');
+            if($listetest==null){
+                $rs->getBody()->write("<li>" . $value->nom . ', n\'appartient pas à une liste' );
+            }else {
+                $rs->getBody()->write("<li>" . $value->nom . ', Et qui est dans la liste ' . $listetest->titre . "</li>");
+            }
+        }
+        $rs->getBody()->write("</ol>");
+        return $rs;
+    });
 
 try {
     $app->run();

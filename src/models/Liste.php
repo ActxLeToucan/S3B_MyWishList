@@ -10,4 +10,8 @@ class Liste extends Model {
     protected $primaryKey = 'no';
     public $timestamps = false ;
     protected $fillable = ['no','user_id'];
+
+    public function items() {
+        return $this->hasMany('wishlist\models\Item',"liste_id");
+    }
 }
