@@ -8,14 +8,12 @@ use wishlist\vues\VueParticipant;
 
 class ListeController {
     const LIST_VIEW = 'listes';
-    const ITEM_VIEW = 'items';
     private $c;
 
     /**
      * @param $c
      */
-    public function __construct($c)
-    {
+    public function __construct($c) {
         $this->c = $c;
     }
 
@@ -28,18 +26,6 @@ class ListeController {
 
         $lists = Liste::select()->get();
         $v = new VueParticipant($lists, ListeController::LIST_VIEW);
-        $rs->getBody()->write($v->render()) ;
-        return $rs ;
-    }
-
-    public function getAllItem( $rq, $rs, $args ) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
-        $route_uri = $container->router->pathFor('Items');
-        $url = $base . $route_uri ;
-
-        $items = Item::select()->get();
-        $v = new VueParticipant($items, ListeController::ITEM_VIEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

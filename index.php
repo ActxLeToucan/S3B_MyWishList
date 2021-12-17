@@ -96,7 +96,7 @@ $rs->getBody()->write("</ol>");*/
 $app->get('/item[/]',
     function (Request $rq, Response $rs, $args):Response {
 
-        $controller = new \wishlist\controllers\ListeController($this);
+        $controller = new \wishlist\controllers\ItemController($this);
         return $controller->getAllItem($rq, $rs, $args);
     }
 )->setName('Items');

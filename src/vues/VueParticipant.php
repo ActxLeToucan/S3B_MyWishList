@@ -2,6 +2,7 @@
 
 namespace wishlist\vues;
 
+use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
 
 class VueParticipant {
@@ -39,7 +40,7 @@ class VueParticipant {
                 $title = 'Listes';
                 break;
             }
-            case ListeController::ITEM_VIEW : {
+            case ItemController::ITEM_VIEW : {
                 $content = $this->affichageItems();
                 $from = 'ItemsStyle.css';
                 $title = 'Items';
