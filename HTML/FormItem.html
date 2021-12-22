@@ -17,7 +17,7 @@
 
     <div class="description">
         <label for="descr">Description de l'item :</label>
-        <textarea id="descr"> </textarea>
+        <textarea id="descr" name="descr"> </textarea>
     </div>
 
 
@@ -25,10 +25,8 @@
 
     <div class="tarif">
         <label for="tarif">Tarif de l'item :</label>
-        <input type="text" id="tarif">
+        <input type="text" id="tarif" name="tarif">
     </div>
-
-
 
     <br>
 
@@ -40,11 +38,18 @@
                accept="image/png, image/jpeg, image/pdf">
     </div>
 
+    <br>
+
+    <div class="url">
+        <label for="url">Lien du vers un site vendant l'objet :</label>
+        <input id="url" name="url">
+    </div>
 
     <br>
 
     <div class="liste">
-        <label>Dans quelle liste voulez vous ajouter l'item :</label>
+        <label for="liste_id">Dans quelle liste voulez vous ajouter l'item :</label>
+        <input type="text" id="liste_id" name="liste_id">
     </div>
 
     <button type="submit">Créer l'item </button>

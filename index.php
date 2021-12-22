@@ -104,35 +104,10 @@ $app->get('/item[/]',
 //q3 créé un nouvel item dans une liste donnée
 $app->post('/new',
     function (Request $rq, Response $rs, $args):Response {
-        $content = $rq->getParsedBody();
-        $nomItem = $content['nom'];
 
-        //$nomImage = $_POST['photo'];
+        $controller = new \wishlist\controllers\ItemController($this);
+        return $controller->newItem($rq, $rs, $args);
 
-
-        $extension = $_FILES['photo']['type'];
-        $cheminServeur = $_FILES['photo']['tmp_name'];
-        $uploadfile = './img/'.str_replace('image/',time()."_".RandomString().'.',$extension);
-
-
-        $allo = move_uploaded_file($cheminServeur, $uploadfile);
-
-
-        if($allo){
-            $rs->getBody()->write('fichier téléchargé');
-        }else{
-            $rs->getBody()->write('fichier ???????');
-        }
-
-        //$id = $args['id'];
-        //$nomListe = Liste::where('no','=',$id)->first();
-        $rs->getBody()->write("Création d'un nouvel item dans la liste je sais pas avec le nom ".$nomItem ." ");
-
-        //$newItem = new Item();
-        //$newItem->nom = $nomItem;
-        //$newItem->liste_id = $id;
-        //$newItem->descr = 'oui oui omelette du fromage';
-        //$newItem->save();
 
         return $rs;
     }

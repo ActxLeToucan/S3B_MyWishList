@@ -26,11 +26,18 @@ class VueParticipant {
     private function affichageItems() : string {
         $str = "<section><ol>";
         foreach ($this->tab as $value) {
-            $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . " </li>";
+            $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . "<br>".$value->url . " </li>";
         }
         $str = $str . "</ol></section>";
 
         return $str;
+    }
+
+    private function confirmationNewItem() : string {
+        $str = "l'item du nom de ".$this->tab['nom']." dans la liste numéro ".$this->tab['liste_id'];
+
+        return $str;
+
     }
 
     public function render() {
@@ -45,6 +52,10 @@ class VueParticipant {
                 $from = 'ItemsStyle.css';
                 $title = 'Items';
                 break;
+            }
+            case ItemController::ITEM_NEW : {
+                $content = $this->confirmationNewItem();
+                $title = 'NewItems';
             }
         }
         $html = <<<END
