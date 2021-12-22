@@ -74,6 +74,14 @@ $app->get('/formulaireItem[/]',
 )->setName("formulaireItem");
 
 
+$app->get('/formulaireListe[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $file =  "HTML/FormListe.html";
+        return $rs->write(file_get_contents($file));
+    }
+)->setName("formulaireItem");
+
+
 
 //q1 affiche toutes les listes
 $app->get('/list[/]',
@@ -85,12 +93,7 @@ $app->get('/list[/]',
 )->setName('Listes');
 
 
-/*$rs->getBody()->write("<ol>");
-$res = Liste::select('titre')->get();
-foreach ($res as $value){
-    $rs->getBody()->write("<li>".$value->titre."</li>");
-}
-$rs->getBody()->write("</ol>");*/
+
 
 //q2 affiche tous les items
 $app->get('/item[/]',
@@ -102,7 +105,7 @@ $app->get('/item[/]',
 )->setName('Items');
 
 //q3 créé un nouvel item dans une liste donnée
-$app->post('/new',
+$app->post('/newItem',
     function (Request $rq, Response $rs, $args):Response {
 
         $controller = new \wishlist\controllers\ItemController($this);
@@ -112,6 +115,19 @@ $app->post('/new',
         return $rs;
     }
 )->setName('New_Item');
+
+//création d'une liste
+$app->post('/newListe',
+    function (Request $rq, Response $rs, $args):Response {
+
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->newListe($rq, $rs, $args);
+
+
+        return $rs;
+    }
+)->setName('New_Liste');
+
 //TD 10 Q2.2 lister les items d'une liste donnée dont l'id est passé en paramètre.
 $app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {

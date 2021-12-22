@@ -40,6 +40,13 @@ class VueParticipant {
 
     }
 
+    private function confirmationNewListe() : string {
+        $str = "la liste du nom de ".$this->tab['nom']."a été crée et expirera le ".$this->tab['dateExp'];
+
+        return $str;
+
+    }
+
     public function render() {
         switch ($this->selecteur) {
             case ListeController::LIST_VIEW : {
@@ -56,6 +63,12 @@ class VueParticipant {
             case ItemController::ITEM_NEW : {
                 $content = $this->confirmationNewItem();
                 $title = 'NewItems';
+                break;
+            }
+            case ItemController::LISTE_NEW : {
+                $content = $this->confirmationNewListe();
+                $title = 'NewListe';
+                break;
             }
         }
         $html = <<<END

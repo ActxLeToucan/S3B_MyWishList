@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="Style/FormItemStyle.css">
+    <meta charset="UTF-8">
+    <title>Nouvel Item</title>
+</head>
+<body>
+
+<form action="./newListe" method="post" enctype="multipart/form-data">
+
+    <div class="nom">
+        <label for="nom">Nom de la liste :</label>
+        <input type="text" id="nom" name="nom">
+    </div>
+
+    <br>
+
+    <div class="description">
+        <label for="descr">Description de l'item :</label>
+        <textarea id="descr" name="descr"> </textarea>
+    </div>
+
+    <br>
+
+    <div class="date">
+        <label for="dateExp">date d'expiration :</label>
+        <input type="date" id="dateExp" name="dateExp">
+    </div>
+
+    <br>
+
+    <button type="submit">Créer la liste </button>
+
+
+</form>
+</body>
+</html>

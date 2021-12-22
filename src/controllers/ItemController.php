@@ -8,6 +8,7 @@ use wishlist\vues\VueParticipant;
 class ItemController {
     const ITEM_VIEW = 'items';
     const ITEM_NEW = 'newItems';
+    const LISTE_NEW = 'newListe';
     private $c;
 
     /**
@@ -58,10 +59,6 @@ class ItemController {
         $newItem->tarif = $tarif;
         $newItem->save();
 
-
-
-
-        $allo = move_uploaded_file($cheminServeur, $uploadfile);
 
 
         $v = new VueParticipant($content, ItemController::ITEM_NEW);
