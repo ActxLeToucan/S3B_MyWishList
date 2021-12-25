@@ -43,6 +43,8 @@ class ItemController {
         $fileName = str_replace('image/',time()."_".RandomString().'.',$extension);
         $uploadfile = './img/'.$fileName;
 
+        move_uploaded_file($cheminServeur, $uploadfile);
+
         $nomItem = $content['nom'];
         $listeId = $content['liste_id'];
         $descr = $content['descr'];
