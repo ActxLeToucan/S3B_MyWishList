@@ -46,6 +46,15 @@ class VueParticipant {
         return $str;
     }
 
+    private function affichageItem() : string {
+        $item = $this->tab[0];
+        $list = $item->liste;
+        $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>");
+
+        return $str;
+    }
+
     private function confirmationNewItem() : string {
         $str = "l'item du nom de ".$this->tab['nom']." dans la liste numéro ".$this->tab['liste_id'];
 
@@ -77,7 +86,7 @@ class VueParticipant {
                 $title = 'Liste';
                 break;
             }
-            case ItemController::ITEM_VIEW : {
+            case ItemController::ITEMS_VIEW : {
                 $content = $this->affichageItems();
                 $from = 'ItemsStyle.css';
                 $title = 'Items';
@@ -86,6 +95,12 @@ class VueParticipant {
             case ItemController::ITEM_NEW : {
                 $content = $this->confirmationNewItem();
                 $title = 'NewItems';
+                break;
+            }
+            case ItemController::ITEM_VIEW : {
+                $content = $this->affichageItem();
+                $from = 'ItemsStyle.css';
+                $title = 'Item';
                 break;
             }
         }

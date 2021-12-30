@@ -6,7 +6,8 @@ use wishlist\models\Item;
 use wishlist\vues\VueParticipant;
 
 class ItemController {
-    const ITEM_VIEW = 'items';
+    const ITEMS_VIEW = 'items';
+    const ITEM_VIEW = 'item';
     const ITEM_NEW = 'newItems';
     private $c;
 
@@ -24,7 +25,7 @@ class ItemController {
         $url = $base . $route_uri ;
 
         $items = Item::select()->get();
-        $v = new VueParticipant($items, ItemController::ITEM_VIEW);
+        $v = new VueParticipant($items, ItemController::ITEMS_VIEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }
@@ -65,5 +66,18 @@ class ItemController {
         $v = new VueParticipant($content, ItemController::ITEM_NEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
+    }
+
+    public function getItemById($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('Item_ID', $args);
+        $url = $base . $route_uri;
+
+        $id = $args['id'];
+        $l = Item::where('id','=',$id)->first();
+        $v = new VueParticipant([$l], ItemController::ITEM_VIEW);
+        $rs->getBody()->write($v->render());
+        return $rs;
     }
 }

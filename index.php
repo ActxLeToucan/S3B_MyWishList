@@ -130,16 +130,8 @@ $app->get('/list/{id}[/]',
 //q4 donne un item avec un id donné
 $app->get('/item/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $id = $args['id'];
-        $rs->getBody()->write("<h1>Item $id </h1>");
-
-        $item = Item::where('id', '=', $id)->first();
-        $list = $item->liste;
-
-        $rs->getBody()->write("<img src='../img/$item->img' height='100px' width='100px'><br />Nom : $item->nom<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url");
-        $rs->getBody()->write("<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>"));
-
-        return $rs;
+        $controller = new \wishlist\controllers\ItemController($this);
+        return $controller->getItemById($rq, $rs, $args);
     }
 )->setName('Item_ID');
 
@@ -148,15 +140,10 @@ $app->get('/item/liste/items[/]',
     function (Request $rq, Response $rs,$args):Response{
         $rs->getBody()->write("Liste des items :");
         $rs->getBody()->write("<ol>");
-        $res = Item::select()->get();
-        foreach ($res as $value){
-            $listetest=$value->liste;
-            //$rs->getBody()->write("On test pour voir si c'est null:".$value->liste .'oui');
-            if($listetest==null){
-                $rs->getBody()->write("<li>" . $value->nom . ', n\'appartient pas à une liste' );
-            }else {
-                $rs->getBody()->write("<li>" . $value->nom . ', Et qui est dans la liste ' . $listetest->titre . "</li>");
-            }
+        $items = Item::select()->get();
+        foreach ($items as $item){
+            $list=$item->liste;
+            $rs->getBody()->write("<li><a href='../../item/$item->id'>$item->nom</a> " . ($list == null ? "n'appartient pas à une liste" : "est dans la liste <a href='../../list/$list->no'>$list->titre</a>") . ".</li>");
         }
         $rs->getBody()->write("</ol>");
         return $rs;
