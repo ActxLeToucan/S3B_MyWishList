@@ -25,7 +25,7 @@ class VueParticipant {
 
     private function affichageListe() : string {
         $list = $this->tab[0];
-        $str = "Liste des items dans la liste $list->no :";
+        $str = "<h1>$list->titre</h1>Numéro de la liste : $list->no<br />ID du créateur : $list->user_id<br />Description : $list->description<br />Expiration : $list->expiration<br />Items :";
         $str = $str . "<section><ol>";
         $items = $list->items;
         foreach ($items as $item) {
@@ -89,12 +89,13 @@ class VueParticipant {
                 break;
             }
         }
+        $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
         $html = <<<END
             <!DOCTYPE html> <html>
             <head>
                 <meta charset="UTF-8">
                 <title>$title</title>
-                <link rel="stylesheet" href="Style/$from">
+                $style
             </head>
             <body>
             <div class="content">
