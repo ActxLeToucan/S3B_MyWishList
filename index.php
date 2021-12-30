@@ -131,13 +131,14 @@ $app->get('/list/{id}[/]',
 $app->get('/item/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $id = $args['id'];
-        $rs->getBody()->write("Item " . $id . " :");
-        $res = Liste::where('no', '=', $id)
-            ->first();
+        $rs->getBody()->write("<h1>Item $id </h1>");
 
-        $titre = $res->titre;
+        $item = Item::where('id', '=', $id)->first();
+        $list = $item->liste;
 
-        $rs->getBody()->write("item dans la liste avec l'id " . $id . " est : " . $titre);
+        $rs->getBody()->write("<img src='../img/$item->img' height='100px' width='100px'><br />Nom : $item->nom<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url");
+        $rs->getBody()->write("<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>"));
+
         return $rs;
     }
 )->setName('Item_ID');

@@ -29,7 +29,7 @@ class VueParticipant {
         $str = $str . "<section><ol>";
         $items = $list->items;
         foreach ($items as $item) {
-            $str = $str . "<li>$item->nom</li>";
+            $str = $str . "<li><a href='../item/$item->id'>$item->nom</a></li>";
         }
         $str = $str . "</ol></section>";
 
