@@ -5,6 +5,7 @@ namespace wishlist\controllers;
 use Illuminate\Database\Eloquent\Model;
 use wishlist\models\Item;
 use wishlist\models\Liste;
+use wishlist\vues\VueCreaateur;
 use wishlist\vues\VueParticipant;
 
 class ListeController {
@@ -69,7 +70,7 @@ class ListeController {
 
 
 
-        $v = new VueParticipant($content, ListeController::LIST_NEW);
+        $v = new VueCreaateur($content, ListeController::LIST_NEW);
         $rs->getBody()->write($v->render());
         return $rs;
     }

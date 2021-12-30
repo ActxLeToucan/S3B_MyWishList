@@ -3,6 +3,7 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Item;
+use wishlist\vues\VueCreaateur;
 use wishlist\vues\VueParticipant;
 
 class ItemController {
@@ -63,7 +64,7 @@ class ItemController {
 
 
 
-        $v = new VueParticipant($content, ItemController::ITEM_NEW);
+        $v = new VueCreaateur($content, ItemController::ITEM_NEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

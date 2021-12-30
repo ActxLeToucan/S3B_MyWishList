@@ -55,30 +55,11 @@ class VueParticipant {
         return $str;
     }
 
-    private function confirmationNewItem() : string {
-        $str = "l'item du nom de ".$this->tab['nom']." dans la liste numéro ".$this->tab['liste_id'];
-
-        return $str;
-
-    }
-
-    private function confirmationNewListe() : string {
-        $str = "la liste du nom de ".$this->tab['nom']."a été crée et expirera le ".$this->tab['dateExp'];
-
-        return $str;
-
-    }
-
     public function render() {
         switch ($this->selecteur) {
             case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
                 $title = 'Listes';
-                break;
-            }
-            case ListeController::LIST_NEW : {
-                $content = $this->confirmationNewListe();
-                $title = 'NewListe';
                 break;
             }
             case ListeController::LIST_VIEW : {
@@ -90,11 +71,6 @@ class VueParticipant {
                 $content = $this->affichageItems();
                 $from = 'ItemsStyle.css';
                 $title = 'Items';
-                break;
-            }
-            case ItemController::ITEM_NEW : {
-                $content = $this->confirmationNewItem();
-                $title = 'NewItems';
                 break;
             }
             case ItemController::ITEM_VIEW : {
