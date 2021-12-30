@@ -99,7 +99,6 @@ class VueParticipant {
             }
             case ItemController::ITEM_VIEW : {
                 $content = $this->affichageItem();
-                $from = 'ItemsStyle.css';
                 $title = 'Item';
                 break;
             }
