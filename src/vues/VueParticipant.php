@@ -16,9 +16,22 @@ class VueParticipant {
     private function affichageListes() : string {
         $str = "<section><ol>";
         foreach ($this->tab as $value) {
-            $str = $str . "<li>" . $value->titre . "</li>";
-
+            $str = $str . "<li><a href='./list/$value->no'>" . $value->titre . "</a></li>";
         }
+        $str = $str . "</ol></section>";
+
+        return $str;
+    }
+
+    private function affichageListe() : string {
+        $list = $this->tab[0];
+        $str = "Liste des items dans la liste $list->no :";
+        $str = $str . "<section><ol>";
+        $items = $list->items;
+        foreach ($items as $item) {
+            $str = $str . "<li>$item->nom</li>";
+        }
+        $str = $str . "</ol></section>";
 
         return $str;
     }
@@ -49,9 +62,19 @@ class VueParticipant {
 
     public function render() {
         switch ($this->selecteur) {
-            case ListeController::LIST_VIEW : {
+            case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
                 $title = 'Listes';
+                break;
+            }
+            case ListeController::LIST_NEW : {
+                $content = $this->confirmationNewListe();
+                $title = 'NewListe';
+                break;
+            }
+            case ListeController::LIST_VIEW : {
+                $content = $this->affichageListe();
+                $title = 'Liste';
                 break;
             }
             case ItemController::ITEM_VIEW : {
@@ -63,11 +86,6 @@ class VueParticipant {
             case ItemController::ITEM_NEW : {
                 $content = $this->confirmationNewItem();
                 $title = 'NewItems';
-                break;
-            }
-            case ItemController::LISTE_NEW : {
-                $content = $this->confirmationNewListe();
-                $title = 'NewListe';
                 break;
             }
         }

@@ -8,7 +8,6 @@ use wishlist\vues\VueParticipant;
 class ItemController {
     const ITEM_VIEW = 'items';
     const ITEM_NEW = 'newItems';
-    const LISTE_NEW = 'newListe';
     private $c;
 
     /**

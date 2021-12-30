@@ -98,7 +98,6 @@ $app->get('/list[/]',
 //q2 affiche tous les items
 $app->get('/item[/]',
     function (Request $rq, Response $rs, $args):Response {
-
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->getAllItem($rq, $rs, $args);
     }
@@ -107,42 +106,26 @@ $app->get('/item[/]',
 //q3 créé un nouvel item dans une liste donnée
 $app->post('/newItem',
     function (Request $rq, Response $rs, $args):Response {
-
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->newItem($rq, $rs, $args);
-
-
-        return $rs;
     }
 )->setName('New_Item');
 
 //création d'une liste
 $app->post('/newListe',
     function (Request $rq, Response $rs, $args):Response {
-
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->newListe($rq, $rs, $args);
-
-
-        return $rs;
     }
 )->setName('New_Liste');
 
 //TD 10 Q2.2 lister les items d'une liste donnée dont l'id est passé en paramètre.
 $app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $id = $args['id'];
-        $rs->getBody()->write("Liste des items de la liste " . $id . " :");
-        $rs->getBody()->write("<ol>");
-        $l= Liste::where('no','=',$id)->first();
-        $res=$l->items;
-        foreach ($res as $value){
-            $rs->getBody()->write("<li>".$value->nom."</li>");
-        }
-        $rs->getBody()->write("</ol>");
-        return $rs;
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->getListById($rq, $rs, $args);
     }
-);
+)->setName('listById');
 
 //q4 donne un item avec un id donné
 $app->get('/item/{id}[/]',
