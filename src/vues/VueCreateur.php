@@ -15,7 +15,7 @@ class VueCreateur {
     }
 
     private function confirmationNewListe() : string {
-        $str = "la liste du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)."a été crée et expirera le ".filter_var($this->tab['dateExp'], FILTER_SANITIZE_STRING);
+        $str = "la liste du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)." a été crée et expirera le ".filter_var($this->tab['dateExp'], FILTER_SANITIZE_STRING);
 
         return $str;
     }

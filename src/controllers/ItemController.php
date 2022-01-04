@@ -52,7 +52,7 @@ class ItemController {
         $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
 
         $url = filter_var($content['url'], FILTER_SANITIZE_STRING);
-        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_STRING);
+        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_NUMBER_FLOAT);
 
         $newItem = new Item();
         $newItem->nom = $nomItem;
