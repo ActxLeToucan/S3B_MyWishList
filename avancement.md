@@ -51,7 +51,8 @@
 
 ## 10 Supprimer un item
 * Le créateur d'une liste peut supprimer un item d'un de ses listes si il n'est pas reservé
-11 Rajouter une image à un item
+
+## 11 Rajouter une image à un item
 * Le créateur d'une liste peut ajouter une image à un de ses items
 * Pour cela il fournit l'URL complète d'une image externe (acceptant le hot-linking) ou bien le chemin relatif d'une image déjà présente dans le dossier web/img/
 
