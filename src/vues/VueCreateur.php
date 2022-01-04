@@ -5,7 +5,7 @@ namespace wishlist\vues;
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
 
-class VueCreaateur {
+class VueCreateur {
     private $tab;
     private $selecteur;
 
@@ -15,13 +15,13 @@ class VueCreaateur {
     }
 
     private function confirmationNewListe() : string {
-        $str = "la liste du nom de ".$this->tab['nom']."a été crée et expirera le ".$this->tab['dateExp'];
+        $str = "la liste du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)."a été crée et expirera le ".filter_var($this->tab['dateExp'], FILTER_SANITIZE_STRING);
 
         return $str;
     }
 
     private function confirmationNewItem() : string {
-        $str = "l'item du nom de ".$this->tab['nom']." dans la liste numéro ".$this->tab['liste_id'];
+        $str = "l'item du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)." dans la liste numéro ".filter_var($this->tab['liste_id'], FILTER_SANITIZE_STRING);
 
         return $str;
     }

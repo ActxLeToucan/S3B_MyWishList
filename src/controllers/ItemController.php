@@ -3,7 +3,7 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Item;
-use wishlist\vues\VueCreaateur;
+use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
 
 class ItemController {
@@ -47,12 +47,12 @@ class ItemController {
 
         move_uploaded_file($cheminServeur, $uploadfile);
 
-        $nomItem = $content['nom'];
-        $listeId = $content['liste_id'];
-        $descr = $content['descr'];
+        $nomItem = filter_var($content['nom'], FILTER_SANITIZE_STRING);
+        $listeId = filter_var($content['liste_id'], FILTER_SANITIZE_STRING);
+        $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
 
-        $url = $content['url'];
-        $tarif = $content['tarif'];
+        $url = filter_var($content['url'], FILTER_SANITIZE_STRING);
+        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_STRING);
 
         $newItem = new Item();
         $newItem->nom = $nomItem;
@@ -65,7 +65,7 @@ class ItemController {
 
 
 
-        $v = new VueCreaateur($content, ItemController::ITEM_NEW);
+        $v = new VueCreateur($content, ItemController::ITEM_NEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

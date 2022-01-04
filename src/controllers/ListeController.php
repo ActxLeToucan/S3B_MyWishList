@@ -5,7 +5,7 @@ namespace wishlist\controllers;
 use Illuminate\Database\Eloquent\Model;
 use wishlist\models\Item;
 use wishlist\models\Liste;
-use wishlist\vues\VueCreaateur;
+use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
 
 class ListeController {
@@ -58,9 +58,9 @@ class ListeController {
         $content = $rq->getParsedBody();
 
 
-        $nomItem = $content['nom'];
-        $descr = $content['descr'];
-        $exp = $content['dateExp'];
+        $nomItem = filter_var($content['nom'], FILTER_SANITIZE_STRING);
+        $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
+        $exp =filter_var($content['dateExp'], FILTER_SANITIZE_STRING);
 
 
         $newListe = new Liste();
@@ -71,7 +71,7 @@ class ListeController {
 
 
 
-        $v = new VueCreaateur($content, ListeController::LIST_NEW);
+        $v = new VueCreateur($content, ListeController::LIST_NEW);
         $rs->getBody()->write($v->render());
         return $rs;
     }
