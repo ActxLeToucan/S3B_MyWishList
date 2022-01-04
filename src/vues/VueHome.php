@@ -29,7 +29,7 @@ class VueHome {
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
         $html = isset($htmlPage) ? $htmlPage : <<<END
-            <!DOCTYPE html> <html>
+            <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
                 <title>$title</title>
@@ -39,7 +39,7 @@ class VueHome {
             <div class="content">
             $content
             </div>
-            </body><html>
+            </body></html>
         END;
         return $html;
     }

@@ -10,51 +10,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use Illuminate\Database\Capsule\Manager as DB;
 use wishlist\models\Item;
 use wishlist\models\Liste;
 
 require 'vendor/autoload.php';
 
-$tabFile = parse_ini_file("src\conf\conf.init.dist");
-
-$db = new DB();
-
-$db->addConnection( [
-    'driver' => $tabFile[ 'driver'],
-    'host' => $tabFile[ 'host'],
-    'database' => $tabFile[ 'database'],
-    'username' => $tabFile[ 'username'],
-    'password' => $tabFile[ 'password'],
-    'charset' => $tabFile[ 'charset'],
-    'collation' => $tabFile[ 'collation'],
-    'prefix' => ''
-] );
-
-$db->setAsGlobal();
-$db->bootEloquent();
-
-$configuration = [
-    'settings' => [
-        'displayErrorDetails' => true,
-        'dbconf' => '/conf/db.conf.ini' ]
-];
-$c = new \Slim\Container($configuration);
-
-
-$app = new \Slim\App($c);
-
-
-function RandomString()
-{
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $randstring = '';
-    for ($i = 0; $i < 10; $i++) {
-        $randstring = $randstring.$characters[Rand(0, strlen($characters))];
-    }
-    return $randstring;
-}
-
+$app = new \Slim\App(\wishlist\dbInit::init());
 
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {

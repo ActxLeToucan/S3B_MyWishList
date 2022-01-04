@@ -39,7 +39,7 @@ class VueParticipant {
     private function affichageItems() : string {
         $str = "<section><ol>";
         foreach ($this->tab as $value) {
-            $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . "<br>".$value->url . " </li>";
+            $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px' alt='$value->nom'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . "<br>".$value->url . " </li>";
         }
         $str = $str . "</ol></section>";
 
@@ -49,7 +49,7 @@ class VueParticipant {
     private function affichageItem() : string {
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>");
 
         return $str;
@@ -82,7 +82,7 @@ class VueParticipant {
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
         $html = isset($htmlPage) ? $htmlPage : <<<END
-            <!DOCTYPE html> <html>
+            <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
                 <title>$title</title>
@@ -92,7 +92,7 @@ class VueParticipant {
             <div class="content">
             $content
             </div>
-            </body><html>
+            </body></html>
         END;
         return $html;
     }

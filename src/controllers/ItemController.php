@@ -3,6 +3,7 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Item;
+use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
 
@@ -11,6 +12,7 @@ class ItemController {
     const ITEM_VIEW = 'item';
     const ITEM_NEW = 'newItems';
     const ITEM_FORM_CREATE = 'form_item_create';
+
     private $c;
 
     /**
@@ -42,7 +44,7 @@ class ItemController {
 
         $extension = $_FILES['photo']['type'];
         $cheminServeur = $_FILES['photo']['tmp_name'];
-        $fileName = str_replace('image/',time()."_".RandomString().'.',$extension);
+        $fileName = str_replace('image/',time()."_".tools::getRandomString().'.',$extension);
         $uploadfile = './img/'.$fileName;
 
         move_uploaded_file($cheminServeur, $uploadfile);

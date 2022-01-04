@@ -6,6 +6,7 @@ use wishlist\vues\VueHome;
 
 class HomeController {
     const HOME = 'home';
+
     private $c;
 
     /**

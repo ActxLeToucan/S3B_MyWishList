@@ -2,8 +2,6 @@
 
 namespace wishlist\controllers;
 
-use Illuminate\Database\Eloquent\Model;
-use wishlist\models\Item;
 use wishlist\models\Liste;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
