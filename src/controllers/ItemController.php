@@ -89,7 +89,7 @@ class ItemController {
         $route_uri = $container->router->pathFor('formulaireItemCreate');
         $url = $base . $route_uri ;
 
-        $v = new VueCreaateur([], ItemController::ITEM_FORM_CREATE);
+        $v = new VueCreateur([], ItemController::ITEM_FORM_CREATE);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

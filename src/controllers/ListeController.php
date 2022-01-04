@@ -82,7 +82,7 @@ class ListeController {
         $route_uri = $container->router->pathFor('formulaireListCreate');
         $url = $base . $route_uri ;
 
-        $v = new VueCreaateur([], ListeController::LIST_FORM_CREATE);
+        $v = new VueCreateur([], ListeController::LIST_FORM_CREATE);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }
