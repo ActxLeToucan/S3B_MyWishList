@@ -15,13 +15,15 @@ class VueCreateur {
     }
 
     private function confirmationNewListe() : string {
-        $str = "la liste du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)." a été crée et expirera le ".filter_var($this->tab['dateExp'], FILTER_SANITIZE_STRING);
+        $list = $this->tab[0];
+        $str = "La liste du nom de <u>$list->titre</u> a été créée et expirera le $list->expiration.<br />Utilisez ce token pour accéder à la liste : <b>$list->token</b>";
 
         return $str;
     }
 
     private function confirmationNewItem() : string {
-        $str = "l'item du nom de ".filter_var($this->tab['nom'], FILTER_SANITIZE_STRING)." dans la liste numéro ".filter_var($this->tab['liste_id'], FILTER_SANITIZE_STRING);
+        $item = $this->tab[0];
+        $str = "L'item du nom de <u>$item->nom</u> dans la liste numéro $item->liste_id.";
 
         return $str;
     }

@@ -3,6 +3,7 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Liste;
+use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
 
@@ -60,16 +61,18 @@ class ListeController {
         $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
         $exp =filter_var($content['dateExp'], FILTER_SANITIZE_STRING);
 
+        $token = tools::generateToken();
 
         $newListe = new Liste();
         $newListe->titre = $nomItem;
         $newListe->description = $descr;
         $newListe->expiration = $exp;
+        $newListe->token = $token;
         $newListe->save();
 
 
 
-        $v = new VueCreateur($content, ListeController::LIST_NEW);
+        $v = new VueCreateur([$newListe], ListeController::LIST_NEW);
         $rs->getBody()->write($v->render());
         return $rs;
     }

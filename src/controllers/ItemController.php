@@ -67,7 +67,7 @@ class ItemController {
 
 
 
-        $v = new VueCreateur($content, ItemController::ITEM_NEW);
+        $v = new VueCreateur([$newItem], ItemController::ITEM_NEW);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }
