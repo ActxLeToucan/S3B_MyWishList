@@ -56,30 +56,28 @@ function RandomString()
 }
 
 
-
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $file =  "HTML/index.html";
-        return $rs->write(file_get_contents($file));
+        $controller = new \wishlist\controllers\HomeController($this);
+        return $controller->getHomePage($rq, $rs, $args);
     }
 )->setName("home");
 
 
-
 $app->get('/formulaireItem[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $file =  "HTML/FormItem.html";
-        return $rs->write(file_get_contents($file));
+        $controller = new \wishlist\controllers\ItemController($this);
+        return $controller->createItem($rq, $rs, $args);
     }
-)->setName("formulaireItem");
+)->setName("formulaireItemCreate");
 
 
 $app->get('/formulaireListe[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $file =  "HTML/FormListe.html";
-        return $rs->write(file_get_contents($file));
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->createList($rq, $rs, $args);
     }
-)->setName("formulaireItem");
+)->setName("formulaireListCreate");
 
 
 

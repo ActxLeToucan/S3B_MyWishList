@@ -10,6 +10,7 @@ class ItemController {
     const ITEMS_VIEW = 'items';
     const ITEM_VIEW = 'item';
     const ITEM_NEW = 'newItems';
+    const ITEM_FORM_CREATE = 'form_item_create';
     private $c;
 
     /**
@@ -80,5 +81,16 @@ class ItemController {
         $v = new VueParticipant([$l], ItemController::ITEM_VIEW);
         $rs->getBody()->write($v->render());
         return $rs;
+    }
+
+    public function createItem($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('formulaireItemCreate');
+        $url = $base . $route_uri ;
+
+        $v = new VueCreaateur([], ItemController::ITEM_FORM_CREATE);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
     }
 }

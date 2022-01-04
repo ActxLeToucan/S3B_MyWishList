@@ -26,7 +26,18 @@ class VueCreaateur {
         return $str;
     }
 
+    private function itemCreate() : string {
+        $file =  "HTML/FormItem.html";
+        return file_get_contents($file);
+    }
+
+    private function listCreate() : string {
+        $file =  "HTML/FormListe.html";
+        return file_get_contents($file);
+    }
+
     public function render() {
+        $content = "";
         switch ($this->selecteur) {
             case ListeController::LIST_NEW : {
                 $content = $this->confirmationNewListe();
@@ -38,9 +49,19 @@ class VueCreaateur {
                 $title = 'NewItems';
                 break;
             }
+            case ItemController::ITEM_FORM_CREATE : {
+                $htmlPage = $this->itemCreate();
+                $title = 'Création d\'un item';
+                break;
+            }
+            case ListeController::LIST_FORM_CREATE : {
+                $htmlPage = $this->listCreate();
+                $title = 'Création d\'une liste';
+                break;
+            }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = <<<END
+        $html = isset($htmlPage) ? $htmlPage : <<<END
             <!DOCTYPE html> <html>
             <head>
                 <meta charset="UTF-8">
@@ -52,7 +73,7 @@ class VueCreaateur {
             $content
             </div>
             </body><html>
-        END ;
+        END;
         return $html;
     }
 }

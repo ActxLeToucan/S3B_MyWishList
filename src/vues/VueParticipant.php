@@ -56,6 +56,7 @@ class VueParticipant {
     }
 
     public function render() {
+        $content = "";
         switch ($this->selecteur) {
             case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
@@ -80,7 +81,7 @@ class VueParticipant {
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = <<<END
+        $html = isset($htmlPage) ? $htmlPage : <<<END
             <!DOCTYPE html> <html>
             <head>
                 <meta charset="UTF-8">
@@ -92,7 +93,7 @@ class VueParticipant {
             $content
             </div>
             </body><html>
-        END ;
+        END;
         return $html;
     }
 

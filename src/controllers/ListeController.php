@@ -12,6 +12,7 @@ class ListeController {
     const LISTS_VIEW = 'lists';
     const LIST_VIEW = 'list';
     const LIST_NEW = 'newList';
+    const LIST_FORM_CREATE = 'list_form_create';
 
     private $c;
 
@@ -73,5 +74,16 @@ class ListeController {
         $v = new VueCreaateur($content, ListeController::LIST_NEW);
         $rs->getBody()->write($v->render());
         return $rs;
+    }
+
+    public function createList($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('formulaireListCreate');
+        $url = $base . $route_uri ;
+
+        $v = new VueCreaateur([], ListeController::LIST_FORM_CREATE);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
     }
 }
