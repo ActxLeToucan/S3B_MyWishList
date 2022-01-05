@@ -51,8 +51,12 @@ class VueParticipant {
         $list = $item->liste;
         $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>");
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par l'utilisateur ayant l'id $item->reserv_par :<br />$item->msg_reserv" : "Réservé par personne.");
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par l'utilisateur ayant l'id $item->reserv_par :<br />$item->msg_reserv" : "Réservé par personne."  .  "<br>"  ." <form action='./reservation?id=$item->id&nom=$item->nom' method='post' enctype='multipart/form-data'>  <label for='message'>Entrez un message pour réserver l'item :</label> <br> <textarea id='message' name='message'> </textarea> <button type='submit' >Réserver</button> </form> ");
+        return $str;
+    }
 
+    private function confirmationReservation() : string {
+        $str = "Vous avez bien réservé l'item : ". $this->tab['nom'] . " avec le message ". $this->tab['msg_reserv'];
         return $str;
     }
 
@@ -77,6 +81,11 @@ class VueParticipant {
             }
             case ItemController::ITEM_VIEW : {
                 $content = $this->affichageItem();
+                $title = 'Item';
+                break;
+            }
+            case ItemController::ITEM_RESERVATION : {
+                $content = $this->confirmationReservation();
                 $title = 'Item';
                 break;
             }

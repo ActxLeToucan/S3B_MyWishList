@@ -115,6 +115,13 @@ $app->get('/item/liste/items[/]',
         return $rs;
     });
 
+$app->post('/reservation[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\ItemController($this);
+        return $controller->reservation($rq, $rs, $args);
+    }
+)->setName('Reservation');
+
 try {
     $app->run();
 } catch (Throwable $e) {

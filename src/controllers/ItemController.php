@@ -2,6 +2,7 @@
 
 namespace wishlist\controllers;
 
+use http\Message;
 use wishlist\models\Item;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
@@ -12,6 +13,7 @@ class ItemController {
     const ITEM_VIEW = 'item';
     const ITEM_NEW = 'newItems';
     const ITEM_FORM_CREATE = 'form_item_create';
+    const ITEM_RESERVATION = 'reservation';
 
     private $c;
 
@@ -92,6 +94,27 @@ class ItemController {
         $url = $base . $route_uri ;
 
         $v = new VueCreateur([], ItemController::ITEM_FORM_CREATE);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
+    }
+
+    public function reservation($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('reservation');
+        $url = $base . $route_uri ;
+
+        $content = $rq->getParsedBody();
+        $message = filter_var($content['message'], FILTER_SANITIZE_NUMBER_FLOAT);
+        $item_id = $args['id'];
+        $item_name = $args['nom'];
+        Item::where('id',$item_id)->update(['msg_reserv'=>$message]);
+        Item::where('id',$item_id)->update(['etat_reserv'=>1]);
+        //Item::where('id',$item_id)->update(['reserv_par']=>);
+        $content['name'] = $item_name;
+        $content['id'] = $item_id;
+
+        $v = new VueParticipant($content, ItemController::ITEM_RESERVATION);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }
