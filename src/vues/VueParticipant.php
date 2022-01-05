@@ -51,6 +51,7 @@ class VueParticipant {
         $list = $item->liste;
         $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>");
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par l'utilisateur ayant l'id $item->reserv_par :<br />$item->msg_reserv" : "Réservé par personne.");
 
         return $str;
     }

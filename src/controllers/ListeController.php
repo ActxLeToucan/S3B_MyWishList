@@ -48,6 +48,19 @@ class ListeController {
         return $rs;
     }
 
+    public function getListByToken($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('listByToken', $args);
+        $url = $base . $route_uri;
+
+        $token = $args['token'];
+        $l = Liste::where('token','=',$token)->first();
+        $v = new VueParticipant([$l], ListeController::LIST_VIEW);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
     public function newListe( $rq, $rs, $args ) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();

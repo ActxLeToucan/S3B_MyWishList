@@ -86,6 +86,13 @@ $app->get('/list/{id}[/]',
     }
 )->setName('listById');
 
+/*$app->get('/list/{token}[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->getListByToken($rq, $rs, $args);
+    }
+)->setName('listByToken');*/
+
 //q4 donne un item avec un id donné
 $app->get('/item/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
