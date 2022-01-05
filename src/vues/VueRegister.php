@@ -13,14 +13,14 @@ class VueRegister{
     }
 
     public function confirmationConnected() : string{
-        $str = "L'utilisateur ".$this->tab['username']." à été connecté";
+        $str = "L'utilisateur ".$this->tab['username']." est connecté.";
 
         return $str;
     }
     public function notConnected():string{
-        $str = "Mot de passe ou nom d'utilisateur incorrect";
+        $str = "Mot de passe ou nom d'utilisateur incorrect.";
 
-        return $str;
+        return $str.$this->tab["username"]." ".$this->tab["password"];
     }
 
     public function render() {
@@ -41,7 +41,7 @@ class VueRegister{
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
         $html = <<<END
-            <!DOCTYPE html> <html>
+            <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
                 <title>$title</title>
@@ -51,7 +51,7 @@ class VueRegister{
             <div class="content">
             $content
             </div>
-            </body><html>
+            </body></html>
         END ;
         return $html;
     }

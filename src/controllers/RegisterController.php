@@ -32,18 +32,20 @@ class RegisterController{
     public function newUser($rq, $rs, $args)  {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('New_User');
+        $route_uri = $container->router->pathFor('signup');
         $url = $base . $route_uri;
         $content = $rq->getParsedBody();
 
-        $NomUtilisateur = $content['Username'];
-        $MotDePasse = $content['Password'];
-        $Email=$content['Email'];
+        $NomUtilisateur = $content['username'];
+        $MotDePasse = $content['password'];
+        $Email=$content['email'];
+        $level = $content['level'];
 
         $newUser= new Authenticate();
         $newUser->username=$NomUtilisateur;
         $newUser->password=$MotDePasse;
         $newUser->email=$Email;
+        $newUser->Niveau_acces=$level;
         $newUser->save();
 
         $v = new VueRegister($content, RegisterController::CONNECTED);
@@ -54,16 +56,18 @@ class RegisterController{
     public function authentification($rq,$rs,$args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('Authentificate');
+        $route_uri = $container->router->pathFor('login');
         $url = $base . $route_uri;
 
-        $NomUtilisateur = $args['Username'];
-        $MotDePasse = $args['Password'];
+        $content = $rq->getParsedBody();
+
+        $NomUtilisateur = $content['username'];
+        $MotDePasse = $content['password'];
 
         $MatchThese=['username'=>$NomUtilisateur, 'password'=>$MotDePasse];
-        $authen = Authenticate::where($MatchThese)->first();
+        $authen = Authenticate::where($MatchThese)->count();
 
-        $v = new VueRegister($authen, RegisterController::CONNECTED);
+        $v = new VueRegister($content, ($authen == 1 ? RegisterController::CONNECTED : RegisterController::CONNECTIONFAILED));
         $rs->getBody()->write($v->render());
         return $rs;
     }
