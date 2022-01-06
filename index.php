@@ -10,8 +10,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use wishlist\models\Item;
-use wishlist\models\Liste;
 
 require 'vendor/autoload.php';
 
@@ -133,7 +131,7 @@ $app->post('/reservation[/]',
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->reservation($rq, $rs, $args);
     }
-)->setName('Reservation');
+)->setName('reservation');
 
 try {
     $app->run();
