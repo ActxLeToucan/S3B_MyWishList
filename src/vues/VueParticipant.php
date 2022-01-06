@@ -4,6 +4,7 @@ namespace wishlist\vues;
 
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
+use wishlist\tools;
 
 class VueParticipant {
     private $tab;
@@ -47,13 +48,15 @@ class VueParticipant {
     }
 
     private function affichageItem() : string {
+        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? ".." : ".");
+
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='../img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='../list/$list->no'>$list->titre</a>");
+        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/$list->no'>$list->titre</a>");
 
         $formulaire = <<<END
-            <form action='../reservation?id=$item->id' method='post' enctype='multipart/form-data'>
+            <form action='$path/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
                 <label for='message'>Entrez un message pour réserver l'item :</label>
                 <br>
                 <textarea id='message' name='message'></textarea>
@@ -68,12 +71,13 @@ class VueParticipant {
     private function confirmationReservation() : string {
         $item = $this->tab[0];
 
-        $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".<br /><br /><a href='./item/$item->id'>Retourner à l'item.</a>";
+        $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".";
         return $str;
     }
 
     public function render() {
         $content = "";
+        $notif = "";
         switch ($this->selecteur) {
             case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
@@ -97,13 +101,14 @@ class VueParticipant {
                 break;
             }
             case ItemController::ITEM_RESERVATION : {
-                $content = $this->confirmationReservation();
+                $content = $this->affichageItem();
+                $notif = tools::messageBox($this->confirmationReservation());
                 $title = 'Item réservé !';
                 break;
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = isset($htmlPage) ? $htmlPage : <<<END
+        $html = $htmlPage ?? <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -111,6 +116,7 @@ class VueParticipant {
                 $style
             </head>
             <body>
+            $notif
             <div class="content">
             $content
             </div>
@@ -118,5 +124,4 @@ class VueParticipant {
         END;
         return $html;
     }
-
 }

@@ -40,6 +40,7 @@ class VueCreateur {
 
     public function render() {
         $content = "";
+        $notif = "";
         switch ($this->selecteur) {
             case ListeController::LIST_NEW : {
                 $content = $this->confirmationNewListe();
@@ -63,7 +64,7 @@ class VueCreateur {
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = isset($htmlPage) ? $htmlPage : <<<END
+        $html = $htmlPage ?? <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -71,6 +72,7 @@ class VueCreateur {
                 $style
             </head>
             <body>
+            $notif
             <div class="content">
             $content
             </div>

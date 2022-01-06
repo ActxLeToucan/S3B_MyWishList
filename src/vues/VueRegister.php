@@ -3,6 +3,8 @@
 namespace wishlist\vues;
 
 use wishlist\controllers\RegisterController;
+use wishlist\tools;
+
 class VueRegister{
     private $tab;
     private $selecteur;
@@ -12,15 +14,15 @@ class VueRegister{
         $this->selecteur = $s;
     }
 
-    public function confirmationConnected() : string{
+    public function confirmationConnected() : string {
         $str = "L'utilisateur ".$this->tab['username']." est connecté.";
 
         return $str;
     }
-    public function notConnected():string{
+    public function notConnected() : string {
         $str = "Mot de passe ou nom d'utilisateur incorrect.";
 
-        return $str.$this->tab["username"]." ".$this->tab["password"];
+        return $str.' '.$this->tab["username"]." ".$this->tab["password"];
     }
 
     public function loginPage() : string {
@@ -30,14 +32,15 @@ class VueRegister{
 
     public function render() {
         $content = "";
+        $notif = "";
         switch ($this->selecteur) {
             case RegisterController::CONNECTED : {
-                $content = $this->confirmationConnected();
+                $htmlPage = tools::insertIntoBody(tools::getHomePage(), tools::messageBox($this->confirmationConnected()));
                 $title = 'Connected';
                 break;
             }
             case RegisterController::CONNECTIONFAILED : {
-                $content = $this->notConnected();
+                $htmlPage = tools::insertIntoBody($this->loginPage(), tools::messageBox($this->notConnected()));
                 $title = 'Failed';
                 break;
             }
@@ -47,7 +50,7 @@ class VueRegister{
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = isset($htmlPage) ? $htmlPage : <<<END
+        $html = $htmlPage ?? <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -55,6 +58,7 @@ class VueRegister{
                 $style
             </head>
             <body>
+            $notif
             <div class="content">
             $content
             </div>

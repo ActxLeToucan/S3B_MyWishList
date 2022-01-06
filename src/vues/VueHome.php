@@ -3,6 +3,7 @@
 namespace wishlist\vues;
 
 use wishlist\controllers\HomeController;
+use wishlist\tools;
 
 class VueHome {
     private $tab;
@@ -14,12 +15,12 @@ class VueHome {
     }
 
     private function home() : string {
-        $file =  "HTML/index.html";
-        return file_get_contents($file);
+        return tools::getHomePage();
     }
 
     public function render() {
         $content = "";
+        $notif = "";
         switch ($this->selecteur) {
             case HomeController::HOME : {
                 $htmlPage = $this->home();
@@ -28,7 +29,7 @@ class VueHome {
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = isset($htmlPage) ? $htmlPage : <<<END
+        $html = $htmlPage ?? <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -36,6 +37,7 @@ class VueHome {
                 $style
             </head>
             <body>
+            $notif
             <div class="content">
             $content
             </div>
