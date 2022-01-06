@@ -22,19 +22,26 @@ $app->get('[/]',
     }
 )->setName("home");
 
-$app->post('/login[/]',
+$app->post('/loginConfirm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->authentification($rq, $rs, $args);
 
+    })->setName("loginConfirm");
+
+$app->get('/login[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\RegisterController($this);
+        return $controller->loginPage($rq, $rs, $args);
+
     })->setName("login");
 
-$app->post('/signup[/]',
+$app->post('/signupConfirrm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->newUser($rq, $rs, $args);
 
-    })->setName("signup");
+    })->setName("signupConfirm");
 
 $app->get('/formulaireItem[/]',
     function (Request $rq, Response $rs, $args):Response {

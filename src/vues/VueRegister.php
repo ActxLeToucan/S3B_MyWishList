@@ -23,7 +23,13 @@ class VueRegister{
         return $str.$this->tab["username"]." ".$this->tab["password"];
     }
 
+    public function loginPage() : string {
+        $file =  "HTML/formLogin.html";
+        return file_get_contents($file);
+    }
+
     public function render() {
+        $content = "";
         switch ($this->selecteur) {
             case RegisterController::CONNECTED : {
                 $content = $this->confirmationConnected();
@@ -35,12 +41,13 @@ class VueRegister{
                 $title = 'Failed';
                 break;
             }
-            case RegisterController::NEW_USER : {
-
+            case RegisterController::LOGIN : {
+                $htmlPage = $this->loginPage();
+                break;
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = <<<END
+        $html = isset($htmlPage) ? $htmlPage : <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -52,7 +59,7 @@ class VueRegister{
             $content
             </div>
             </body></html>
-        END ;
+        END;
         return $html;
     }
 }

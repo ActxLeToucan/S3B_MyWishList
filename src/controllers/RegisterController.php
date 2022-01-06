@@ -16,6 +16,8 @@ class RegisterController{
     const NEW_USER = 'newUser';
     const CONNECTED ='connected';
     const CONNECTIONFAILED='failed';
+    const LOGIN = 'login';
+
     private $c;
 
 
@@ -32,7 +34,7 @@ class RegisterController{
     public function newUser($rq, $rs, $args)  {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('signup');
+        $route_uri = $container->router->pathFor('signupConfirm');
         $url = $base . $route_uri;
         $content = $rq->getParsedBody();
 
@@ -56,7 +58,7 @@ class RegisterController{
     public function authentification($rq,$rs,$args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('login');
+        $route_uri = $container->router->pathFor('loginConfirm');
         $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
@@ -71,6 +73,18 @@ class RegisterController{
         $rs->getBody()->write($v->render());
         return $rs;
     }
+
+    public function loginPage($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('login');
+        $url = $base . $route_uri ;
+
+        $v = new VueRegister([], RegisterController::LOGIN);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
+    }
+
     public function LoadUser($rq,$rs,$args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();

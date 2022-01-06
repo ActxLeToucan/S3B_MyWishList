@@ -68,7 +68,7 @@ class VueParticipant {
     private function confirmationReservation() : string {
         $item = $this->tab[0];
 
-        $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".";
+        $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".<br /><br /><a href='./item/$item->id'>Retourner à l'item.</a>";
         return $str;
     }
 
