@@ -1,24 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="Style/styleLogin.css">
 </head>
 <body>
+<div class="center">
+    <h1>Login</h1>
     <form action="./loginConfirm" method="post" enctype="multipart/form-data">
-        <div class="username">
-            <label for="username">Nom d'utilisateur :</label>
-            <input type="text" id="username" name="username">
+        <div class="txt_field">
+            <input type="text" required id="username" name="username">
+            <span></span>
+            <label>Username</label>
         </div>
-
-        <br />
-
-        <div class="password">
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password">
+        <div class="txt_field">
+            <input type="password" required id="password" name="password">
+            <span></span>
+            <label>Password</label>
         </div>
-
-        <button type="submit">Se connecter</button>
+        <div class="show">
+            <input type="checkbox" onclick="showOrNot()">Show password
+        </div>
+        <input type="submit" value="Login">
+        <div class="signup_link">
+            Want to create a List ? <a href="./signUp">SignUp</a>
+        </div>
     </form>
+</div>
+
+<script>
+    function showOrNot() {
+        var pass = document.getElementById("password");
+        if (pass.type === "password") {
+            pass.type = "text";
+        } else {
+            pass.type = "password";
+        }
+    }
+</script>
+
 </body>
 </html>

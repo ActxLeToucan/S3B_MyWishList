@@ -30,6 +30,11 @@ class VueRegister{
         return file_get_contents($file);
     }
 
+    public function signUpPage() : string {
+        $file =  "HTML/formSignUp.html";
+        return file_get_contents($file);
+    }
+
     public function render() {
         $content = "";
         $notif = "";
@@ -46,6 +51,10 @@ class VueRegister{
             }
             case RegisterController::LOGIN : {
                 $htmlPage = $this->loginPage();
+                break;
+            }
+            case RegisterController::SIGNUP : {
+                $htmlPage = $this->signUpPage();
                 break;
             }
         }
