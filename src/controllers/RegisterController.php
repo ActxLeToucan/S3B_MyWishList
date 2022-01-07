@@ -62,6 +62,19 @@ class RegisterController{
         $route_uri = $container->router->pathFor('loginConfirm');
         $url = $base . $route_uri;
 
+
+        $auth = $this->LoadUser($rq, $rs, $args);
+        if (isset($_SESSION['username'])){
+            session_destroy();
+            session_start();
+            $_SESSION['username']=$auth['username'];
+            $_SESSION['AccessRights']=$auth['Niveau_acces'];
+        }else{
+            $_SESSION['username']=$auth['username'];
+            $_SESSION['AccessRights']=$auth['Niveau_acces'];
+        }
+
+
         $content = $rq->getParsedBody();
 
         $NomUtilisateur = $content['username'];
