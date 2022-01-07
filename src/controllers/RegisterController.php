@@ -17,6 +17,7 @@ class RegisterController{
     const CONNECTED ='connected';
     const CONNECTIONFAILED='failed';
     const LOGIN = 'login';
+    const SIGNUP = 'signUp';
 
     private $c;
 
@@ -81,6 +82,17 @@ class RegisterController{
         $url = $base . $route_uri ;
 
         $v = new VueRegister([], RegisterController::LOGIN);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
+    }
+
+    public function signUpPage($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('signUp');
+        $url = $base . $route_uri ;
+
+        $v = new VueRegister([], RegisterController::SIGNUP);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

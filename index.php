@@ -51,6 +51,13 @@ $app->get('/login[/]',
 
     })->setName("login");
 
+$app->get('/signUp[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\RegisterController($this);
+        return $controller->signUpPage($rq, $rs, $args);
+
+    })->setName("signUp");
+
 $app->post('/signupConfirrm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
