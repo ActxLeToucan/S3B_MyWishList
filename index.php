@@ -28,17 +28,16 @@ $app->post('/loginConfirm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         $auth=$controller->LoadUser($rq,$rs,$args);
-        echo($auth .'is null');
         if(isset($_SESSION['username'])){
             session_destroy();
             session_start();
             $_SESSION['username']=$auth['username'];
             $_SESSION['AccessRights']=$auth['Niveau_acces'];
-            echo ('session existe : '.$_SESSION);
+            echo ('session existe : '.json_encode($_SESSION));
         }else{
             $_SESSION['username']=$auth['username'];
             $_SESSION['AccessRights']=$auth['Niveau_acces'];
-            echo ('session nouvelle : '.$_SESSION);
+            echo ('session nouvelle : '.json_encode($_SESSION));
         }
         return $controller->authentification($rq, $rs, $args);
 
