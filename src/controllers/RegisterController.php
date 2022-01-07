@@ -13,11 +13,11 @@ use wishlist\vues\VueRegister;
 
 
 class RegisterController{
-    const NEW_USER = 'newUser';
     const CONNECTED ='connected';
     const CONNECTIONFAILED='failed';
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
+    const LOGOUT = 'logout';
 
     private $c;
 
@@ -120,6 +120,21 @@ class RegisterController{
         $NomUtilisateur = $content['username'];
         $auth=Authenticate::where('username','=',$NomUtilisateur)->first();
         return $auth;
+    }
+
+    public function logout($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('logout');
+        $url = $base . $route_uri ;
+
+
+        session_destroy();
+
+
+        $v = new VueRegister([], RegisterController::LOGOUT);
+        $rs->getBody()->write($v->render()) ;
+        return $rs ;
     }
 }
 

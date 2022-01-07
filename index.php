@@ -53,6 +53,14 @@ $app->get('/signUp[/]',
 
     })->setName("signUp");
 
+// deconnexion
+$app->get('/logout[/]',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\RegisterController($this);
+        return $controller->logout($rq, $rs, $args);
+
+    })->setName("logout");
+
 
 /**
  * reception de donnees

@@ -2,6 +2,7 @@
 
 namespace wishlist\vues;
 
+use wishlist\controllers\HomeController;
 use wishlist\controllers\RegisterController;
 use wishlist\tools;
 
@@ -25,6 +26,12 @@ class VueRegister{
         return $str.' '.$this->tab["username"]." ".$this->tab["password"];
     }
 
+    private function confirmationDeconnexion() : string {
+        $str = "Vous avez été déconnecté." . tools::rewriteUrl(".", "");
+
+        return $str;
+    }
+
     private function loginPage() : string {
         $file =  "HTML/formLogin.html";
         return file_get_contents($file);
@@ -40,7 +47,9 @@ class VueRegister{
         $notif = "";
         switch ($this->selecteur) {
             case RegisterController::CONNECTED : {
-                $htmlPage = tools::insertIntoBody(tools::getHomePage(), tools::messageBox($this->confirmationConnected()));
+                $vueHome = new VueHome([], HomeController::HOME);
+
+                $htmlPage = tools::insertIntoBody($vueHome->render(), tools::messageBox($this->confirmationConnected()));
                 $title = 'Connected';
                 break;
             }
@@ -56,6 +65,10 @@ class VueRegister{
             case RegisterController::SIGNUP : {
                 $htmlPage = $this->signUpPage();
                 break;
+            }
+            case RegisterController::LOGOUT : {
+                $vueHome = new VueHome([], HomeController::HOME);
+                $htmlPage = tools::insertIntoBody($vueHome->render(), tools::messageBox($this->confirmationDeconnexion()));
             }
         }
         $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";

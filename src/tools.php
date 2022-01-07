@@ -88,4 +88,22 @@ class tools {
 
         return $html;
     }
+
+    public static function rewriteUrl(string $page = "", string $titre = "") {
+        if (substr($_SERVER['REQUEST_URI'], strlen($_SERVER['REQUEST_URI'])-1) == "/") {
+            $page = "../$page";
+        }
+        $titre = ($titre = "" ? "" : "document.title = '$titre'");
+
+        $script = <<<END
+        <script>
+        window.addEventListener("load", () => {
+            history.pushState(null, "", "$page");
+            $titre
+        });
+        </script>
+        END;
+
+        return $script;
+    }
 }

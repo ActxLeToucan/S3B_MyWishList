@@ -72,7 +72,7 @@ class VueParticipant {
         $item = $this->tab[0];
 
         $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".";
-        return $str;
+        return $str . tools::rewriteUrl("./item/$item->id");
     }
 
     public function render() {
