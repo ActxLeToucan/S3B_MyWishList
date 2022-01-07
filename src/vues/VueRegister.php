@@ -14,18 +14,18 @@ class VueRegister{
         $this->selecteur = $s;
     }
 
-    public function confirmationConnected() : string {
+    private function confirmationConnected() : string {
         $str = "L'utilisateur ".$this->tab['username']." est connecté.";
 
         return $str;
     }
-    public function notConnected() : string {
+    private function notConnected() : string {
         $str = "Mot de passe ou nom d'utilisateur incorrect.";
 
         return $str.' '.$this->tab["username"]." ".$this->tab["password"];
     }
 
-    public function loginPage() : string {
+    private function loginPage() : string {
         $file =  "HTML/formLogin.html";
         return file_get_contents($file);
     }

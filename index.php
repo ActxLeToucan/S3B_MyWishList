@@ -27,18 +27,18 @@ $app->get('[/]',
 $app->post('/loginConfirm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
-        $tab=$controller->LoadUser($rq,$rs,$args);
-        echo($tab .'is null');
+        $auth=$controller->LoadUser($rq,$rs,$args);
+        echo($auth .'is null');
         if(isset($_SESSION['username'])){
             session_destroy();
             session_start();
-            $_SESSION['username']=$tab['username'];
-            $_SESSION['AccessRights']=$tab['AccessRights'];
-            echo ($_SESSION);
+            $_SESSION['username']=$auth['username'];
+            $_SESSION['AccessRights']=$auth['Niveau_acces'];
+            echo ('session existe : '.$_SESSION);
         }else{
-            $_SESSION['username']=$tab['username'];
-            $_SESSION['Niveau_acces']=$tab['Niveau_acces'];
-            echo ($_SESSION);
+            $_SESSION['username']=$auth['username'];
+            $_SESSION['AccessRights']=$auth['Niveau_acces'];
+            echo ('session nouvelle : '.$_SESSION);
         }
         return $controller->authentification($rq, $rs, $args);
 

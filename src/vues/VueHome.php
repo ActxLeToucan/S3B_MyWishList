@@ -15,7 +15,8 @@ class VueHome {
     }
 
     private function home() : string {
-        return tools::getHomePage();
+        $user = $_SESSION['username'] ?? "";
+        return tools::insertIntoBody(tools::getHomePage(), "<p>".(isset($_SESSION['username']) ? "Connecté en tant que $user." : "Pas connecté.")."</p>");
     }
 
     public function render() {

@@ -93,10 +93,8 @@ class RegisterController{
         $content = $rq->getParsedBody();
 
         $NomUtilisateur = $content['username'];
-        $authen=Authenticate::where('username','=',$NomUtilisateur);
-        foreach ($authen as $auth){
-            return $tab=['username'=>$auth->username,'AccessRights'=>$auth->Niveau_acces];
-        }
+        $auth=Authenticate::where('username','=',$NomUtilisateur)->first();
+        return $auth;
     }
 }
 
