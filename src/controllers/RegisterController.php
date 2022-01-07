@@ -88,15 +88,15 @@ class RegisterController{
     public function LoadUser($rq,$rs,$args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('AccessRights');
+        $route_uri = $container->router->pathFor('loginConfirm');
         $url = $base . $route_uri;
+        $content = $rq->getParsedBody();
 
-        $NomUtilisateur = $args['Username'];
-
+        $NomUtilisateur = $content['username'];
         $authen=Authenticate::where('username','=',$NomUtilisateur);
-
-        $v = new VueRegister($authen, RegisterController::CONNECTED);
-        $rs->getBody()->write($v->render());
-        return $rs;
+        foreach ($authen as $auth){
+            return $tab=['username'=>$auth->username,'AccessRights'=>$auth->Niveau_acces];
+        }
     }
 }
+

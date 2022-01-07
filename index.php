@@ -6,6 +6,8 @@
  * @author: canals
  */
 
+session_start();
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
@@ -25,6 +27,19 @@ $app->get('[/]',
 $app->post('/loginConfirm[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
+        $tab=$controller->LoadUser($rq,$rs,$args);
+        echo($tab .'is null');
+        if(isset($_SESSION['username'])){
+            session_destroy();
+            session_start();
+            $_SESSION['username']=$tab['username'];
+            $_SESSION['AccessRights']=$tab['AccessRights'];
+            echo ($_SESSION);
+        }else{
+            $_SESSION['username']=$tab['username'];
+            $_SESSION['Niveau_acces']=$tab['Niveau_acces'];
+            echo ($_SESSION);
+        }
         return $controller->authentification($rq, $rs, $args);
 
     })->setName("loginConfirm");
