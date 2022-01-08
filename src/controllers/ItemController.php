@@ -3,6 +3,7 @@
 namespace wishlist\controllers;
 
 use http\Message;
+use wishlist\models\Authenticate;
 use wishlist\models\Item;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
@@ -14,6 +15,7 @@ class ItemController {
     const ITEM_NEW = 'newItems';
     const ITEM_FORM_CREATE = 'form_item_create';
     const ITEM_RESERVATION = 'reservation';
+    const ITEM_RESERVATION_ERROR = 'reservation_error';
 
     private $c;
 
@@ -107,13 +109,19 @@ class ItemController {
         $content = $rq->getParsedBody();
         $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING) : "Aucun message.";
         $item_id = $rq->getQueryParams('id');
-        Item::where('id',$item_id)->update(['msg_reserv'=>$message]);
-        Item::where('id',$item_id)->update(['etat_reserv'=>1]);
-        //Item::where('id',$item_id)->update(['reserv_par']=>);
 
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $affichage = ItemController::ITEM_RESERVATION;
+            $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+            Item::where('id', $item_id)->update(['msg_reserv' => $message]);
+            Item::where('id', $item_id)->update(['etat_reserv' => 1]);
+            Item::where('id', $item_id)->update(['reserv_par' => $user->id]);
+        } else {
+            $affichage = ItemController::ITEM_RESERVATION_ERROR;
+        }
         $item = Item::where('id',$item_id)->first();
 
-        $v = new VueParticipant([$item], ItemController::ITEM_RESERVATION);
+        $v = new VueParticipant([$item], $affichage);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
     }

@@ -4,6 +4,7 @@ namespace wishlist\vues;
 
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
+use wishlist\models\Authenticate;
 use wishlist\tools;
 
 class VueParticipant {
@@ -64,14 +65,25 @@ class VueParticipant {
             </form>
         END;
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par l'utilisateur ayant l'id $item->reserv_par :<br />$item->msg_reserv" : "Réservé par personne.<br />$formulaire");
+        $user = Authenticate::where("id", "=", $item->reserv_par)->first();
+        $msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
+
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $user->username $msg" : "Réservé par personne.<br />$formulaire");
         return $str;
     }
 
     private function confirmationReservation() : string {
         $item = $this->tab[0];
 
-        $str = "Vous avez bien réservé l'item <u>$item->nom</u> avec le message \"$item->msg_reserv\".";
+        $str = "Vous avez bien réservé l'item <u>$item->nom</u>";
+        $str = $str . ($item->msg_reserv == "" ? " sans laisser de message." : "avec le message \"$item->msg_reserv\".");
+        return $str . tools::rewriteUrl("./item/$item->id");
+    }
+
+    private function errorReservation() : string {
+        $item = $this->tab[0];
+
+        $str = "Impossible de réserver l'item <u>$item->nom</u>. <a href='../login'>Reconnectez-vous.</a>";
         return $str . tools::rewriteUrl("./item/$item->id");
     }
 
@@ -104,6 +116,12 @@ class VueParticipant {
                 $content = $this->affichageItem();
                 $notif = tools::messageBox($this->confirmationReservation());
                 $title = 'Item réservé !';
+                break;
+            }
+            case ItemController::ITEM_RESERVATION_ERROR : {
+                $content = $this->affichageItem();
+                $notif = tools::messageBox($this->errorReservation());
+                $title = 'Erreur reservation !';
                 break;
             }
         }
