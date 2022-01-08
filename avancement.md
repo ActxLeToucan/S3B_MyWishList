@@ -1,27 +1,27 @@
 # Participant
 ## 1 Afficher une liste de souhaits
 * ✅ L'affichage du détail d'une liste présente toutes les informations de la liste accompagnées de la liste des items
-* Chaque item est affiché avec son nom, son image et l'état de la réservation
-  * _Ajouter réservations dans la BDD_
+* ✅ Chaque item est affiché avec son nom, son image et l'état de la réservation
 * L'affichage de l'état de la réservation est restreint pour le propriétaire de la liste (basé sur un cookie) : le nom du participant et les messages n'apparaissent pas avant la date d'échéance
 * ✅ un clic sur un item donne accès à son détail
 * Pour afficher une liste, il faut connaître son URL contenant un token
 
 ## 2 Afficher un item d'une liste
 * L'affichage d'un item présente toutes ses informations détaillées, son image, et l'état de la réservation (nom du participant sans message)
-  * _Ajouter réservations dans la BDD_
+  * _NE PAS AFFICHER LE MESSAGE EN FAIT_
 * L'état de la réservation est restreint pour le propriétaire de la liste (basé sur un cookie) : le nom du participant n’apparaît pas
 * Un item appartenant à aucune liste validée (par son créateur) ne peut pas être affiché
   * _Qu'est ce qu'une liste **validée** ?_
 * Pour afficher un item d'une liste, il faut connaître l'URL de sa liste contenant un token
 
 ## 3 Réserver un item
-* Dans la page de l'item, si l'item n'est pas réservé, un formulaire permet de saisir le nom du participant
-* La validation du formulaire enregistre la participation
+* ✅ Dans la page de l'item, si l'item n'est pas réservé, un formulaire permet de saisir le nom du participant
+* ✅ La validation du formulaire enregistre la participation
 * Le nom du participant peut être mémorisé dans une variable de session ou un cookie pour pré-remplir le champ afin de ne pas avoir à le retaper
 
 ## 4 Ajouter un message avec sa réservation
-* Dans la page de l'item, si l'item n'est pas réservé, le formulaire de participation permet également de saisir un message destiné le créateur* La validation du formulaire enregistre le message avec la participation
+* ✅ Dans la page de l'item, si l'item n'est pas réservé, le formulaire de participation permet également de saisir un message destiné le créateur
+* ✅ La validation du formulaire enregistre le message avec la participation
 
 ## 5 Ajouter un message sur une liste
 * Dans la page d'une liste, un formulaire permet d'ajouter un message public rattaché à la liste
