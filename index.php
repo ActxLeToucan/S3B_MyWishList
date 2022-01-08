@@ -22,8 +22,13 @@ $app = new \Slim\App(\wishlist\dbInit::init());
  *************************/
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {
-        $controller = new \wishlist\controllers\HomeController($this);
-        return $controller->getHomePage($rq, $rs, $args);
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $controller = new \wishlist\controllers\HomeController($this);
+            return $controller->getHomePage($rq, $rs, $args);
+        } else {
+            $controller = new \wishlist\controllers\RegisterController($this);
+            return $controller->loginPage($rq, $rs, $args);
+        }
     })->setName("home");
 
 
