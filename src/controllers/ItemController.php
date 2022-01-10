@@ -126,6 +126,12 @@ class ItemController {
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
             Item::where('id', $item_id)->update(['etat_reserv' => 1]);
             Item::where('id', $item_id)->update(['reserv_par' => $user->id]);
+        } else if (isset($content["pseudo"])) {
+            $affichage = ItemController::ITEM_RESERVATION;
+            $pseudo = $content["pseudo"];
+            Item::where('id', $item_id)->update(['msg_reserv' => $message]);
+            Item::where('id', $item_id)->update(['etat_reserv' => 1]);
+            Item::where('id', $item_id)->update(['pseudo' => $pseudo]);
         } else {
             $affichage = ItemController::ITEM_RESERVATION_ERROR;
         }

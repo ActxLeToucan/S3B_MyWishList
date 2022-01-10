@@ -50,8 +50,16 @@ class VueParticipant {
         $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
+
+        $username = "";
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
+        }
+
+
         $formulaire = <<<END
-            <form action='$path/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
+            <form action='../../reservation?id=$item->id' method='post' enctype='multipart/form-data'>
+                $username
                 <label for='message'>Entrez un message pour réserver l'item :</label>
                 <br>
                 <textarea id='message' name='message'></textarea>
@@ -60,9 +68,12 @@ class VueParticipant {
         END;
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
+        $pseudo = $item->pseudo;
+
+        $reserveur = isset($user) ? $user->username : $pseudo;
         //$msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $user->username" : "Réservé par personne.<br />$formulaire");
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur." : "Réservé par personne.<br />$formulaire");
         return $str;
     }
 
@@ -72,17 +83,19 @@ class VueParticipant {
 
     private function confirmationReservation() : string {
         $item = $this->tab[0];
+        $liste = $item->liste;
 
         $str = "Vous avez bien réservé l'item <u>$item->nom</u>";
-        $str = $str . ($item->msg_reserv == "" ? " sans laisser de message." : " avec le message \"$item->msg_reserv\".");
-        return $str . tools::rewriteUrl("./item/$item->id");
+        $str = $str . ($item->msg_reserv == "" ? (isset($item->pseudo) ? " avec le pseudo \"$item->pseudo\"" : "") . " sans laisser de message." : " avec le message \"$item->msg_reserv\".");
+        return $str . tools::rewriteUrl("./item/$item->id/view?token=$liste->token");
     }
 
     private function errorReservation() : string {
         $item = $this->tab[0];
+        $liste = $item->liste;
 
-        $str = "Impossible de réserver l'item <u>$item->nom</u>. <a href='../login'>Reconnectez-vous.</a>";
-        return $str . tools::rewriteUrl("./item/$item->id");
+        $str = "Impossible de réserver l'item.";
+        return $str . tools::rewriteUrl("./item/$item->id/view?token=$liste->token");
     }
 
     //TODO
