@@ -36,7 +36,7 @@ class ListeController {
 
         $user = Authenticate::where('username','=',$_SESSION['username'])->first();
         $lists = Liste::where('user_id','=',$user->user_id)->get();
-        $v = new VueParticipant($lists, ListeController::LISTS_VIEW);
+        $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
         $rs->getBody()->write($v->render());
         return $rs;
     }
