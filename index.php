@@ -142,18 +142,18 @@ $app->post('/newListe',
  */
 
 // affichage liste avec id
-$app->get('/list/{id}[/]',
+/*$app->get('/list/{id}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->getListById($rq, $rs, $args);
-    })->setName('listById');
+    })->setName('listById');*/
 
 // affichage liste avec token
-/*$app->get('/list/{token}[/]',
+$app->get('/list/{token}[/]',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->getListByToken($rq, $rs, $args);
-    })->setName('listByToken');*/
+    })->setName('listByToken');
 
 // affichage item avec id
 $app->get('/item/{id}[/]',

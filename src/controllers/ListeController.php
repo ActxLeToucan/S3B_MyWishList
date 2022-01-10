@@ -35,7 +35,7 @@ class ListeController {
 
 
         $user = Authenticate::where('username','=',$_SESSION['username'])->first();
-        $lists = Liste::where('user_id','=',$user->user_id)->get();
+        $lists = Liste::where('user_id','=',$user->id)->get();
         $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
         $rs->getBody()->write($v->render());
         return $rs;
@@ -88,7 +88,7 @@ class ListeController {
             $newListe->description = $descr;
             $newListe->expiration = $exp;
             $newListe->token = $token;
-            $newListe->user_id = $user->user_id;
+            $newListe->user_id = $user->id;
             $newListe->save();
             $affichage = ListeController::LIST_NEW;
         } else {
