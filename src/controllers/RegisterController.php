@@ -52,7 +52,10 @@ class RegisterController{
 
         $NomUtilisateur = $content['username'];
         $MotDePasse = $content['password'];
+        $options =['cost' => 12];
+        $MotDePasse = password_hash($MotDePasse, PASSWORD_DEFAULT,$options);
         $MotDePasseConfirm = $content['password_confirm'];
+        echo (password_verify($MotDePasseConfirm,$MotDePasse));
         $Email=$content['email'];
 
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
@@ -67,7 +70,7 @@ class RegisterController{
             $affichage = RegisterController::INVALID_PASSWORD_TROP_COURT;
         } else if (strlen($MotDePasse) > $TAILLE_MDP_MAX) {
             $affichage = RegisterController::INVALID_PASSWORD_TROP_LONG;
-        } else if ($MotDePasse != $MotDePasseConfirm) {
+        } else if ( !password_verify($MotDePasseConfirm,$MotDePasse)) {
             $affichage = RegisterController::INVALID_PASSWORD_PAS_PAREIL;
         } else {
             $affichage = RegisterController::CONNECTED;
@@ -98,14 +101,19 @@ class RegisterController{
         $NomUtilisateur = $content['username'];
         $MotDePasse = $content['password'];
 
-        $userValide = Authenticate::where(['username'=>$NomUtilisateur, 'password'=>$MotDePasse])->count();
 
-        if ($userValide == 1) {
-            $affichage = RegisterController::CONNECTED;
-            $user = Authenticate::where('username', '=', $NomUtilisateur)->first();
+        $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
 
-            // gestion session
-            $this->gestionSession($user);
+        if ($userNameExist == 1) {
+            $GetUser=Authenticate::where("username","=",$NomUtilisateur)->first();
+            $HashedPassword=$GetUser->password;
+            if(password_verify($MotDePasse,$HashedPassword)) {
+                $affichage = RegisterController::CONNECTED;
+                $user = Authenticate::where('username', '=', $NomUtilisateur)->first();
+
+                // gestion session
+                $this->gestionSession($user);
+            }
         } else {
             $affichage = RegisterController::CONNECTIONFAILED;
             session_destroy();

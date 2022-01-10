@@ -56,9 +56,9 @@ class VueParticipant {
         END;
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
-        $msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
+        //$msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $user->username $msg" : "Réservé par personne.<br />$formulaire");
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $user->username" : "Réservé par personne.<br />$formulaire");
         return $str;
     }
 
