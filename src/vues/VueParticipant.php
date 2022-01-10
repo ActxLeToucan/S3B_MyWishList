@@ -44,7 +44,7 @@ class VueParticipant {
         $item = $this->tab[0];
         $list = $item->liste;
         $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/$list->no'>$list->titre</a>");
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/$list->token'>$list->titre</a>");
 
         $formulaire = <<<END
             <form action='$path/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
