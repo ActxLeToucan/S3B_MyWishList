@@ -42,7 +42,7 @@ class VueCreateur {
     private function affichageListes() : string {
         $str = "<section><ol>";
         foreach ($this->tab as $value) {
-            $str = $str . "<li><a href='./list/$value->token'>" . $value->titre . "</a></li>";
+            $str = $str . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
         $str = $str . "</ol></section>";
 

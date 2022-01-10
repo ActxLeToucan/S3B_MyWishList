@@ -5,6 +5,7 @@ namespace wishlist\controllers;
 use http\Message;
 use wishlist\models\Authenticate;
 use wishlist\models\Item;
+use wishlist\models\Liste;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
@@ -12,6 +13,7 @@ use wishlist\vues\VueParticipant;
 class ItemController {
     const ITEMS_VIEW = 'items';
     const ITEM_VIEW = 'item';
+    const ITEM_VIEW_ERROR = 'item_view_error';
     const ITEM_NEW = 'newItems';
     const ITEM_FORM_CREATE = 'form_item_create';
     const ITEM_RESERVATION = 'reservation';
@@ -83,8 +85,16 @@ class ItemController {
         $url = $base . $route_uri;
 
         $id = $args['id'];
-        $l = Item::where('id','=',$id)->first();
-        $v = new VueParticipant([$l], ItemController::ITEM_VIEW);
+        $token = $rq->getQueryParams('token');
+        $item = Item::where('id','=',$id)->first();
+        $liste = $item->liste;
+        if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"]) {
+            $affichage = ItemController::ITEM_VIEW_ERROR;
+        } else {
+            $affichage = ItemController::ITEM_VIEW;
+        }
+
+        $v = new VueParticipant([$item], $affichage);
         $rs->getBody()->write($v->render());
         return $rs;
     }

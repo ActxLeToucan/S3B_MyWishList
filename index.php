@@ -43,7 +43,7 @@ $app->get('[/]',
  */
 
 // connexion
-$app->get('/login[/]',
+$app->get('/login',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->loginPage($rq, $rs, $args);
@@ -51,7 +51,7 @@ $app->get('/login[/]',
     })->setName("login");
 
 // inscription
-$app->get('/signUp[/]',
+$app->get('/signUp',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->signUpPage($rq, $rs, $args);
@@ -59,7 +59,7 @@ $app->get('/signUp[/]',
     })->setName("signUp");
 
 // deconnexion
-$app->get('/logout[/]',
+$app->get('/logout',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->logout($rq, $rs, $args);
@@ -72,7 +72,7 @@ $app->get('/logout[/]',
  */
 
 // reception connexion
-$app->post('/loginConfirm[/]',
+$app->post('/loginConfirm',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->authentification($rq, $rs, $args);
@@ -80,7 +80,7 @@ $app->post('/loginConfirm[/]',
     })->setName("loginConfirm");
 
 // reception inscription
-$app->post('/signupConfirm[/]',
+$app->post('/signupConfirm',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\RegisterController($this);
         return $controller->newUser($rq, $rs, $args);
@@ -99,18 +99,25 @@ $app->post('/signupConfirm[/]',
  */
 
 // creation d'un item
-$app->get('/formulaireItem[/]',
+$app->get('/formulaireItem',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->createItem($rq, $rs, $args);
     })->setName("formulaireItemCreate");
 
 // creation d'une liste
-$app->get('/formulaireListe[/]',
+$app->get('/formulaireListe',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->createList($rq, $rs, $args);
     })->setName("formulaireListCreate");
+
+// modification liste avec token
+$app->get('/list/edit',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->editListByToken($rq, $rs, $args);
+    })->setName('listByTokenEdit');
 
 /**
  * reception de donnees
@@ -149,14 +156,14 @@ $app->post('/newListe',
     })->setName('listById');*/
 
 // affichage liste avec token
-$app->get('/list/{token}[/]',
+$app->get('/list/view',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->getListByToken($rq, $rs, $args);
-    })->setName('listByToken');
+    })->setName('listByTokenView');
 
-// affichage item avec id
-$app->get('/item/{id}[/]',
+// affichage item avec id et token
+$app->get('/item/{id}/view',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->getItemById($rq, $rs, $args);
@@ -167,7 +174,7 @@ $app->get('/item/{id}[/]',
  */
 
 // reception reservation d'un item
-$app->post('/reservation[/]',
+$app->post('/reservation',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->reservation($rq, $rs, $args);
@@ -177,7 +184,7 @@ $app->post('/reservation[/]',
 
 
 //q1 affiche toutes les listes
-$app->get('/list[/]',
+$app->get('/list',
     function (Request $rq, Response $rs, $args):Response {
         //$rs->getBody()->write("Liste des listes :");
         $controller = new \wishlist\controllers\ListeController($this);
@@ -188,7 +195,7 @@ $app->get('/list[/]',
 
 
 //q2 affiche tous les items
-$app->get('/item[/]',
+$app->get('/item',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ItemController($this);
         return $controller->getAllItem($rq, $rs, $args);
@@ -196,7 +203,7 @@ $app->get('/item[/]',
 
 
 //TD10 Q2.1 indiquer le nom de la liste de souhait dans la liste des items
-$app->get('/item/liste/items[/]',
+$app->get('/item/liste/items',
     function (Request $rq, Response $rs,$args):Response{
         $rs->getBody()->write("Liste des items :");
         $rs->getBody()->write("<ol>");

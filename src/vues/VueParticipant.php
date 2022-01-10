@@ -21,11 +21,15 @@ class VueParticipant {
         $str = $str . "<section><ol>";
         $items = $list->items;
         foreach ($items as $item) {
-            $str = $str . "<li><a href='../item/$item->id'>$item->nom</a></li>";
+            $str = $str . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
         $str = $str . "</ol></section>";
 
         return $str;
+    }
+
+    private function affichageListeError() : string {
+        return "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
     }
 
     private function affichageItems() : string {
@@ -39,12 +43,12 @@ class VueParticipant {
     }
 
     private function affichageItem() : string {
-        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? ".." : ".");
+        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
 
         $item = $this->tab[0];
         $list = $item->liste;
         $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/$list->token'>$list->titre</a>");
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         $formulaire = <<<END
             <form action='$path/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
@@ -62,6 +66,10 @@ class VueParticipant {
         return $str;
     }
 
+    private function affichageItemError() : string {
+        return "L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient.";
+    }
+
     private function confirmationReservation() : string {
         $item = $this->tab[0];
 
@@ -77,6 +85,24 @@ class VueParticipant {
         return $str . tools::rewriteUrl("./item/$item->id");
     }
 
+    //TODO
+    private function editList(): string {
+        return "TODO";
+    }
+
+    private function editListError(): string {
+        switch ($this->selecteur) {
+            case ListeController::LIST_EDIT_TOKEN_ERROR : {
+                $msg = "Token de modification invalide.";
+                break;
+            }
+            case ListeController::LIST_EDIT_OWNER_ERROR : {
+                $msg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
+            }
+        }
+        return $msg;
+    }
+
     public function render() {
         $content = "";
         $notif = "";
@@ -84,6 +110,11 @@ class VueParticipant {
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
+                break;
+            }
+            case ListeController::LIST_VIEW_ERROR : {
+                $content = $this->affichageListeError();
+                $title = 'Erreur : Liste';
                 break;
             }
             case ItemController::ITEMS_VIEW : {
@@ -97,6 +128,11 @@ class VueParticipant {
                 $title = 'Item';
                 break;
             }
+            case ItemController::ITEM_VIEW_ERROR : {
+                $content = $this->affichageItemError();
+                $title = "Erreur : Item";
+                break;
+            }
             case ItemController::ITEM_RESERVATION : {
                 $content = $this->affichageItem();
                 $notif = tools::messageBox($this->confirmationReservation());
@@ -107,6 +143,17 @@ class VueParticipant {
                 $content = $this->affichageItem();
                 $notif = tools::messageBox($this->errorReservation());
                 $title = 'Erreur reservation !';
+                break;
+            }
+            case ListeController::LIST_EDIT : {
+                $content = $this->editList();
+                $title = "Modification liste";
+                break;
+            }
+            case ListeController::LIST_EDIT_OWNER_ERROR :
+            case ListeController::LIST_EDIT_TOKEN_ERROR : {
+                $content = $this->editListError();
+                $title = "Erreur : Modification liste";
                 break;
             }
         }

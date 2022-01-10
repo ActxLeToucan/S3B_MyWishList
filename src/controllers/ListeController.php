@@ -10,10 +10,14 @@ use wishlist\vues\VueParticipant;
 
 class ListeController {
     const LISTS_VIEW = 'lists';
-    const LIST_VIEW = 'list';
+    const LIST_VIEW = 'list_view';
+    const LIST_VIEW_ERROR = 'list_view_error';
     const LIST_NEW = 'newList';
     const LIST_FORM_CREATE = 'list_form_create';
     const LIST_NEW_ERROR = 'liste_new_error';
+    const LIST_EDIT = 'list_edit';
+    const LIST_EDIT_TOKEN_ERROR = 'list_edit_token_error';
+    const LIST_EDIT_OWNER_ERROR = 'list_edit_token_edit';
 
     private $c;
 
@@ -57,12 +61,40 @@ class ListeController {
     public function getListByToken($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('listByToken', $args);
+        $route_uri = $container->router->pathFor('listByTokenView', $args);
         $url = $base . $route_uri;
 
-        $token = $args['token'];
-        $l = Liste::where('token','=',$token)->first();
-        $v = new VueParticipant([$l], ListeController::LIST_VIEW);
+        $token = $rq->getQueryParams('token');
+        $liste = Liste::select()->where('token','=',$token)->first();
+        if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
+            $affichage = ListeController::LIST_VIEW_ERROR;
+        } else {
+            $affichage = ListeController::LIST_VIEW;
+        }
+
+        $v = new VueParticipant([$liste], $affichage);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function editListByToken($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('listByTokenView', $args);
+        $url = $base . $route_uri;
+
+        $token = $rq->getQueryParams('token');
+        $liste = Liste::select()->where('token_edit','=',$token)->first();
+        $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+        if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
+            $affichage = ListeController::LIST_EDIT_TOKEN_ERROR;
+        } else if ($user->id != $liste->user_id) {
+            $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
+        } else {
+            $affichage = ListeController::LIST_EDIT;
+        }
+
+        $v = new VueParticipant([$liste], $affichage);
         $rs->getBody()->write($v->render());
         return $rs;
     }
