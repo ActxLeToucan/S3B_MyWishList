@@ -15,16 +15,6 @@ class VueParticipant {
         $this->selecteur = $s;
     }
 
-    private function affichageListes() : string {
-        $str = "<section><ol>";
-        foreach ($this->tab as $value) {
-            $str = $str . "<li><a href='./list/$value->no'>" . $value->titre . "</a></li>";
-        }
-        $str = $str . "</ol></section>";
-
-        return $str;
-    }
-
     private function affichageListe() : string {
         $list = $this->tab[0];
         $str = "<h1>$list->titre</h1>Numéro de la liste : $list->no<br />ID du créateur : $list->user_id<br />Description : $list->description<br />Expiration : $list->expiration<br />Items :";
@@ -76,7 +66,7 @@ class VueParticipant {
         $item = $this->tab[0];
 
         $str = "Vous avez bien réservé l'item <u>$item->nom</u>";
-        $str = $str . ($item->msg_reserv == "" ? " sans laisser de message." : "avec le message \"$item->msg_reserv\".");
+        $str = $str . ($item->msg_reserv == "" ? " sans laisser de message." : " avec le message \"$item->msg_reserv\".");
         return $str . tools::rewriteUrl("./item/$item->id");
     }
 
@@ -91,11 +81,6 @@ class VueParticipant {
         $content = "";
         $notif = "";
         switch ($this->selecteur) {
-            case ListeController::LISTS_VIEW : {
-                $content = $this->affichageListes();
-                $title = 'Listes';
-                break;
-            }
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';

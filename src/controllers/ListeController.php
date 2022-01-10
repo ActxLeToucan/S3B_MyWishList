@@ -30,7 +30,7 @@ class ListeController {
         $url = $base . $route_uri;
 
         $lists = Liste::select()->get();
-        $v = new VueParticipant($lists, ListeController::LISTS_VIEW);
+        $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
         $rs->getBody()->write($v->render());
         return $rs;
     }

@@ -4,6 +4,7 @@ namespace wishlist\vues;
 
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
+use wishlist\tools;
 
 class VueCreateur {
     private $tab;
@@ -38,13 +39,32 @@ class VueCreateur {
         return file_get_contents($file);
     }
 
+    private function affichageListes() : string {
+        $str = "<section><ol>";
+        foreach ($this->tab as $value) {
+            $str = $str . "<li><a href='./list/$value->no'>" . $value->titre . "</a></li>";
+        }
+        $str = $str . "</ol></section>";
+
+        return $str;
+    }
+
     public function render() {
         $content = "";
         $notif = "";
         switch ($this->selecteur) {
+            case ListeController::LISTS_VIEW : {
+                $content = $this->affichageListes();
+                $title = 'Listes';
+                break;
+            }
             case ListeController::LIST_NEW : {
                 $content = $this->confirmationNewListe();
                 $title = 'NewListe';
+                break;
+            }
+            case ListeController::LIST_NEW_ERROR: {
+                $content = $this->listCreate().tools::messageBox("Impossible de créer une nouvelle liste. <a href='../login'>Reconnectez-vous.</a>").tools::rewriteUrl("formulaireListe", "Création d'une liste");
                 break;
             }
             case ItemController::ITEM_NEW : {

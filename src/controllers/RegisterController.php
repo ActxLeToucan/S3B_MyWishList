@@ -42,7 +42,7 @@ class RegisterController{
         $TAILLE_USERNAME_MIN = 4;
         $TAILLE_USERNAME_MAX = 100;
         $TAILLE_MDP_MIN = 8;
-        $TAILLE_MDP_MAX = 100;
+        $TAILLE_MDP_MAX = 256;
 
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
