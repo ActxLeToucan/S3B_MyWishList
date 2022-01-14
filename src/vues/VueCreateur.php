@@ -4,6 +4,7 @@ namespace wishlist\vues;
 
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
+use wishlist\models\Authenticate;
 use wishlist\tools;
 
 class VueCreateur {
@@ -49,6 +50,36 @@ class VueCreateur {
         return $str;
     }
 
+    private function affichageItemListeExpiree(): string {
+        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
+
+        $item = $this->tab[0];
+        $list = $item->liste;
+        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
+
+        $user = Authenticate::where("id", "=", $item->reserv_par)->first();
+        $pseudo = $item->pseudo;
+
+        $reserveur = isset($user) ? $user->username : $pseudo;
+        $msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
+
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur $msg" : "Réservé par personne.");
+        return $str;
+    }
+
+    private function affichageItemListeEnCours(): string {
+        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
+
+        $item = $this->tab[0];
+        $list = $item->liste;
+        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
+
+        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
+        return $str;
+    }
+
     public function render() {
         $content = "";
         $notif = "";
@@ -80,6 +111,16 @@ class VueCreateur {
             case ListeController::LIST_FORM_CREATE : {
                 $htmlPage = $this->listCreate();
                 $title = 'Création d\'une liste';
+                break;
+            }
+            case ItemController::ITEM_VIEW_OWNER_EXPIRE : {
+                $content = $this->affichageItemListeExpiree();
+                $title = "Item";
+                break;
+            }
+            case ItemController::ITEM_VIEW_OWNER_EN_COURS : {
+                $content = $this->affichageItemListeEnCours();
+                $title = "Item";
                 break;
             }
         }

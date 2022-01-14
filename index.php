@@ -148,13 +148,6 @@ $app->post('/newListe',
  * pages
  */
 
-// affichage liste avec id
-/*$app->get('/list/{id}[/]',
-    function (Request $rq, Response $rs, $args):Response {
-        $controller = new \wishlist\controllers\ListeController($this);
-        return $controller->getListById($rq, $rs, $args);
-    })->setName('listById');*/
-
 // affichage liste avec token
 $app->get('/list/view',
     function (Request $rq, Response $rs, $args):Response {

@@ -14,6 +14,8 @@ class ItemController {
     const ITEMS_VIEW = 'items';
     const ITEM_VIEW = 'item';
     const ITEM_VIEW_ERROR = 'item_view_error';
+    const ITEM_VIEW_OWNER_EN_COURS = 'item_view_owner_en_cours';
+    const ITEM_VIEW_OWNER_EXPIRE = 'item_view_owner_expirée';
     const ITEM_NEW = 'newItems';
     const ITEM_FORM_CREATE = 'form_item_create';
     const ITEM_RESERVATION = 'reservation';
@@ -88,13 +90,22 @@ class ItemController {
         $token = $rq->getQueryParams('token');
         $item = Item::where('id','=',$id)->first();
         $liste = $item->liste;
-        if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"]) {
+        $user = $liste->user;
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
+            if (strtotime($liste->expiration) < strtotime(date("Y-m-d"))) {
+                $affichage = ItemController::ITEM_VIEW_OWNER_EXPIRE;
+            } else {
+                $affichage = ItemController::ITEM_VIEW_OWNER_EN_COURS;
+            }
+            $v = new VueCreateur([$item], $affichage);
+        } else if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"]) {
             $affichage = ItemController::ITEM_VIEW_ERROR;
+            $v = new VueParticipant([$item], $affichage);
         } else {
             $affichage = ItemController::ITEM_VIEW;
+            $v = new VueParticipant([$item], $affichage);
         }
 
-        $v = new VueParticipant([$item], $affichage);
         $rs->getBody()->write($v->render());
         return $rs;
     }

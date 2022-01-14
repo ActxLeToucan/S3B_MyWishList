@@ -17,7 +17,7 @@ class VueParticipant {
 
     private function affichageListe() : string {
         $list = $this->tab[0];
-        $str = "<h1>$list->titre</h1>Numéro de la liste : $list->no<br />ID du créateur : $list->user_id<br />Description : $list->description<br />Expiration : $list->expiration<br />Items :";
+        $str = "<h1>$list->titre</h1>Numéro de la liste : $list->no<br />Créateur : {$list->user->username}<br />Description : $list->description<br />Expiration : $list->expiration".((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)")."<br />Items :";
         $str = $str . "<section><ol>";
         $items = $list->items;
         foreach ($items as $item) {
