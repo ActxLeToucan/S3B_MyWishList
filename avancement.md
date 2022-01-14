@@ -9,10 +9,8 @@
 ## 2 Afficher un item d'une liste
 * ✅ L'affichage d'un item présente toutes ses informations détaillées, son image, et l'état de la réservation (nom du participant sans message)
 * ✅ L'état de la réservation est restreint pour le propriétaire de la liste (basé sur un cookie) : le nom du participant n’apparaît pas
-* Un item appartenant à aucune liste validée (par son créateur) ne peut pas être affiché
-  * _Qu'est ce qu'une liste **validée** ?_
-* Pour afficher un item d'une liste, il faut connaître l'URL de sa liste contenant un token
-  * _Modifier forme url item pour contenir un token de liste._
+* ✅ Un item appartenant à aucune liste validée (par son créateur) ne peut pas être affiché
+* ✅ Pour afficher un item d'une liste, il faut connaître l'URL de sa liste contenant un token
 
 ## 3 Réserver un item
 * ✅ Dans la page de l'item, si l'item n'est pas réservé, un formulaire permet de saisir le nom du participant

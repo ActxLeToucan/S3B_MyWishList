@@ -98,7 +98,7 @@ class ItemController {
                 $affichage = ItemController::ITEM_VIEW_OWNER_EN_COURS;
             }
             $v = new VueCreateur([$item], $affichage);
-        } else if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"]) {
+        } else if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"] || $liste->validee != 1) {
             $affichage = ItemController::ITEM_VIEW_ERROR;
             $v = new VueParticipant([$item], $affichage);
         } else {

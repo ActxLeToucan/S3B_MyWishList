@@ -55,7 +55,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Etat : ".($list->validee == 1 ? "Validée" : "Non validée")."<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
@@ -73,7 +73,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Etat : ".($list->validee == 1 ? "Validée" : "Non validée")."<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");

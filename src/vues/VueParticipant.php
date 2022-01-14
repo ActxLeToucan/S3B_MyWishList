@@ -78,7 +78,7 @@ class VueParticipant {
     }
 
     private function affichageItemError() : string {
-        return "L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient.";
+        return "L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient, et que la liste est validée.";
     }
 
     private function confirmationReservation() : string {
