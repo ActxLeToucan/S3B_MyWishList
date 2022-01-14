@@ -5,6 +5,7 @@ namespace wishlist\vues;
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
 use wishlist\models\Authenticate;
+use wishlist\models\Message;
 use wishlist\tools;
 
 class VueParticipant {
@@ -24,6 +25,13 @@ class VueParticipant {
             $str = $str . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
         $str = $str . "</ol></section>";
+        $messages = Message::where("id_list", "=", $list->no)->get();
+        $str = $str . "Messages :<section><ul>";
+        foreach ($messages as $message) {
+            $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
+            $str = $str . "<li>($message->date) $author : $message->texte</li>";
+        }
+        $str = $str . "</ul></section>";
 
         return $str;
     }
@@ -98,24 +106,6 @@ class VueParticipant {
         return $str . tools::rewriteUrl("./item/$item->id/view?token=$liste->token");
     }
 
-    //TODO
-    private function editList(): string {
-        return "TODO";
-    }
-
-    private function editListError(): string {
-        switch ($this->selecteur) {
-            case ListeController::LIST_EDIT_TOKEN_ERROR : {
-                $msg = "Token de modification invalide.";
-                break;
-            }
-            case ListeController::LIST_EDIT_OWNER_ERROR : {
-                $msg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
-            }
-        }
-        return $msg;
-    }
-
     public function render() {
         $content = "";
         $notif = "";
@@ -156,17 +146,6 @@ class VueParticipant {
                 $content = $this->affichageItem();
                 $notif = tools::messageBox($this->errorReservation());
                 $title = 'Erreur reservation !';
-                break;
-            }
-            case ListeController::LIST_EDIT : {
-                $content = $this->editList();
-                $title = "Modification liste";
-                break;
-            }
-            case ListeController::LIST_EDIT_OWNER_ERROR :
-            case ListeController::LIST_EDIT_TOKEN_ERROR : {
-                $content = $this->editListError();
-                $title = "Erreur : Modification liste";
                 break;
             }
         }

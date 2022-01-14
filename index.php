@@ -137,6 +137,12 @@ $app->post('/newListe',
         return $controller->newListe($rq, $rs, $args);
     })->setName('New_Liste');
 
+// reception ajout message
+$app->post('/addmsg',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->addMsg($rq, $rs, $args);
+})->setName('addmsg');
 
 
 

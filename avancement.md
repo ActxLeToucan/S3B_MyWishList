@@ -23,7 +23,7 @@
 
 ## 5 Ajouter un message sur une liste
 * Dans la page d'une liste, un formulaire permet d'ajouter un message public rattaché à la liste
-* Les messages sur la liste seront affichés avec le détail de la liste
+* ✅ Les messages sur la liste seront affichés avec le détail de la liste
 
 # Créateur
 ## 6 Créer une liste

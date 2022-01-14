@@ -4,6 +4,7 @@ namespace wishlist\controllers;
 
 use wishlist\models\Authenticate;
 use wishlist\models\Liste;
+use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
@@ -66,13 +67,18 @@ class ListeController {
 
         $token = $rq->getQueryParams('token');
         $liste = Liste::select()->where('token','=',$token)->first();
-        if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
+        $user = $liste->user;
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
+            $affichage = ListeController::LIST_VIEW;
+            $v = new VueCreateur([$liste], $affichage);
+        } else if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
             $affichage = ListeController::LIST_VIEW_ERROR;
+            $v = new VueParticipant([$liste], $affichage);
         } else {
             $affichage = ListeController::LIST_VIEW;
+            $v = new VueParticipant([$liste], $affichage);
         }
 
-        $v = new VueParticipant([$liste], $affichage);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -85,16 +91,20 @@ class ListeController {
 
         $token = $rq->getQueryParams('token');
         $liste = Liste::select()->where('token_edit','=',$token)->first();
-        $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+        } else {
+            $user = null;
+        }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
             $affichage = ListeController::LIST_EDIT_TOKEN_ERROR;
-        } else if ($user->id != $liste->user_id) {
+        } else if (is_null($user) || $user->id != $liste->user_id) {
             $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
         } else {
             $affichage = ListeController::LIST_EDIT;
         }
 
-        $v = new VueParticipant([$liste], $affichage);
+        $v = new VueCreateur([$liste], $affichage);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -146,5 +156,31 @@ class ListeController {
         $v = new VueCreateur([], ListeController::LIST_FORM_CREATE);
         $rs->getBody()->write($v->render()) ;
         return $rs ;
+    }
+
+    public function addMsg($rq, $rs, $args) {
+        $container = $this->c ;
+        $base = $rq->getUri()->getBasePath() ;
+        $route_uri = $container->router->pathFor('addmsg');
+        $url = $base . $route_uri ;
+
+        $content = $rq->getParsedBody();
+
+        $msg = new Message();
+        $msg->id_list = Liste::where("token", "=", $rq->getQueryParams('token'))->first()->no;
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+            $msg->id_user = $user->id;
+            $msg->pseudo = null;
+        } else {
+            $msg->id_user = null;
+            $msg->pseudo = filter_var($content['pseudo'], FILTER_SANITIZE_STRING);;
+        }
+        $msg->texte = filter_var($content['texte'], FILTER_SANITIZE_STRING);
+        $msg->save();
+
+        $v = new VueParticipant([$msg->list], ListeController::LIST_VIEW);
+        $rs->getBody()->write($v->render());
+        return $rs;
     }
 }
