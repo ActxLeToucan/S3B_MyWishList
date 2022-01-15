@@ -8,18 +8,12 @@ use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
-use wishlist\vues\VueRegister;
 
 class ListeController {
     const LISTS_VIEW = 'lists';
     const LIST_VIEW = 'list_view';
-    const LIST_VIEW_ERROR = 'list_view_error';
-    const LIST_NEW = 'newList';
     const LIST_FORM_CREATE = 'list_form_create';
-    const LIST_NEW_ERROR = 'liste_new_error';
     const LIST_EDIT = 'list_edit';
-    const LIST_EDIT_TOKEN_ERROR = 'list_edit_token_error';
-    const LIST_EDIT_OWNER_ERROR = 'list_edit_token_edit';
 
     private $c;
 
@@ -33,19 +27,22 @@ class ListeController {
     /**
      * pour un gars connecté
      */
-    public function getAllListe( $rq, $rs, $args ) {
+    public function getAllListe($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('Listes');
         $url = $base . $route_uri;
 
+        $notif = tools::prepareNotif($rq);
+
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
             $user = Authenticate::where('username','=',$_SESSION['username'])->first();
             $lists = Liste::where('user_id','=',$user->id)->get();
 
-            $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
+            $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif);
         } else {
-            $v = new VueRegister(["base" => $base], RegisterController::LOGIN_REQUIRED);
+            $notifMsg = "Vous devez être connecté pour accéder à cette page.";
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
         $rs->getBody()->write($v->render());
         return $rs;
@@ -60,15 +57,16 @@ class ListeController {
         $token = $rq->getQueryParams('token');
         $liste = Liste::select()->where('token','=',$token)->first();
         $user = $liste->user;
+
+        $notif = tools::prepareNotif($rq);
+
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
-            $affichage = ListeController::LIST_VIEW;
-            $v = new VueCreateur([$liste], $affichage);
+            $v = new VueCreateur([$liste], ListeController::LIST_VIEW, $notif);
         } else if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            $affichage = ListeController::LIST_VIEW_ERROR;
-            $v = new VueParticipant([$liste], $affichage);
+            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            return $rs->withRedirect($base."?notif=$notifMsg");
         } else {
-            $affichage = ListeController::LIST_VIEW;
-            $v = new VueParticipant([$liste], $affichage);
+            $v = new VueParticipant([$liste], ListeController::LIST_VIEW, $notif);
         }
 
         $rs->getBody()->write($v->render());
@@ -89,14 +87,16 @@ class ListeController {
             $user = null;
         }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            return $this->getAllListe($rq, $rs, $args);
+            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
         } else if (is_null($user) || $user->id != $liste->user_id) {
-            $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
-        } else {
-            $affichage = ListeController::LIST_EDIT;
+            $notifMsg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
+            return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         }
 
-        $v = new VueCreateur([$liste], $affichage);
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueCreateur([$liste], ListeController::LIST_EDIT, $notif);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -115,11 +115,12 @@ class ListeController {
             $user = null;
         }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            return $this->getAllListe($rq, $rs, $args);
+            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
         } else if (is_null($user) || $user->id != $liste->user_id) {
-            $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
+            $notifMsg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
+            return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         } else {
-            $affichage = ListeController::LIST_VIEW;
             $content = $rq->getParsedBody();
 
             $titre = filter_var($content['nom'], FILTER_SANITIZE_STRING);
@@ -133,14 +134,12 @@ class ListeController {
             Liste::where('token_edit', '=', $token)->update(['validee' => $validee]);
 
             $liste = Liste::where('token_edit','=',$token)->first();
+            $notifMsg = "La liste a été mise à jour.";
+            return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         }
-
-        $v = new VueCreateur([$liste], $affichage);
-        $rs->getBody()->write($v->render());
-        return $rs;
     }
 
-    public function newListe( $rq, $rs, $args ) {
+    public function newListe($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('New_Liste');
@@ -163,32 +162,39 @@ class ListeController {
             $newListe->token = $token;
             $newListe->user_id = $user->id;
             $newListe->save();
-            $affichage = ListeController::LIST_NEW;
-        } else {
-            $affichage = ListeController::LIST_NEW_ERROR;
-        }
 
-        $v = new VueCreateur([$newListe], $affichage);
-        $rs->getBody()->write($v->render());
-        return $rs;
+            $liste = Liste::where('token_edit','=',$token)->first();
+            $notifMsg = "Liste créée !";
+            return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
+        } else {
+            $notifMsg = "Impossible de créer une nouvelle liste. Reconnectez-vous.";
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
     }
 
     public function createList($rq, $rs, $args) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('formulaireListCreate');
-        $url = $base . $route_uri ;
+        $url = $base . $route_uri;
 
-        $v = new VueCreateur([], ListeController::LIST_FORM_CREATE);
-        $rs->getBody()->write($v->render()) ;
+        $notif = tools::prepareNotif($rq);
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = "Impossible de créer une nouvelle liste. Reconnectez-vous.";
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $v = new VueCreateur([], ListeController::LIST_FORM_CREATE, $notif);
+        $rs->getBody()->write($v->render());
         return $rs ;
     }
 
     public function addMsg($rq, $rs, $args) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('addmsg');
-        $url = $base . $route_uri ;
+        $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
 
@@ -200,13 +206,11 @@ class ListeController {
             $msg->pseudo = null;
         } else {
             $msg->id_user = null;
-            $msg->pseudo = filter_var($content['pseudo'], FILTER_SANITIZE_STRING);;
+            $msg->pseudo = filter_var($content['pseudo'], FILTER_SANITIZE_STRING);
         }
         $msg->texte = filter_var($content['texte'], FILTER_SANITIZE_STRING);
         $msg->save();
 
-        $v = new VueParticipant([$msg->list], ListeController::LIST_VIEW);
-        $rs->getBody()->write($v->render());
-        return $rs;
+        return $rs->withRedirect($base."/list/view?token={$msg->list->token}");
     }
 }

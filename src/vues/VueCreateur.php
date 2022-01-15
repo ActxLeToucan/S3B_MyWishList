@@ -11,24 +11,12 @@ use wishlist\tools;
 class VueCreateur {
     private $tab;
     private $selecteur;
+    private array $params;
 
-    public function __construct(iterable $t, $s) {
+    public function __construct(iterable $t, $s, array $p) {
         $this->tab = $t;
         $this->selecteur = $s;
-    }
-
-    private function confirmationNewListe() : string {
-        $list = $this->tab[0];
-        $str = "La liste du nom de <u>$list->titre</u> a été créée et expirera le $list->expiration.<br />Utilisez ce token pour accéder à la liste : <b>$list->token</b>";
-
-        return $str;
-    }
-
-    private function confirmationNewItem() : string {
-        $item = $this->tab[0];
-        $str = "L'item du nom de <u>$item->nom</u> dans la liste numéro $item->liste_id.";
-
-        return $str;
+        $this->params = $p;
     }
 
     private function itemCreate() : string {
@@ -46,9 +34,7 @@ class VueCreateur {
         foreach ($this->tab as $value) {
             $str = $str . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
-        $str = $str . "</ol></section>";
-
-        return $str;
+        return $str . "</ol></section>";
     }
 
     private function affichageListe() : string {
@@ -67,28 +53,50 @@ class VueCreateur {
             $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
             $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
         }
-        $rewriteUrl = (str_contains($_SERVER['REQUEST_URI'], "/editList") ? tools::rewriteUrl("./list/view?token=$list->token", "Liste") : "");
 
 
-        $str = <<<EOF
-        $rewriteUrl
+        return <<<EOF
         <h1>$list->titre <a href='./edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>
         $listeVisible<br />
         Numéro de la liste : $list->no<br />
-        Créateur : {$list->user->username}<br />
+        Token de partage : <span id="tokenShare">$list->token</span> <button id="buttonGetToken" onclick="copyToken()">Copier le lien de partage</button><br />
+        Token d'édition : $list->token_edit<br />
         Description : $list->description<br />
         Expiration : $list->expiration $listeExpiree<br />
         Items :
         <section><ol>$items</ol></section>
         Messages :
         <section><ul>$messages</ul></section>
+        <script>
+            let buttonToken = document.getElementById("buttonGetToken");
+            let confirm = document.createElement("span");
+            confirm.innerHTML = "✅";
+            
+            let click = false;
+            
+            function copyToken() {
+                let url = window.location.href;
+                url = url.substring(0, url.indexOf("?"));
+                let token = document.getElementById("tokenShare");
+                
+                navigator.clipboard.writeText(url + "?token=" + token.textContent);
+                
+                if (!click) buttonToken.parentNode.insertBefore(confirm, buttonToken.nextSibling);
+                click = true;
+                
+                setInterval(clearButtonToken, 5000);
+            } 
+            
+            function clearButtonToken() {
+                click = false;
+                confirm.remove();
+            }
+        </script>
         EOF;
-
-        return $str;
     }
 
     private function affichageItemListeExpiree(): string {
-        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
+        $path = "../..";
 
         $item = $this->tab[0];
         $list = $item->liste;
@@ -101,26 +109,24 @@ class VueCreateur {
         $reserveur = isset($user) ? $user->username : $pseudo;
         $msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur $msg" : "Réservé par personne.");
-        return $str;
+        return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur $msg" : "Réservé par personne.");
     }
 
     private function affichageItemListeEnCours(): string {
-        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
+        $path = "../..";
 
         $item = $this->tab[0];
         $list = $item->liste;
         $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Etat : ".($list->validee == 1 ? "Validée" : "Non validée")."<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
-        return $str;
+        return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
     }
 
     private function editList(): string {
         $list = $this->tab[0];
         $listeVisible = $list->validee == 1 ? 'checked' : "";
-        $form = <<<END
+        return <<<END
         <form action="../editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
             <div class="nom">
                 <label for="nom">Nom de la liste :</label>
@@ -155,17 +161,14 @@ class VueCreateur {
         
         </form>
         END;
-        return $form;
     }
 
-    private function editListErrorOwner(): string {
-        $list = $this->tab[0];
-        return tools::messageBox("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.") . tools::rewriteUrl("./view?token=$list->token", "Erreur : Modification liste");
-    }
-
-    public function render() {
-        $content = "";
+    public function render() : string {
+        $from = "";
+        $htmlPage = "";
+        $title = "";
         $notif = "";
+        $content = "";
         switch ($this->selecteur) {
             case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
@@ -175,20 +178,6 @@ class VueCreateur {
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
-                break;
-            }
-            case ListeController::LIST_NEW : {
-                $content = $this->confirmationNewListe();
-                $title = 'NewListe';
-                break;
-            }
-            case ListeController::LIST_NEW_ERROR: {
-                $content = $this->listCreate().tools::messageBox("Impossible de créer une nouvelle liste. <a href='../login'>Reconnectez-vous.</a>").tools::rewriteUrl("formulaireListe", "Création d'une liste");
-                break;
-            }
-            case ItemController::ITEM_NEW : {
-                $content = $this->confirmationNewItem();
-                $title = 'NewItems';
                 break;
             }
             case ItemController::ITEM_FORM_CREATE : {
@@ -216,28 +205,7 @@ class VueCreateur {
                 $title = "Modification liste";
                 break;
             }
-            case ListeController::LIST_EDIT_OWNER_ERROR : {
-                $vue = new VueParticipant($this->tab, ListeController::LIST_VIEW);
-                $content = $vue->render() . $this->editListErrorOwner();
-                $title = "";
-                break;
-            }
         }
-        $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = $htmlPage ?? <<<END
-            <!DOCTYPE html> <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title>$title</title>
-                $style
-            </head>
-            <body>
-            $notif
-            <div class="content">
-            $content
-            </div>
-            </body></html>
-        END;
-        return $html;
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
     }
 }

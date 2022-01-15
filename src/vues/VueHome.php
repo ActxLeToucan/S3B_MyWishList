@@ -8,20 +8,26 @@ use wishlist\tools;
 class VueHome {
     private $tab;
     private $selecteur;
+    private array $notif;
 
-    public function __construct(iterable $t, $s) {
+    public function __construct(iterable $t, $s, array $n) {
         $this->tab = $t;
         $this->selecteur = $s;
+        $this->notif = $n;
     }
 
     private function home() : string {
         $user = $_SESSION['username'] ?? "";
-        return tools::insertIntoBody(tools::getHomePage(), "<p>".(isset($_SESSION['username']) ? "Connecté en tant que $user. <a href='logout'>Se déconnecter</a>" : "<a href='login'>Se connecter</a>")."</p>");
+        $file =  "HTML/index.html";
+        return tools::insertIntoBody(file_get_contents($file), "<p>".(isset($_SESSION['username']) ? "Connecté en tant que $user. <a href='logout'>Se déconnecter</a>" : "<a href='login'>Se connecter</a>")."</p>");
     }
 
-    public function render() {
-        $content = "";
+    public function render() : string {
+        $from = "";
+        $htmlPage = "";
+        $title = "";
         $notif = "";
+        $content = "";
         switch ($this->selecteur) {
             case HomeController::HOME : {
                 $htmlPage = $this->home();
@@ -29,21 +35,6 @@ class VueHome {
                 break;
             }
         }
-        $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = $htmlPage ?? <<<END
-            <!DOCTYPE html> <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title>$title</title>
-                $style
-            </head>
-            <body>
-            $notif
-            <div class="content">
-            $content
-            </div>
-            </body></html>
-        END;
-        return $html;
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
     }
 }

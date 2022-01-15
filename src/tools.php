@@ -2,6 +2,8 @@
 
 namespace wishlist;
 
+use JetBrains\PhpStorm\Pure;
+
 class tools {
     public static function getRandomString(int $length = 10) : string {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -16,24 +18,29 @@ class tools {
         return time().self::getRandomString(20);
     }
 
-    public static function getHomePage() : string {
-        $file =  "HTML/index.html";
-        return file_get_contents($file);
-    }
-
     public static function insertIntoBody(string $page, string $text) : string {
         $positionBody = strpos($page, "<body>") + 6;
         return substr_replace($page, $text, $positionBody, 0);
     }
 
     public static function messageBox(string $message) : string {
-        $html = <<<END
+        return <<<END
         <script>
             window.addEventListener("load", () => {
                 let notif = document.getElementById('notif-box');
-                notif.addEventListener("click", () => {
+                
+                let interval = setInterval(disparaitre, 15000);
+                
+                function disparaitre() {
                     notif.style.display = "none";
-                });
+                        
+                    let url = window.location.href;
+                    url = url.substring(0, url.indexOf("notif")-1)
+                    history.pushState(null, "", url);
+                    
+                    clearInterval(interval);
+                }
+                notif.addEventListener("click", disparaitre);
             });
         </script>
         <style>
@@ -85,25 +92,50 @@ class tools {
             </div>
         </div>
         END;
-
-        return $html;
     }
 
-    public static function rewriteUrl(string $page = "", string $titre = "") {
-        if (substr($_SERVER['REQUEST_URI'], strlen($_SERVER['REQUEST_URI'])-1) == "/") {
-            $page = "../$page";
-        }
-        $titre = ($titre = "" ? "" : "document.title = '$titre'");
+    public static function prepareNotif($rq) : array {
+        return array(
+            "notif" => isset($rq->getQueryParams()['notif']) ? urldecode($rq->getQueryParams('notif')["notif"]) : null,
+            "link" => isset($rq->getQueryParams()['notif']) && isset($rq->getQueryParams()['link']) ? filter_var($rq->getQueryParams('link')["link"], FILTER_SANITIZE_ADD_SLASHES): null,
+        );
+    }
 
-        $script = <<<END
-        <script>
-        window.addEventListener("load", () => {
-            history.pushState(null, "", "$page");
-            $titre
-        });
-        </script>
+    /**
+     * @param string $from
+     * @param string $htmlPage
+     * @param string $title
+     * @param string $notif
+     * @param string $content
+     * @param array $params
+     * @return string
+     */
+    #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $params): string {
+        $style = $from != "" ? "<link rel='stylesheet' href='Style/$from'>" : "";
+        $html = $htmlPage != "" ? $htmlPage : <<<END
+            <!DOCTYPE html> <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <title>$title</title>
+                $style
+            </head>
+            <body>
+            $notif
+            <div class="content">
+            $content
+            </div>
+            </body></html>
         END;
 
-        return $script;
+        if (!is_null($params["notif"])) {
+            $texte = $params["notif"];
+            if (is_null($params["link"])) {
+                $html = tools::insertIntoBody($html, tools::messageBox($texte));
+            } else {
+                $lien = $params['link'];
+                $html = tools::insertIntoBody($html, tools::messageBox("<a href='$lien'>$texte</a>"));
+            }
+        }
+        return $html;
     }
 }

@@ -3,28 +3,13 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Authenticate;
-
-use Illuminate\Database\Eloquent\Model;
-use wishlist\models\Item;
-use wishlist\models\Liste;
-use wishlist\vues\VueCreaateur;
-use wishlist\vues\VueParticipant;
+use wishlist\tools;
 use wishlist\vues\VueRegister;
 
 
 class RegisterController{
-    const CONNECTED ='connected';
-    const CONNECTIONFAILED='failed';
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
-    const LOGOUT = 'logout';
-    const LOGIN_REQUIRED = 'login_required';
-    const INVALID_USERNAME_TROP_COURT = 'invalid_username_trop_court';
-    const INVALID_USERNAME_TROP_LONG = 'invalid_username_trop_long';
-    const INVALID_USERNAME_EXISTE_DEJA = 'invalid_username_existe_deja';
-    const INVALID_PASSWORD_TROP_COURT = 'invalid_mdp_trop_court';
-    const INVALID_PASSWORD_TROP_LONG = 'invalid_mdp_trop_long';
-    const INVALID_PASSWORD_PAS_PAREIL = 'invalid_password_pas_pareil';
 
     private $c;
 
@@ -62,19 +47,24 @@ class RegisterController{
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
 
         if (strlen($NomUtilisateur) < $TAILLE_USERNAME_MIN) {
-            $affichage = RegisterController::INVALID_USERNAME_TROP_COURT;
+            $notifMsg = "Ce nom d'utilisateur est trop court. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($NomUtilisateur) > $TAILLE_USERNAME_MAX) {
-            $affichage = RegisterController::INVALID_USERNAME_TROP_LONG;
+            $notifMsg = "Ce nom d'utilisateur est trop long. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ($userNameExist != 0) {
-            $affichage = RegisterController::INVALID_USERNAME_EXISTE_DEJA;
+            $notifMsg = "Ce nom d'utilisateur est déjà pris. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($MotDePasse) < $TAILLE_MDP_MIN) {
-            $affichage = RegisterController::INVALID_PASSWORD_TROP_COURT;
+            $notifMsg = "Ce mot de passe est trop court. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($MotDePasse) > $TAILLE_MDP_MAX) {
-            $affichage = RegisterController::INVALID_PASSWORD_TROP_LONG;
+            $notifMsg = "Ce mot de passe est trop long. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ( !password_verify($MotDePasseConfirm,$MotDePasse)) {
-            $affichage = RegisterController::INVALID_PASSWORD_PAS_PAREIL;
+            $notifMsg = "Les mots de passe ne correspondent pas. Réessayez.";
+            return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else {
-            $affichage = RegisterController::CONNECTED;
             $newUser = new Authenticate();
             $newUser->username=$NomUtilisateur;
             $newUser->password=$MotDePasse;
@@ -84,11 +74,10 @@ class RegisterController{
 
             // gestion session
             $this->gestionSession($newUser);
-        }
 
-        $v = new VueRegister($content, $affichage);
-        $rs->getBody()->write($v->render());
-        return $rs;
+            $notifMsg = "Vous êtes connecté en tant que $NomUtilisateur.";
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        }
     }
 
     public function authentification($rq,$rs,$args){
@@ -108,72 +97,61 @@ class RegisterController{
         if ($userNameExist == 1) {
             $GetUser=Authenticate::where("username","=",$NomUtilisateur)->first();
             $HashedPassword=$GetUser->password;
-            if(password_verify($MotDePasse,$HashedPassword)) {
-                $affichage = RegisterController::CONNECTED;
+            if (password_verify($MotDePasse,$HashedPassword)) {
                 $user = Authenticate::where('username', '=', $NomUtilisateur)->first();
 
-                // gestion session
                 $this->gestionSession($user);
+
+                $notifMsg = "Vous êtes connecté en tant que $NomUtilisateur.";
+                return $rs->withRedirect($base."?notif=$notifMsg");
             }
-        } else {
-            $affichage = RegisterController::CONNECTIONFAILED;
-            session_destroy();
-            session_start();
         }
 
-        $v = new VueRegister($content, $affichage);
+        session_destroy();
+        session_start();
+
+        $notifMsg = "Mot de passe ou nom d'utilisateur incorrect.";
+        return $rs->withRedirect($base."/login?notif=$notifMsg");
+    }
+
+    public function loginPage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('login');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([], RegisterController::LOGIN, $notif);
         $rs->getBody()->write($v->render());
         return $rs;
     }
 
-    public function loginPage($rq, $rs, $args) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
-        $route_uri = $container->router->pathFor('login');
-        $url = $base . $route_uri ;
-
-        $v = new VueRegister([], RegisterController::LOGIN);
-        $rs->getBody()->write($v->render()) ;
-        return $rs ;
-    }
-
     public function signUpPage($rq, $rs, $args) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
-        $route_uri = $container->router->pathFor('signUp');
-        $url = $base . $route_uri ;
-
-        $v = new VueRegister([], RegisterController::SIGNUP);
-        $rs->getBody()->write($v->render()) ;
-        return $rs ;
-    }
-
-    public function LoadUser($rq,$rs,$args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('loginConfirm');
+        $route_uri = $container->router->pathFor('signUp');
         $url = $base . $route_uri;
-        $content = $rq->getParsedBody();
 
-        $NomUtilisateur = $content['username'];
-        $auth=Authenticate::where('username','=',$NomUtilisateur)->first();
-        return $auth;
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([], RegisterController::SIGNUP, $notif);
+        $rs->getBody()->write($v->render());
+        return $rs;
     }
 
     public function logout($rq, $rs, $args) {
-        $container = $this->c ;
-        $base = $rq->getUri()->getBasePath() ;
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('logout');
-        $url = $base . $route_uri ;
+        $url = $base . $route_uri;
 
 
         session_destroy();
         session_start();
 
-
-        $v = new VueRegister([], RegisterController::LOGOUT);
-        $rs->getBody()->write($v->render()) ;
-        return $rs ;
+        $notifMsg = "Vous avez été déconnecté.";
+        return $rs->withRedirect($base."/login?notif=$notifMsg");
     }
 
     /**

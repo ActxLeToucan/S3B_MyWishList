@@ -11,9 +11,12 @@ use wishlist\tools;
 class VueParticipant {
     private $tab;
     private $selecteur;
-    public function __construct(Iterable $t, $s) {
+    private array $params;
+
+    public function __construct(iterable $t, $s, array $p) {
         $this->tab = $t;
         $this->selecteur = $s;
+        $this->params = $p;
     }
 
     private function affichageListe() : string {
@@ -35,11 +38,9 @@ class VueParticipant {
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
             $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
         }
-        $rewriteUrl = (str_contains($_SERVER['REQUEST_URI'], "/addmsg") ? tools::rewriteUrl("./list/view?token=$list->token", "Liste") : "");
 
 
-        $str = <<<EOF
-        $rewriteUrl
+        return <<<EOF
         <h1>$list->titre</h1>
         Numéro de la liste : $list->no<br />
         Créateur : {$list->user->username}<br />
@@ -55,12 +56,6 @@ class VueParticipant {
             <button type='submit'>Ajouter un message</button>
         </form>
         EOF;
-
-        return $str;
-    }
-
-    private function affichageListeError() : string {
-        return "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
     }
 
     private function affichageItems() : string {
@@ -68,13 +63,11 @@ class VueParticipant {
         foreach ($this->tab as $value) {
             $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px' alt='$value->nom'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . "<br>".$value->url . " </li>";
         }
-        $str = $str . "</ol></section>";
-
-        return $str;
+        return $str . "</ol></section>";
     }
 
     private function affichageItem() : string {
-        $path = (str_contains($_SERVER['REQUEST_URI'], "/item/") ? "../.." : ".");
+        $path = "../..";
 
         $item = $this->tab[0];
         $list = $item->liste;
@@ -102,45 +95,20 @@ class VueParticipant {
         $pseudo = $item->pseudo;
 
         $reserveur = isset($user) ? $user->username : $pseudo;
-        //$msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
 
-        $str = $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur." : "Réservé par personne.<br />$formulaire");
-        return $str;
+        return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur." : "Réservé par personne.<br />$formulaire");
     }
 
-    private function affichageItemError() : string {
-        return "L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient, et que la liste est validée.";
-    }
-
-    private function confirmationReservation() : string {
-        $item = $this->tab[0];
-        $liste = $item->liste;
-
-        $str = "Vous avez bien réservé l'item <u>$item->nom</u>";
-        $str = $str . ($item->msg_reserv == "" ? (isset($item->pseudo) ? " avec le pseudo \"$item->pseudo\"" : "") . " sans laisser de message." : " avec le message \"$item->msg_reserv\".");
-        return $str . tools::rewriteUrl("./item/$item->id/view?token=$liste->token");
-    }
-
-    private function errorReservation() : string {
-        $item = $this->tab[0];
-        $liste = $item->liste;
-
-        $str = "Impossible de réserver l'item.";
-        return $str . tools::rewriteUrl("./item/$item->id/view?token=$liste->token");
-    }
-
-    public function render() {
-        $content = "";
+    public function render() : string {
+        $from = "";
+        $htmlPage = "";
+        $title = "";
         $notif = "";
+        $content = "";
         switch ($this->selecteur) {
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
-                break;
-            }
-            case ListeController::LIST_VIEW_ERROR : {
-                $content = $this->affichageListeError();
-                $title = 'Erreur : Liste';
                 break;
             }
             case ItemController::ITEMS_VIEW : {
@@ -154,39 +122,7 @@ class VueParticipant {
                 $title = 'Item';
                 break;
             }
-            case ItemController::ITEM_VIEW_ERROR : {
-                $content = $this->affichageItemError();
-                $title = "Erreur : Item";
-                break;
-            }
-            case ItemController::ITEM_RESERVATION : {
-                $content = $this->affichageItem();
-                $notif = tools::messageBox($this->confirmationReservation());
-                $title = 'Item réservé !';
-                break;
-            }
-            case ItemController::ITEM_RESERVATION_ERROR : {
-                $content = $this->affichageItem();
-                $notif = tools::messageBox($this->errorReservation());
-                $title = 'Erreur reservation !';
-                break;
-            }
         }
-        $style = isset($from) ? "<link rel='stylesheet' href='Style/$from'>" : "";
-        $html = $htmlPage ?? <<<END
-            <!DOCTYPE html> <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title>$title</title>
-                $style
-            </head>
-            <body>
-            $notif
-            <div class="content">
-            $content
-            </div>
-            </body></html>
-        END;
-        return $html;
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
     }
 }

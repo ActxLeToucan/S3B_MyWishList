@@ -30,6 +30,6 @@ class dbInit {
                 'displayErrorDetails' => true,
                 'dbconf' => '/conf/db.conf.ini' ]
         ];
-        return new \Slim\Container($configuration);
+        return new Container($configuration);
     }
 }
