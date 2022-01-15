@@ -8,6 +8,7 @@ use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
+use wishlist\vues\VueRegister;
 
 class ListeController {
     const LISTS_VIEW = 'lists';
@@ -38,23 +39,14 @@ class ListeController {
         $route_uri = $container->router->pathFor('Listes');
         $url = $base . $route_uri;
 
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where('username','=',$_SESSION['username'])->first();
+            $lists = Liste::where('user_id','=',$user->id)->get();
 
-        $user = Authenticate::where('username','=',$_SESSION['username'])->first();
-        $lists = Liste::where('user_id','=',$user->id)->get();
-        $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
-        $rs->getBody()->write($v->render());
-        return $rs;
-    }
-
-    public function getListById($rq, $rs, $args) {
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('listById', $args);
-        $url = $base . $route_uri;
-
-        $id = $args['id'];
-        $l = Liste::where('no','=',$id)->first();
-        $v = new VueParticipant([$l], ListeController::LIST_VIEW);
+            $v = new VueCreateur($lists, ListeController::LISTS_VIEW);
+        } else {
+            $v = new VueRegister(["base" => $base], RegisterController::LOGIN_REQUIRED);
+        }
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -97,11 +89,50 @@ class ListeController {
             $user = null;
         }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            $affichage = ListeController::LIST_EDIT_TOKEN_ERROR;
+            return $this->getAllListe($rq, $rs, $args);
         } else if (is_null($user) || $user->id != $liste->user_id) {
             $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
         } else {
             $affichage = ListeController::LIST_EDIT;
+        }
+
+        $v = new VueCreateur([$liste], $affichage);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function editList($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('editList', $args);
+        $url = $base . $route_uri;
+
+        $token = $rq->getQueryParams('token');
+        $liste = Liste::where('token_edit','=',$token)->first();
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+        } else {
+            $user = null;
+        }
+        if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
+            return $this->getAllListe($rq, $rs, $args);
+        } else if (is_null($user) || $user->id != $liste->user_id) {
+            $affichage = ListeController::LIST_EDIT_OWNER_ERROR;
+        } else {
+            $affichage = ListeController::LIST_VIEW;
+            $content = $rq->getParsedBody();
+
+            $titre = filter_var($content['nom'], FILTER_SANITIZE_STRING);
+            $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
+            $exp = filter_var($content['dateExp'], FILTER_SANITIZE_STRING);
+            $validee = (isset($content['validee']) && filter_var($content['validee'], FILTER_SANITIZE_NUMBER_INT) == 1 ? 1 : 0);
+
+            Liste::where('token_edit', '=', $token)->update(['titre' => $titre]);
+            Liste::where('token_edit', '=', $token)->update(['description' => $descr]);
+            Liste::where('token_edit', '=', $token)->update(['expiration' => $exp]);
+            Liste::where('token_edit', '=', $token)->update(['validee' => $validee]);
+
+            $liste = Liste::where('token_edit','=',$token)->first();
         }
 
         $v = new VueCreateur([$liste], $affichage);
@@ -136,11 +167,6 @@ class ListeController {
         } else {
             $affichage = ListeController::LIST_NEW_ERROR;
         }
-
-
-
-
-
 
         $v = new VueCreateur([$newListe], $affichage);
         $rs->getBody()->write($v->render());

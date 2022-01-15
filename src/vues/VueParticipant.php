@@ -18,37 +18,45 @@ class VueParticipant {
 
     private function affichageListe() : string {
         $list = $this->tab[0];
-        $str = "<h1>$list->titre</h1>Numéro de la liste : $list->no<br />Créateur : {$list->user->username}<br />Description : $list->description<br />Expiration : $list->expiration".((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)")."<br />Items :";
-        $str = $str . "<section><ol>";
-        $items = $list->items;
-        foreach ($items as $item) {
-            $str = $str . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
-        }
-        $str = $str . "</ol></section>";
-        $messages = Message::where("id_list", "=", $list->no)->get();
-        $str = $str . "Messages :<section><ul>";
-        foreach ($messages as $message) {
-            $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
-            $str = $str . "<li>($message->date) $author : $message->texte</li>";
-        }
-        $str = $str . "</ul></section>";
+        $msgs = Message::where("id_list", "=", $list->no)->get();
 
+
+        $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
+        $items = "";
+        foreach ($list->items as $item) {
+            $items = $items . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
+        }
+        $messages = "";
+        foreach ($msgs as $message) {
+            $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
+            $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
+        }
         $username = "";
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
             $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
         }
-        $form = <<<END
-            <form action='../addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
-                $username
-                <textarea id='texte' name='texte'></textarea>
-                <button type='submit'>Ajouter un message</button>
-            </form>
-        END;
-
         $rewriteUrl = (str_contains($_SERVER['REQUEST_URI'], "/addmsg") ? tools::rewriteUrl("./list/view?token=$list->token", "Liste") : "");
 
 
-        return $rewriteUrl . $str . $form;
+        $str = <<<EOF
+        $rewriteUrl
+        <h1>$list->titre</h1>
+        Numéro de la liste : $list->no<br />
+        Créateur : {$list->user->username}<br />
+        Description : $list->description<br />
+        Expiration : $list->expiration $listeExpiree<br />
+        Items :
+        <section><ol>$items</ol></section>
+        Messages :
+        <section><ul>$messages</ul></section>
+        <form action='../addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
+            $username
+            <textarea id='texte' name='texte'></textarea>
+            <button type='submit'>Ajouter un message</button>
+        </form>
+        EOF;
+
+        return $str;
     }
 
     private function affichageListeError() : string {

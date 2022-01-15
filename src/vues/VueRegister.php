@@ -80,6 +80,11 @@ class VueRegister{
         return $msg . tools::rewriteUrl("signUp", "Inscription");
     }
 
+    private function loginRequired() : string {
+        $base = $this->tab["base"];
+        return "Vous devez être connecté pour accéder à cette page." . tools::rewriteUrl("$base/login", "Connexion");
+    }
+
     public function render() {
         $content = "";
         $notif = "";
@@ -106,6 +111,10 @@ class VueRegister{
             }
             case RegisterController::LOGOUT : {
                 $htmlPage = tools::insertIntoBody($this->loginPage(), tools::messageBox($this->confirmationDeconnexion()));
+                break;
+            }
+            case RegisterController::LOGIN_REQUIRED : {
+                $htmlPage = tools::insertIntoBody($this->loginPage(), tools::messageBox($this->loginRequired()));
                 break;
             }
             case RegisterController::INVALID_USERNAME_TROP_COURT :

@@ -142,7 +142,14 @@ $app->post('/addmsg',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new \wishlist\controllers\ListeController($this);
         return $controller->addMsg($rq, $rs, $args);
-})->setName('addmsg');
+    })->setName('addmsg');
+
+// reception edition liste
+$app->post('/editList',
+    function (Request $rq, Response $rs, $args) {
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->editList($rq, $rs, $args);
+    })->setName('editList');
 
 
 
@@ -153,6 +160,14 @@ $app->post('/addmsg',
 /**
  * pages
  */
+
+// affichage de mes listes
+$app->get('/list',
+    function (Request $rq, Response $rs, $args):Response {
+        //$rs->getBody()->write("Liste des listes :");
+        $controller = new \wishlist\controllers\ListeController($this);
+        return $controller->getAllListe($rq, $rs, $args);
+    })->setName('Listes');
 
 // affichage liste avec token
 $app->get('/list/view',
@@ -182,14 +197,6 @@ $app->post('/reservation',
 
 
 
-//q1 affiche toutes les listes
-$app->get('/list',
-    function (Request $rq, Response $rs, $args):Response {
-        //$rs->getBody()->write("Liste des listes :");
-        $controller = new \wishlist\controllers\ListeController($this);
-        return $controller->getAllListe($rq, $rs, $args);
-    })->setName('Listes');
-
 
 
 
@@ -201,19 +208,6 @@ $app->get('/item',
     })->setName('Items');
 
 
-//TD10 Q2.1 indiquer le nom de la liste de souhait dans la liste des items
-$app->get('/item/liste/items',
-    function (Request $rq, Response $rs,$args):Response{
-        $rs->getBody()->write("Liste des items :");
-        $rs->getBody()->write("<ol>");
-        $items = Item::select()->get();
-        foreach ($items as $item){
-            $list=$item->liste;
-            $rs->getBody()->write("<li><a href='../../item/$item->id'>$item->nom</a> " . ($list == null ? "n'appartient pas à une liste" : "est dans la liste <a href='../../list/$list->no'>$list->titre</a>") . ".</li>");
-        }
-        $rs->getBody()->write("</ol>");
-        return $rs;
-    });
 
 try {
     $app->run();

@@ -53,20 +53,36 @@ class VueCreateur {
 
     private function affichageListe() : string {
         $list = $this->tab[0];
-        $str = "<h1>$list->titre <a href='./edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>Numéro de la liste : $list->no<br />Créateur : {$list->user->username}<br />Description : $list->description<br />Expiration : $list->expiration".((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)")."<br />Items :";
-        $str = $str . "<section><ol>";
-        $items = $list->items;
-        foreach ($items as $item) {
-            $str = $str . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
+        $msgs = Message::where("id_list", "=", $list->no)->get();
+
+
+        $listeVisible = ($list->validee == 1) ? "Liste visible" : "Liste invisible";
+        $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
+        $items = "";
+        foreach ($list->items as $item) {
+            $items = $items . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
-        $str = $str . "</ol></section>";
-        $messages = Message::where("id_list", "=", $list->no)->get();
-        $str = $str . "Messages :<section><ul>";
-        foreach ($messages as $message) {
+        $messages = "";
+        foreach ($msgs as $message) {
             $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
-            $str = $str . "<li>($message->date) $author : $message->texte</li>";
+            $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
         }
-        $str = $str . "</ul></section>";
+        $rewriteUrl = (str_contains($_SERVER['REQUEST_URI'], "/editList") ? tools::rewriteUrl("./list/view?token=$list->token", "Liste") : "");
+
+
+        $str = <<<EOF
+        $rewriteUrl
+        <h1>$list->titre <a href='./edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>
+        $listeVisible<br />
+        Numéro de la liste : $list->no<br />
+        Créateur : {$list->user->username}<br />
+        Description : $list->description<br />
+        Expiration : $list->expiration $listeExpiree<br />
+        Items :
+        <section><ol>$items</ol></section>
+        Messages :
+        <section><ul>$messages</ul></section>
+        EOF;
 
         return $str;
     }
@@ -101,22 +117,50 @@ class VueCreateur {
         return $str;
     }
 
-    //TODO
     private function editList(): string {
-        return "TODO";
+        $list = $this->tab[0];
+        $listeVisible = $list->validee == 1 ? 'checked' : "";
+        $form = <<<END
+        <form action="../editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
+            <div class="nom">
+                <label for="nom">Nom de la liste :</label>
+                <input type="text" id="nom" name="nom" value="$list->titre" required>
+            </div>
+        
+            <br>
+        
+            <div class="description">
+                <label for="descr">Description de la liste :</label>
+                <textarea id="descr" name="descr">$list->description</textarea>
+            </div>
+        
+            <br>
+        
+            <div class="date">
+                <label for="dateExp">Date d'expiration :</label>
+                <input type="date" id="dateExp" name="dateExp" value="$list->expiration" required>
+            </div>
+        
+            <br>
+            
+            <div class="liste_validee">
+                <input type="checkbox" id="validee" name="validee" value="1" $listeVisible>
+                <label for="validee"> Rendre la liste visible</label>
+            </div>
+            
+            <br />
+        
+            <button type="submit">Valider les changements sur cette liste</button>
+        
+        
+        </form>
+        END;
+        return $form;
     }
 
-    private function editListError(): string {
-        switch ($this->selecteur) {
-            case ListeController::LIST_EDIT_TOKEN_ERROR : {
-                $msg = "Token de modification invalide.";
-                break;
-            }
-            case ListeController::LIST_EDIT_OWNER_ERROR : {
-                $msg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
-            }
-        }
-        return $msg;
+    private function editListErrorOwner(): string {
+        $list = $this->tab[0];
+        return tools::messageBox("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.") . tools::rewriteUrl("./view?token=$list->token", "Erreur : Modification liste");
     }
 
     public function render() {
@@ -172,10 +216,10 @@ class VueCreateur {
                 $title = "Modification liste";
                 break;
             }
-            case ListeController::LIST_EDIT_OWNER_ERROR :
-            case ListeController::LIST_EDIT_TOKEN_ERROR : {
-                $content = $this->editListError();
-                $title = "Erreur : Modification liste";
+            case ListeController::LIST_EDIT_OWNER_ERROR : {
+                $vue = new VueParticipant($this->tab, ListeController::LIST_VIEW);
+                $content = $vue->render() . $this->editListErrorOwner();
+                $title = "";
                 break;
             }
         }

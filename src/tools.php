@@ -56,7 +56,7 @@ class tools {
             width:420px
         }
         #notif:before {
-            background-color:#e1e1e1;
+            background-color:#656565;
             border-radius:5px 0 0 5px;
             content:"";
             display:block;

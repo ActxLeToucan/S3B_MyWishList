@@ -18,6 +18,7 @@ class RegisterController{
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
     const LOGOUT = 'logout';
+    const LOGIN_REQUIRED = 'login_required';
     const INVALID_USERNAME_TROP_COURT = 'invalid_username_trop_court';
     const INVALID_USERNAME_TROP_LONG = 'invalid_username_trop_long';
     const INVALID_USERNAME_EXISTE_DEJA = 'invalid_username_existe_deja';
