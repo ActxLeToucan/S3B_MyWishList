@@ -33,7 +33,22 @@ class VueParticipant {
         }
         $str = $str . "</ul></section>";
 
-        return $str;
+        $username = "";
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
+        }
+        $form = <<<END
+            <form action='../addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
+                $username
+                <textarea id='texte' name='texte'></textarea>
+                <button type='submit'>Ajouter un message</button>
+            </form>
+        END;
+
+        $rewriteUrl = (str_contains($_SERVER['REQUEST_URI'], "/addmsg") ? tools::rewriteUrl("./list/view?token=$list->token", "Liste") : "");
+
+
+        return $rewriteUrl . $str . $form;
     }
 
     private function affichageListeError() : string {
