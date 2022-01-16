@@ -25,7 +25,23 @@
       <label>Check new password :
         <input type = password required id="newPsw_confirm" name="newPsw_confirm" >
       </label>
+        <input type="checkbox" onclick="showOrNot()"> Show password
+
       <button>Save change</button>
     </form>
+
+    <script>
+      function showOrNot() {
+        let pass = document.getElementById("newPsw");
+        let passConfirm = document.getElementById("newPsw_confirm");
+        if (pass.type === "password" && pass.type === "password") {
+          pass.type = "text";
+          passConfirm.type = "text";
+        } else {
+          pass.type = "password";
+          passConfirm.type = "password";
+        }
+      }
+    </script>
 
 </body>

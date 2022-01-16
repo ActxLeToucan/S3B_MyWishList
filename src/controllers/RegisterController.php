@@ -154,23 +154,29 @@ class RegisterController{
         $new_Psw = filter_var($content['newPsw'], FILTER_SANITIZE_STRING);
         $new_Psw_confirm = filter_var($content['newPsw_confirm'], FILTER_SANITIZE_STRING);
 
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
 
-            if($new_Psw == $new_Psw_confirm){
-                $options =['cost' => 12];
-                $new_Psw = password_hash($new_Psw, PASSWORD_DEFAULT,$options);
-                Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
-                $args[] = "changement de mdp";
-                return $this->logout($rq, $rs, $args);
-
-            }else{
-                $notifMsg = 'Erreur : les deux mots de passe sont différents !';
-            }
-        } else {
+        if (!isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
             $notifMsg = 'Erreur : session';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ( strlen($new_Psw) >= 256) {
+            $notifMsg = 'Erreur : Le mot de passe est trop long !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ( strlen($new_Psw) <= 7) {
+            $notifMsg = 'Erreur : Le mot de passe est trop court !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ($new_Psw != $new_Psw_confirm){
+            $notifMsg = 'Erreur : les deux mots de passe sont différents !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else{
+            $options =['cost' => 12];
+            $new_Psw = password_hash($new_Psw, PASSWORD_DEFAULT,$options);
+
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+            Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
+            $args[] = "changement de mdp";
+
+            return $this->logout($rq, $rs, $args);
         }
-        return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
     }
 
     public function loginPage($rq, $rs, $args) {
