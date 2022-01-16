@@ -8,12 +8,12 @@ use wishlist\tools;
 class VueRegister{
     private $tab;
     private $selecteur;
-    private array $params;
+    private array $notif;
 
-    public function __construct(iterable $t, $s, array $p) {
+    public function __construct(iterable $t, $s, array $n) {
         $this->tab = $t;
         $this->selecteur = $s;
-        $this->params = $p;
+        $this->notif = $n;
     }
 
     private function loginPage() : string {
@@ -23,6 +23,11 @@ class VueRegister{
 
     public function signUpPage() : string {
         $file =  "HTML/formSignUp.html";
+        return file_get_contents($file);
+    }
+
+    public function tokenPage() : string {
+        $file =  "HTML/formToken.html";
         return file_get_contents($file);
     }
 
@@ -41,7 +46,11 @@ class VueRegister{
                 $htmlPage = $this->signUpPage();
                 break;
             }
+            case RegisterController::TOKEN : {
+                $htmlPage = $this->tokenPage();
+                break;
+            }
         }
-        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif);
     }
 }

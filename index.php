@@ -64,6 +64,14 @@ $app->get('/signUp',
 
     })->setName("signUp");
 
+// token access
+$app->get('/token',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new RegisterController($this);
+        return $controller->accessListToken($rq, $rs, $args);
+
+    })->setName("token");
+
 // deconnexion
 $app->get('/logout',
     function (Request $rq, Response $rs, $args):Response {

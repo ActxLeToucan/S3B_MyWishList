@@ -10,6 +10,7 @@ use wishlist\vues\VueRegister;
 class RegisterController{
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
+    const TOKEN = 'token';
 
     private $c;
 
@@ -196,6 +197,21 @@ class RegisterController{
         $rs->getBody()->write($v->render());
         return $rs;
     }
+
+    public function accessListToken($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('token');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([], RegisterController::TOKEN, $notif);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+
 
     public function logout($rq, $rs, $args) {
         $container = $this->c;
