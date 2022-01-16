@@ -30,11 +30,18 @@ class VueCreateur {
     }
 
     private function affichageListes() : string {
-        $str = "<section><ol>";
+        $mesListes = "";
         foreach ($this->tab as $value) {
-            $str = $str . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
+            $mesListes = $mesListes . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
-        return $str . "</ol></section>";
+        $listesPubliques = "";
+
+        return <<<END
+        <h1>Mes listes</h1>
+        <section><ul>$mesListes</ul></section>
+        <h1>Listes publiques</h1>
+        <section><ul>$listesPubliques</ul></section>
+        END;
     }
 
     private function affichageListe() : string {
@@ -127,6 +134,22 @@ class VueCreateur {
     private function editList(): string {
         $list = $this->tab[0];
         $listeVisible = $list->validee == 1 ? 'checked' : "";
+        $items = "";
+        foreach ($list->items as $item) {
+            $removeItem = <<<END
+            <form style="display:inline;" action="../removeItem?token=$list->token_edit&id=$item->id" method="post">
+                <input type="submit" name="removeItem" value="🗑️" />
+            </form>
+            END;
+
+            $items = $items . "<li><a href='../item/$item->id/edit?token=$list->token_edit'>$item->nom</a> $removeItem</li>";
+        }
+        $items = $items . <<<END
+        <form action="../addItem?token=$list->token_edit" method="post">
+            <input type="submit" name="addItem" value="Ajouter un item" />
+        </form>
+        END;
+
         return <<<END
         <form action="../editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
             <div class="nom">
@@ -161,6 +184,9 @@ class VueCreateur {
         
         
         </form>
+        <br />
+        Items :
+        <section><ul>$items</ul></section>
         END;
     }
 

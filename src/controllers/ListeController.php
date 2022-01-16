@@ -41,7 +41,7 @@ class ListeController {
 
             $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif);
         } else {
-            $notifMsg = "Vous devez être connecté pour accéder à cette page.";
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
             return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
         $rs->getBody()->write($v->render());
@@ -63,7 +63,7 @@ class ListeController {
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
             $v = new VueCreateur([$liste], ListeController::LIST_VIEW, $notif);
         } else if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            $notifMsg = urlencode("La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         } else {
             $v = new VueParticipant([$liste], ListeController::LIST_VIEW, $notif);
@@ -87,10 +87,10 @@ class ListeController {
             $user = null;
         }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            $notifMsg = urlencode("La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.");
             return $rs->withRedirect($base."/list?notif=$notifMsg");
         } else if (is_null($user) || $user->id != $liste->user_id) {
-            $notifMsg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.");
             return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         }
 
@@ -115,10 +115,10 @@ class ListeController {
             $user = null;
         }
         if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
-            $notifMsg = "La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.";
+            $notifMsg = urlencode("La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.");
             return $rs->withRedirect($base."/list?notif=$notifMsg");
         } else if (is_null($user) || $user->id != $liste->user_id) {
-            $notifMsg = "Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.";
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.");
             return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         } else {
             $content = $rq->getParsedBody();
@@ -134,7 +134,7 @@ class ListeController {
             Liste::where('token_edit', '=', $token)->update(['validee' => $validee]);
 
             $liste = Liste::where('token_edit','=',$token)->first();
-            $notifMsg = "La liste a été mise à jour.";
+            $notifMsg = urlencode("La liste a été mise à jour.");
             return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         }
     }
@@ -164,10 +164,10 @@ class ListeController {
             $newListe->save();
 
             $liste = Liste::where('token_edit','=',$token)->first();
-            $notifMsg = "Liste créée !";
+            $notifMsg = urlencode("Liste créée !");
             return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         } else {
-            $notifMsg = "Impossible de créer une nouvelle liste. Reconnectez-vous.";
+            $notifMsg = urlencode("Impossible de créer une nouvelle liste. Reconnectez-vous.");
             return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
     }
@@ -181,7 +181,7 @@ class ListeController {
         $notif = tools::prepareNotif($rq);
 
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
-            $notifMsg = "Impossible de créer une nouvelle liste. Reconnectez-vous.";
+            $notifMsg = urlencode("Impossible de créer une nouvelle liste. Reconnectez-vous.");
             return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
 

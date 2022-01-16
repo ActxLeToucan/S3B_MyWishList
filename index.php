@@ -136,6 +136,20 @@ $app->post('/newItem',
         return $controller->newItem($rq, $rs, $args);
     })->setName('New_Item');
 
+// reception creation d'un item vierge
+$app->post('/addItem',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ItemController($this);
+        return $controller->addItem($rq, $rs, $args);
+    })->setName('itemVierge');
+
+// reception suppression item
+$app->post('/removeItem',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ItemController($this);
+        return $controller->removeItem($rq, $rs, $args);
+    })->setName('supprItem');
+
 // reception creation creation d'une liste
 $app->post('/newListe',
     function (Request $rq, Response $rs, $args):Response {

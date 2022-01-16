@@ -4,6 +4,7 @@ namespace wishlist\controllers;
 
 use wishlist\models\Authenticate;
 use wishlist\models\Item;
+use wishlist\models\Liste;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
@@ -55,8 +56,66 @@ class ItemController {
         $newItem->tarif = $tarif;
         $newItem->save();
 
-        $notif = urlencode("L'item $newItem->nom a été créé et ajouté dans la liste {$newItem->liste->titre}.");
-        return $rs->withRedirect($base."/item/$newItem->id/view?token={$newItem->liste->token}&notif=$notif");
+        $notifMsg = urlencode("L'item $newItem->nom a été créé et ajouté dans la liste {$newItem->liste->titre}.");
+        return $rs->withRedirect($base."/item/$newItem->id/view?token={$newItem->liste->token}&notif=$notifMsg");
+    }
+
+    public function addItem($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('itemVierge');
+        $url = $base . $route_uri;
+
+        $token = $rq->getQueryParams('token');
+        $list = Liste::where("token_edit", "=", $token)->first();
+        $user = $list->user;
+
+        if (!isset($rq->getQueryParams()['token']) || is_null($list)) {
+            $notifMsg = urlencode("Le token de modification ne correspond à aucune liste.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
+            $newItem = new Item();
+            $newItem->nom = "Nouvel item";
+            $newItem->liste_id = $list->no;
+            $newItem->save();
+
+            return $rs->withRedirect($base."/list/edit?token=$list->token_edit");
+        } else  {
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.");
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
+        }
+    }
+
+    public function removeItem($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('supprItem');
+        $url = $base . $route_uri;
+
+        $token = $rq->getQueryParams('token');
+        $idItem = $rq->getQueryParams('id');
+        $list = Liste::where("token_edit", "=", $token)->first();
+        $item = Item::where("id", "=", $idItem['id'])->first();
+        $user = $list->user;
+
+        if (!isset($rq->getQueryParams()['token']) || is_null($list) || !isset($rq->getQueryParams()['id']) || is_null($item) || $item->liste_id != $list->no) {
+            $notifMsg = urlencode("L'association token de modification / id ne correspond à aucun item.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
+            if ($item->etat_reserv == 1) {
+                $notifMsg = urlencode("Vous ne pouvez pas supprimer l'item \"$item->nom\" car quelqu'un l'a réservé.");
+            } else {
+                $image = $item->img;
+                is_null($image) ? : unlink("./img/$image");
+                $item->delete();
+
+                $notifMsg = urlencode("L'item \"$item->nom\" a bien été supprimé.");
+            }
+            return $rs->withRedirect($base."/list/edit?token=$list->token_edit&notif=$notifMsg");
+        } else  {
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cette liste car vous n'en êtes pas le créateur.");
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
+        }
     }
 
     public function getItemById($rq, $rs, $args) {
@@ -123,7 +182,7 @@ class ItemController {
 
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
-            $notif = urlencode("Vous avez bien réservé l'item \"$item->nom\" $avecOuSansMsg");
+            $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" $avecOuSansMsg");
         } else if (isset($content["pseudo"])) {
             $pseudo = $content["pseudo"];
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
@@ -132,12 +191,12 @@ class ItemController {
 
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
-            $notif = urlencode("Vous avez bien réservé l'item \"$item->nom\" avec le pseudo \"$item->pseudo\" $avecOuSansMsg");
+            $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" avec le pseudo \"$item->pseudo\" $avecOuSansMsg");
         } else {
-            $notif = urlencode("Impossible de réserver l'item.");
+            $notifMsg = urlencode("Impossible de réserver l'item.");
         }
         $item = Item::where('id',$item_id)->first();
 
-        return $rs->withRedirect($base."/item/$item->id/view?token={$item->liste->token}&notif=$notif");
+        return $rs->withRedirect($base."/item/$item->id/view?token={$item->liste->token}&notif=$notifMsg");
     }
 }

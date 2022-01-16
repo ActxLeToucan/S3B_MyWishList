@@ -47,22 +47,22 @@ class RegisterController{
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
 
         if (strlen($NomUtilisateur) < $TAILLE_USERNAME_MIN) {
-            $notifMsg = "Ce nom d'utilisateur est trop court. Réessayez.";
+            $notifMsg = urlencode("Ce nom d'utilisateur est trop court. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($NomUtilisateur) > $TAILLE_USERNAME_MAX) {
-            $notifMsg = "Ce nom d'utilisateur est trop long. Réessayez.";
+            $notifMsg = urlencode("Ce nom d'utilisateur est trop long. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ($userNameExist != 0) {
-            $notifMsg = "Ce nom d'utilisateur est déjà pris. Réessayez.";
+            $notifMsg = urlencode("Ce nom d'utilisateur est déjà pris. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($MotDePasse) < $TAILLE_MDP_MIN) {
-            $notifMsg = "Ce mot de passe est trop court. Réessayez.";
+            $notifMsg = urlencode("Ce mot de passe est trop court. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if (strlen($MotDePasse) > $TAILLE_MDP_MAX) {
-            $notifMsg = "Ce mot de passe est trop long. Réessayez.";
+            $notifMsg = urlencode("Ce mot de passe est trop long. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ( !password_verify($MotDePasseConfirm,$MotDePasse)) {
-            $notifMsg = "Les mots de passe ne correspondent pas. Réessayez.";
+            $notifMsg = urlencode("Les mots de passe ne correspondent pas. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else {
             $newUser = new Authenticate();
@@ -75,7 +75,7 @@ class RegisterController{
             // gestion session
             $this->gestionSession($newUser);
 
-            $notifMsg = "Vous êtes connecté en tant que $NomUtilisateur.";
+            $notifMsg = urlencode("Vous êtes connecté en tant que $NomUtilisateur.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         }
     }
@@ -102,7 +102,7 @@ class RegisterController{
 
                 $this->gestionSession($user);
 
-                $notifMsg = "Vous êtes connecté en tant que $NomUtilisateur.";
+                $notifMsg = urlencode("Vous êtes connecté en tant que $NomUtilisateur.");
                 return $rs->withRedirect($base."?notif=$notifMsg");
             }
         }
@@ -110,7 +110,7 @@ class RegisterController{
         session_destroy();
         session_start();
 
-        $notifMsg = "Mot de passe ou nom d'utilisateur incorrect.";
+        $notifMsg = urlencode("Mot de passe ou nom d'utilisateur incorrect.");
         return $rs->withRedirect($base."/login?notif=$notifMsg");
     }
 
@@ -150,7 +150,7 @@ class RegisterController{
         session_destroy();
         session_start();
 
-        $notifMsg = "Vous avez été déconnecté.";
+        $notifMsg = urlencode("Vous avez été déconnecté.");
         return $rs->withRedirect($base."/login?notif=$notifMsg");
     }
 
