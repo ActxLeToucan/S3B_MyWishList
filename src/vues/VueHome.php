@@ -35,6 +35,6 @@ class VueHome {
                 break;
             }
         }
-        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif);
     }
 }
