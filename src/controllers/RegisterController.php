@@ -41,32 +41,32 @@ class RegisterController{
         $NomUtilisateur = $content['username'];
         $MotDePasse = $content['password'];
         $options =['cost' => 12];
-        $MotDePasse = password_hash($MotDePasse, PASSWORD_DEFAULT,$options);
         $MotDePasseConfirm = $content['password_confirm'];
         echo (password_verify($MotDePasseConfirm,$MotDePasse));
         $Email=$content['email'];
 
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
 
-        if (strlen($NomUtilisateur) < $TAILLE_USERNAME_MIN) {
+        if (strlen($NomUtilisateur) < self::TAILLE_USERNAME_MIN) {
             $notifMsg = urlencode("Ce nom d'utilisateur est trop court. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
-        } else if (strlen($NomUtilisateur) > $TAILLE_USERNAME_MAX) {
+        } else if (strlen($NomUtilisateur) > self::TAILLE_USERNAME_MAX) {
             $notifMsg = urlencode("Ce nom d'utilisateur est trop long. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ($userNameExist != 0) {
             $notifMsg = urlencode("Ce nom d'utilisateur est déjà pris. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
-        } else if (strlen($MotDePasse) < $TAILLE_MDP_MIN) {
+        } else if (strlen($MotDePasse) < self::TAILLE_MDP_MIN) {
             $notifMsg = urlencode("Ce mot de passe est trop court. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
-        } else if (strlen($MotDePasse) > $TAILLE_MDP_MAX) {
+        } else if (strlen($MotDePasse) > self::TAILLE_MDP_MAX) {
             $notifMsg = urlencode("Ce mot de passe est trop long. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else if ( !password_verify($MotDePasseConfirm,$MotDePasse)) {
             $notifMsg = urlencode("Les mots de passe ne correspondent pas. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else {
+            $MotDePasse = password_hash($MotDePasse, PASSWORD_DEFAULT,$options);
             $newUser = new Authenticate();
             $newUser->username=$NomUtilisateur;
             $newUser->password=$MotDePasse;
@@ -158,10 +158,10 @@ class RegisterController{
         if (!isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
             $notifMsg = 'Erreur : session';
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else if ( strlen($new_Psw) >= 256) {
+        }else if ( strlen($new_Psw) >= self::TAILLE_MDP_MAX) {
             $notifMsg = 'Erreur : Le mot de passe est trop long !';
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else if ( strlen($new_Psw) <= 7) {
+        }else if ( strlen($new_Psw) <= self::TAILLE_MDP_MIN) {
             $notifMsg = 'Erreur : Le mot de passe est trop court !';
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
         }else if ($new_Psw != $new_Psw_confirm){
