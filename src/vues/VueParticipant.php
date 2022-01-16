@@ -11,12 +11,12 @@ use wishlist\tools;
 class VueParticipant {
     private $tab;
     private $selecteur;
-    private array $params;
+    private array $notif;
 
-    public function __construct(iterable $t, $s, array $p) {
+    public function __construct(iterable $t, $s, array $n) {
         $this->tab = $t;
         $this->selecteur = $s;
-        $this->params = $p;
+        $this->notif = $n;
     }
 
     private function affichageListe() : string {
@@ -123,6 +123,6 @@ class VueParticipant {
                 break;
             }
         }
-        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif);
     }
 }

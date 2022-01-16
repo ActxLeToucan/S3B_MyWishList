@@ -11,12 +11,12 @@ use wishlist\tools;
 class VueCreateur {
     private $tab;
     private $selecteur;
-    private array $params;
+    private array $notif;
 
-    public function __construct(iterable $t, $s, array $p) {
+    public function __construct(iterable $t, $s, array $n) {
         $this->tab = $t;
         $this->selecteur = $s;
-        $this->params = $p;
+        $this->notif = $n;
     }
 
     private function itemCreate() : string {
@@ -43,6 +43,7 @@ class VueCreateur {
 
 
         $listeVisible = ($list->validee == 1) ? "Liste visible" : "Liste invisible";
+        $tokenPartage = ($list->validee == 1) ? "<span id='tokenShare'>$list->token</span> <button id='buttonGetToken' onclick='copyToken()'>Copier le lien de partage</button>" : "<i>La liste doit être visible pour être partagée.</i>";
         $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
         $items = "";
         foreach ($list->items as $item) {
@@ -59,7 +60,7 @@ class VueCreateur {
         <h1>$list->titre <a href='./edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>
         $listeVisible<br />
         Numéro de la liste : $list->no<br />
-        Token de partage : <span id="tokenShare">$list->token</span> <button id="buttonGetToken" onclick="copyToken()">Copier le lien de partage</button><br />
+        Token de partage : $tokenPartage<br />
         Token d'édition : $list->token_edit<br />
         Description : $list->description<br />
         Expiration : $list->expiration $listeExpiree<br />
@@ -206,6 +207,6 @@ class VueCreateur {
                 break;
             }
         }
-        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->params);
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif);
     }
 }

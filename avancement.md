@@ -34,8 +34,8 @@
 * ✅ Lors de sa création un token est créé pour accéder à cette liste en modification
 
 ## 7 Modifier les informations générales d'une de ses listes
-* Le créateur d'une liste peut modifier les informations générales de ses listes
-* Pour modifier il doit connaître son URL de modification (avec token)
+* ✅ Le créateur d'une liste peut modifier les informations générales de ses listes
+* ✅ Pour modifier il doit connaître son URL de modification (avec token)
 
 ## 8 Ajouter des items
 * Le créateur d'une liste peut ajouter des items à une de ses listes après l'avoir sélectionnée par son URL de modification (avec token)
@@ -62,16 +62,16 @@
 * Dans le cas d'une image locale, le fichier de l'image n'est pas supprimé
 
 ## 14 Partager une liste
-* Une fois la liste entièrement saisie, le créateur peut la partager
-* Le partage d'une liste génère une URL avec un token (jeton unique différent du token de modification) destiné à être envoyé aux futurs participants
+* ✅ Une fois la liste entièrement saisie, le créateur peut la partager
+* ✅ Le partage d'une liste génère une URL avec un token (jeton unique différent du token de modification) destiné à être envoyé aux futurs participants
 
 ## 15 Consulter les réservations d'une de ses listes avant échéance
-* Le créateur d'une liste partagée peut consulter les réservations effectuées sur sa liste
-* Seul l'état réservé ou non s'affiche avant la date d'échéance
-* un cookie permet d'identifier le créateur de la liste qu'il soit authentifié ou non afin de cacher les noms des participants (seuls les participants voient les noms des autres participants). On suppose que le créateur accède à la liste avec son navigateur habituel (celui sur lequel il s'est déjà authentifié)
+* ✅ Le créateur d'une liste partagée peut consulter les réservations effectuées sur sa liste
+* ✅ Seul l'état réservé ou non s'affiche avant la date d'échéance
+* ✅ un cookie permet d'identifier le créateur de la liste qu'il soit authentifié ou non afin de cacher les noms des participants (seuls les participants voient les noms des autres participants). On suppose que le créateur accède à la liste avec son navigateur habituel (celui sur lequel il s'est déjà authentifié)
 
 ## 16 Consulter les réservations et messages d'une de ses listes après échéance
-* Après la date d'échéance de la liste, le créateur authentifié d'une liste partagée peut consulter les réservations effectuées sur sa liste avec les noms des participants et les message associés aux réservations
+* ✅ Après la date d'échéance de la liste, le créateur authentifié d'une liste partagée peut consulter les réservations effectuées sur sa liste avec les noms des participants et les message associés aux réservations
 
 # Extensions
 ## 17 Créer un compte
@@ -99,10 +99,10 @@
 * En option, peuvent s'ajouter une recherche par auteur ou par intervalle de date.
 
 ## 22 Créer une cagnotte sur un item
-* Le créateur d'une liste peut ouvrir une cagnotte pour un de ses item
+* ⛔ Le créateur d'une liste peut ouvrir une cagnotte pour un de ses item
 
 ## 23 Participer à une cagnotte
-* Pour les items avec cagnotte, les participants peuvent choisir un montant de participation dont le maximum est le reste à payer
+* ⛔ Pour les items avec cagnotte, les participants peuvent choisir un montant de participation dont le maximum est le reste à payer
 
 ## 24 Uploader une image
 * ✅ Le créateur d'une liste peut ajouter des images par upload.
