@@ -39,30 +39,30 @@
 
 ## 8 Ajouter des items
 * ✅ Le créateur d'une liste peut ajouter des items à une de ses listes après l'avoir sélectionnée par son URL de modification (avec token)
-* 🟨 Un formulaire permet de saisir les informations de l'item
-* 🟨 les informations sont : nom et description et prix
-* 🟨 il peut aussi fournir l'URL d'une page externe qui détaille le produit (sur un site de ecommerce par exemple)
+* ✅ 🟨 Un formulaire permet de saisir les informations de l'item
+* ✅ 🟨 les informations sont : nom et description et prix
+* ✅ 🟨 il peut aussi fournir l'URL d'une page externe qui détaille le produit (sur un site de ecommerce par exemple)
   * _Finalement, on crée un item par défaut, et si on veut ajouter des informations, on peut le modifier._
 
 ## 9 Modifier un item
-* Le créateur d'une liste peut modifier les informations des items de ses listes
-* Une fois réservé, un item ne peut plus être modifié
+* ✅ Le créateur d'une liste peut modifier les informations des items de ses listes
+* ✅ Une fois réservé, un item ne peut plus être modifié
 
 ## 10 Supprimer un item
 * ✅ Le créateur d'une liste peut supprimer un item d'un de ses listes si il n'est pas reservé
 
 ## 11 Rajouter une image à un item
-* Le créateur d'une liste peut ajouter une image à un de ses items
-* 🟨 ~~Pour cela il fournit l'URL complète d'une image externe (acceptant le hot-linking) ou bien le chemin relatif d'une image déjà présente dans le dossier web/img/~~
+* ✅ Le créateur d'une liste peut ajouter une image à un de ses items
+* ✅ 🟨 ~~Pour cela il fournit l'URL complète d'une image externe (acceptant le hot-linking) ou bien le chemin relatif d'une image déjà présente dans le dossier web/img/~~
   * _On peut uploader des images, donc on utilise cette méthode._
 
 ## 12 Modifier une image d'un item
-* 🟨 ~~Le créateur d'une liste peut modifier l'URL de l'image de ses items~~
+* ✅ 🟨 ~~Le créateur d'une liste peut modifier l'URL de l'image de ses items~~
   * _Le créateur d'une liste peut modifier l'image en faisait un réupload._
 
 ## 13 Supprimer une image d'un item
-* Le créateur d'une liste peut supprimer l'image de ses items
-* 🟨 ~~Dans le cas d'une image locale, le fichier de l'image n'est pas supprimé~~
+* ✅ Le créateur d'une liste peut supprimer l'image de ses items
+* ✅ 🟨 ~~Dans le cas d'une image locale, le fichier de l'image n'est pas supprimé~~
   * _Alors, si. Nous on supprime le fichier puisque le nom du fichier est unique._
 
 ## 14 Partager une liste
