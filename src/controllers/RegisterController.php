@@ -24,6 +24,7 @@ class RegisterController{
     /**
      * @return mixed
      */
+
     public function newUser($rq, $rs, $args)  {
         $TAILLE_USERNAME_MIN = 4;
         $TAILLE_USERNAME_MAX = 100;
@@ -112,6 +113,62 @@ class RegisterController{
 
         $notifMsg = "Mot de passe ou nom d'utilisateur incorrect.";
         return $rs->withRedirect($base."/login?notif=$notifMsg");
+    }   
+
+    public function changeMail($rq, $rs, $args){
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMail');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $new_mail = filter_var($content['newMail'], FILTER_SANITIZE_STRING);
+        $new_mail_confirm = filter_var($content['newMail_confirm'], FILTER_SANITIZE_STRING);
+
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+
+            if($new_mail == $new_mail_confirm){
+                Authenticate::where("id", "=", $user->id)->update(['email' => $new_mail]);
+                $rs->getBody()->write('Votre email a bien été changé en :'.$new_mail);
+            }else{
+                $rs->getBody()->write("ça marche pas");
+            }
+        } else {
+            $rs->getBody()->write("ça marche pas");
+        }
+        return $rs;
+    }
+
+    public function changePsw($rq, $rs, $args){
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMail');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $new_Psw = filter_var($content['newPsw'], FILTER_SANITIZE_STRING);
+        $new_Psw_confirm = filter_var($content['newPsw_confirm'], FILTER_SANITIZE_STRING);
+
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+
+            if($new_Psw == $new_Psw_confirm){
+                $options =['cost' => 12];
+                $new_Psw = password_hash($new_Psw, PASSWORD_DEFAULT,$options);
+                Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
+                $rs->getBody()->write('Votre mot de passe a bien été changé');
+                return $this->logout($rq, $rs, $args);
+
+            }else{
+                $rs->getBody()->write("ça marche pas");
+            }
+        } else {
+            $rs->getBody()->write("ça marche pas");
+        }
+        return $rs;
     }
 
     public function loginPage($rq, $rs, $args) {
@@ -167,4 +224,6 @@ class RegisterController{
         $_SESSION['AccessRights'] = $user['Niveau_acces'];
     }
 }
+
+
 

@@ -19,7 +19,7 @@ class VueHome {
     private function home() : string {
         $user = $_SESSION['username'] ?? "";
         $file =  "HTML/index.html";
-        return tools::insertIntoBody(file_get_contents($file), "<p>".(isset($_SESSION['username']) ? "Connecté en tant que $user. <a href='logout'>Se déconnecter</a>" : "<a href='login'>Se connecter</a>")."</p>");
+        return tools::insertIntoBody(file_get_contents($file), "<p>".(isset($_SESSION['username']) ? "Connecté en tant que $user. <a href='logout'>Se déconnecter</a> <a href='monCompte'>Mon compte</a>" : "<a href='login'>Se connecter</a>")."</p>");
     }
 
     public function render() : string {

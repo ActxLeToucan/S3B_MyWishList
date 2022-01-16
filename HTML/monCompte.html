@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="Style/FormItemStyle.css">
+  <title>Mon Compte</title>
+</head>
+
+<body>
+    <h1>Modification des informations du compte</h1>
+    <form action="./changeMail" method="post" enctype="multipart/form-data">
+      <label>New mail :
+        <input required id="newMail" name="newMail" >
+      </label>
+      <label>Check new mail :
+        <input required id="newMail_confirm" name="newMail_confirm" >
+      </label>
+      <button>Save change</button>
+    </form>
+  </br>
+    <form action="./changePassword" method="post" enctype="multipart/form-data">
+      <label>New password :
+        <input required id="newPsw" name="newPsw" >
+      </label>
+      <label>Check new password :
+        <input required id="newPsw_confirm" name="newPsw_confirm" >
+      </label>
+      <button>Save change</button>
+    </form>
+
+</body>
