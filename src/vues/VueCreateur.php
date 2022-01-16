@@ -112,7 +112,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
@@ -129,7 +129,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");

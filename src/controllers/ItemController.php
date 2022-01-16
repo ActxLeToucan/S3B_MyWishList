@@ -168,8 +168,8 @@ class ItemController {
 
         $notif = tools::prepareNotif($rq);
 
-        if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"] || $liste->validee != 1) {
-            $notifMsg = urlencode("L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient, et que la liste a été validée par le créateur.");
+        if (!isset($rq->getQueryParams()['token']) || is_null($item) || $liste->token != $token["token"]) {
+            $notifMsg = urlencode("L'item demandé est invalide. Vérifiez que le token correspond bien à celui de la liste à laquelle il appartient.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         } else if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
             if (strtotime($liste->expiration) < strtotime(date("Y-m-d"))) {
@@ -178,7 +178,10 @@ class ItemController {
                 $affichage = ItemController::ITEM_VIEW_OWNER_EN_COURS;
             }
             $v = new VueCreateur([$item], $affichage, $notif);
-        } else  {
+        } else if ($liste->validee != 1) {
+            $notifMsg = urlencode("Cet item n'est pas visible car la liste à laquelle il appartient n'a pas été validée.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else {
             $affichage = ItemController::ITEM_VIEW;
             $v = new VueParticipant([$item], $affichage, $notif);
         }
