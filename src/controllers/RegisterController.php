@@ -217,8 +217,6 @@ class RegisterController{
         return $rs;
     }
 
-
-
     public function logout($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
