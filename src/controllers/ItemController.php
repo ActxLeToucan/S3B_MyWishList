@@ -83,7 +83,7 @@ class ItemController {
                         $nomItem = filter_var($content['nom'], FILTER_SANITIZE_STRING);
                         $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
                         $url = filter_var($content['url'], FILTER_SANITIZE_STRING);
-                        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_NUMBER_FLOAT);
+                        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
                         Item::where('id', '=', $item->id)->update(['nom' => $nomItem]);
                         Item::where('id', '=', $item->id)->update(['descr' => $descr]);
