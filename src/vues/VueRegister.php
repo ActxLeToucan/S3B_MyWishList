@@ -26,6 +26,11 @@ class VueRegister{
         return file_get_contents($file);
     }
 
+    public function tokenPage() : string {
+        $file =  "HTML/formToken.html";
+        return file_get_contents($file);
+    }
+
     public function render() : string {
         $from = "";
         $htmlPage = "";
@@ -39,6 +44,10 @@ class VueRegister{
             }
             case RegisterController::SIGNUP : {
                 $htmlPage = $this->signUpPage();
+                break;
+            }
+            case RegisterController::TOKEN : {
+                $htmlPage = $this->tokenPage();
                 break;
             }
         }
