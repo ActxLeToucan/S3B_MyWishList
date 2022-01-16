@@ -10,7 +10,11 @@ use wishlist\vues\VueRegister;
 class RegisterController{
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
-
+    const TOKEN = 'token';
+    const TAILLE_USERNAME_MIN = 4;
+    const TAILLE_USERNAME_MAX = 100;
+    const TAILLE_MDP_MIN = 8;
+    const TAILLE_MDP_MAX = 256;
     private $c;
 
 
@@ -24,11 +28,9 @@ class RegisterController{
     /**
      * @return mixed
      */
+
     public function newUser($rq, $rs, $args)  {
-        $TAILLE_USERNAME_MIN = 4;
-        $TAILLE_USERNAME_MAX = 100;
-        $TAILLE_MDP_MIN = 8;
-        $TAILLE_MDP_MAX = 256;
+        
 
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
@@ -112,6 +114,69 @@ class RegisterController{
 
         $notifMsg = urlencode("Mot de passe ou nom d'utilisateur incorrect.");
         return $rs->withRedirect($base."/login?notif=$notifMsg");
+    }   
+
+    public function changeMail($rq, $rs, $args){
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMail');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $new_mail = filter_var($content['newMail'], FILTER_SANITIZE_STRING);
+        $new_mail_confirm = filter_var($content['newMail_confirm'], FILTER_SANITIZE_STRING);
+
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+
+            if($new_mail == $new_mail_confirm){
+                Authenticate::where("id", "=", $user->id)->update(['email' => $new_mail]);
+                $notifMsg = 'Votre email a bien été changé en :'.$new_mail;
+            }else{
+                $notifMsg = 'Erreur : les deux adresses mails sont différentes !';
+            }
+        } else {
+            $notifMsg = 'Erreur : session';
+        }
+        
+        return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+    }
+
+    public function changePsw($rq, $rs, $args){
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMail');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $new_Psw = filter_var($content['newPsw'], FILTER_SANITIZE_STRING);
+        $new_Psw_confirm = filter_var($content['newPsw_confirm'], FILTER_SANITIZE_STRING);
+
+
+        if (!isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $notifMsg = 'Erreur : session';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ( strlen($new_Psw) >= 256) {
+            $notifMsg = 'Erreur : Le mot de passe est trop long !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ( strlen($new_Psw) <= 7) {
+            $notifMsg = 'Erreur : Le mot de passe est trop court !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else if ($new_Psw != $new_Psw_confirm){
+            $notifMsg = 'Erreur : les deux mots de passe sont différents !';
+            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
+        }else{
+            $options =['cost' => 12];
+            $new_Psw = password_hash($new_Psw, PASSWORD_DEFAULT,$options);
+
+            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
+            Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
+            $args[] = "changement de mdp";
+
+            return $this->logout($rq, $rs, $args);
+        }
     }
 
     public function loginPage($rq, $rs, $args) {
@@ -140,6 +205,21 @@ class RegisterController{
         return $rs;
     }
 
+    public function accessListToken($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('token');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([], RegisterController::TOKEN, $notif);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+
+
     public function logout($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
@@ -149,8 +229,12 @@ class RegisterController{
 
         session_destroy();
         session_start();
-
-        $notifMsg = urlencode("Vous avez été déconnecté.");
+        if(in_array('changement de mdp',$args)){
+            $notifMsg = urlencode("Votre mot de passe a bien été changé.");
+        }else{
+            $notifMsg = urlencode("Vous avez été déconnecté.");
+        }
+        
         return $rs->withRedirect($base."/login?notif=$notifMsg");
     }
 
@@ -167,4 +251,6 @@ class RegisterController{
         $_SESSION['AccessRights'] = $user['Niveau_acces'];
     }
 }
+
+
 

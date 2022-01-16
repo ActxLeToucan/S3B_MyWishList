@@ -64,6 +64,14 @@ $app->get('/signUp',
 
     })->setName("signUp");
 
+// token access
+$app->get('/token',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new RegisterController($this);
+        return $controller->accessListToken($rq, $rs, $args);
+
+    })->setName("token");
+
 // deconnexion
 $app->get('/logout',
     function (Request $rq, Response $rs, $args):Response {
@@ -72,6 +80,16 @@ $app->get('/logout',
 
     })->setName("logout");
 
+/*************************
+ * gestion du compte
+ *************************/
+// mon compte
+$app->get('/monCompte',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new HomeController($this);
+        return $controller->monComptePage($rq, $rs, $args);
+
+    })->setName("monCompte");
 
 /**
  * reception de donnees
@@ -93,8 +111,21 @@ $app->post('/signupConfirm',
 
     })->setName("signupConfirm");
 
+// changement de mail 
+$app->post('/changeMail',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new RegisterController($this);
+        return $controller->changeMail($rq, $rs, $args);
 
+})->setName("changeMail");
 
+// changement de mot de passe
+$app->post('/changePassword',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new RegisterController($this);
+        return $controller->changePsw($rq, $rs, $args);
+
+})->setName("changePassword");
 
 /*************************
  * gestion listes

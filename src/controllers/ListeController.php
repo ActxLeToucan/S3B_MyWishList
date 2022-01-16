@@ -25,7 +25,7 @@ class ListeController {
     }
 
     /**
-     * pour un gars connecté
+     * pour qqn connecté
      */
     public function getAllListe($rq, $rs, $args) {
         $container = $this->c;

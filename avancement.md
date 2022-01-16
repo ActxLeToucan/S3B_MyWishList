@@ -86,9 +86,9 @@
 * ✅ Une variable de session permet de maintenir l'état authentifié
 
 ## 19 Modifier son compte
-* Un utilisateur authentifié peut modifier son compte
-* Seul le login ne peut pas être modifié
-* Si il modifie son mot de passe, il doit alors à nouveau s'authentifier
+* ✅Un utilisateur authentifié peut modifier son compte
+* ✅Seul le login ne peut pas être modifié
+* ✅Si il modifie son mot de passe, il doit alors à nouveau s'authentifier
 
 ## 20 Rendre une liste publique
 * Le créateur d'une liste peut la rendre publique

@@ -4,10 +4,11 @@ namespace wishlist\controllers;
 
 use wishlist\tools;
 use wishlist\vues\VueHome;
+use wishlist\vues\VueCreateur;
 
 class HomeController {
     const HOME = 'home';
-
+    const MONCOMPTE = 'monCompte';
     private $c;
 
     /**
@@ -27,6 +28,19 @@ class HomeController {
 
         $v = new VueHome([], HomeController::HOME, $notif);
         $rs->getBody()->write($v->render());
+        return $rs;
+    }
+    public function monComptePage ($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('monCompte');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueCreateur([], HomeController::MONCOMPTE, $notif);
+        $rs->getBody()->write($v->render());
+
         return $rs;
     }
 }

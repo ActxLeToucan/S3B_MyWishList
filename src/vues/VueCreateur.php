@@ -2,6 +2,7 @@
 
 namespace wishlist\vues;
 
+use wishlist\controllers\HomeController;
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
 use wishlist\models\Authenticate;
@@ -28,7 +29,10 @@ class VueCreateur {
         $file =  "HTML/FormListe.html";
         return file_get_contents($file);
     }
-
+    private function monCompte() : string {
+        $file =  "HTML/monCompte.html";
+        return file_get_contents($file);
+    }
     private function affichageListes() : string {
         $mesListes = "";
         foreach ($this->tab as $value) {
@@ -273,6 +277,11 @@ class VueCreateur {
             case ItemController::ITEM_FORM_CREATE : {
                 $htmlPage = $this->itemCreate();
                 $title = 'Création d\'un item';
+                break;
+            }
+            case HomeController::MONCOMPTE : {
+                $htmlPage = $this->monCompte();
+                $title = 'Modification du compte';
                 break;
             }
             case ListeController::LIST_FORM_CREATE : {
