@@ -42,7 +42,6 @@ class RegisterController{
         $MotDePasse = $content['password'];
         $options =['cost' => 12];
         $MotDePasseConfirm = $content['password_confirm'];
-        echo (password_verify($MotDePasseConfirm,$MotDePasse));
         $Email=$content['email'];
 
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
@@ -62,11 +61,11 @@ class RegisterController{
         } else if (strlen($MotDePasse) > self::TAILLE_MDP_MAX) {
             $notifMsg = urlencode("Ce mot de passe est trop long. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
-        } else if ( !password_verify($MotDePasseConfirm,$MotDePasse)) {
+        } else if ($MotDePasseConfirm != $MotDePasse) {
             $notifMsg = urlencode("Les mots de passe ne correspondent pas. Réessayez.");
             return $rs->withRedirect($base."/signUp?notif=$notifMsg");
         } else {
-            $MotDePasse = password_hash($MotDePasse, PASSWORD_DEFAULT,$options);
+            $MotDePasse = password_hash($MotDePasse, PASSWORD_DEFAULT, $options);
             $newUser = new Authenticate();
             $newUser->username=$NomUtilisateur;
             $newUser->password=$MotDePasse;
