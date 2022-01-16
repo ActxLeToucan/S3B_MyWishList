@@ -108,7 +108,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><br /><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Etat : ".($list->validee == 1 ? "Validée" : "Non validée")."<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
@@ -125,7 +125,7 @@ class VueCreateur {
 
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><img src='$path/img/$item->img' height='100px' width='100px' alt='$item->nom'><br />ID : $item->id<br />Etat : ".($list->validee == 1 ? "Validée" : "Non validée")."<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
 
         return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
@@ -154,7 +154,7 @@ class VueCreateur {
         <form action="../editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
             <div class="nom">
                 <label for="nom">Nom de la liste :</label>
-                <input type="text" id="nom" name="nom" value="$list->titre" required>
+                <input type="text" id="nom" name="nom" value="$list->titre" required />
             </div>
         
             <br>
@@ -168,13 +168,13 @@ class VueCreateur {
         
             <div class="date">
                 <label for="dateExp">Date d'expiration :</label>
-                <input type="date" id="dateExp" name="dateExp" value="$list->expiration" required>
+                <input type="date" id="dateExp" name="dateExp" value="$list->expiration" required />
             </div>
         
             <br>
             
             <div class="liste_validee">
-                <input type="checkbox" id="validee" name="validee" value="1" $listeVisible>
+                <input type="checkbox" id="validee" name="validee" value="1" $listeVisible />
                 <label for="validee"> Rendre la liste visible</label>
             </div>
             
@@ -184,9 +184,72 @@ class VueCreateur {
         
         
         </form>
-        <br />
+        <br /><br />
         Items :
         <section><ul>$items</ul></section>
+        END;
+    }
+
+    private function editItem() : string {
+        $item = $this->tab[0];
+        $list = $item->liste;
+
+        $image = is_null($item->img) || $item->img == ""
+            ? <<<END
+            <form action="../../editItem?token=$list->token_edit&id=$item->id&type=addImg" method="post" enctype="multipart/form-data">
+                Image associée à l'item :<br />
+                <input type="file"
+                       id="photo"
+                       name="photo"
+                       accept="image/png, image/jpeg, image/pdf" />
+                <input type="submit" name="addItem" value="Ajouter une image" />
+            </form>
+            END
+            : <<<END
+            Image associée à l'item :<br />
+            <img src='../../img/$item->img' height='100px' alt='$item->nom' />
+            <form style="display:inline;" action="../../editItem?token=$list->token_edit&id=$item->id&type=edit&type=rmImg" method="post">
+                <input type="submit" name="removeImage" value="🗑️" />
+            </form>
+            END;
+
+
+        return <<<END
+        $image
+        <br /><br />
+        <form action="../../editItem?token=$list->token_edit&id=$item->id&type=edit" method="post" enctype="multipart/form-data">
+            <div class="nom">
+                <label for="nom">Nom de l'item :</label>
+                <input type="text" id="nom" name="nom" value="$item->nom" required />
+            </div>
+        
+        
+            <br>
+        
+            <div class="description">
+                <label for="descr">Description de l'item :</label>
+                <textarea id="descr" name="descr">$item->descr</textarea>
+            </div>
+        
+        
+            <br>
+        
+            <div class="tarif">
+                <label for="tarif">Tarif de l'item :</label>
+                <input type="text" id="tarif" name="tarif" value="$item->tarif" />
+            </div>
+        
+            <br>
+        
+            <div class="url">
+                <label for="url">Lien du vers un site vendant l'objet :</label>
+                <input id="url" name="url" value="$item->url" />
+            </div>
+            
+            <br />
+        
+            <button type="submit">Valider les changements sur cet item</button>
+        </form>
         END;
     }
 
@@ -230,6 +293,11 @@ class VueCreateur {
             case ListeController::LIST_EDIT : {
                 $content = $this->editList();
                 $title = "Modification liste";
+                break;
+            }
+            case ItemController::ITEM_EDIT : {
+                $content = $this->editItem();
+                $title = "Modification item";
                 break;
             }
         }

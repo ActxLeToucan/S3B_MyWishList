@@ -104,13 +104,6 @@ $app->post('/signupConfirm',
  * pages
  */
 
-// creation d'un item
-$app->get('/formulaireItem',
-    function (Request $rq, Response $rs, $args):Response {
-        $controller = new ItemController($this);
-        return $controller->createItem($rq, $rs, $args);
-    })->setName("formulaireItemCreate");
-
 // creation d'une liste
 $app->get('/formulaireListe',
     function (Request $rq, Response $rs, $args):Response {
@@ -125,16 +118,16 @@ $app->get('/list/edit',
         return $controller->editListByToken($rq, $rs, $args);
     })->setName('listByTokenEdit');
 
+// modification item
+$app->get('/item/{id}/edit',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ItemController($this);
+        return $controller->editItemPage($rq, $rs, $args);
+    })->setName('editItemPage');
+
 /**
  * reception de donnees
  */
-
-// reception creation d'un item
-$app->post('/newItem',
-    function (Request $rq, Response $rs, $args):Response {
-        $controller = new ItemController($this);
-        return $controller->newItem($rq, $rs, $args);
-    })->setName('New_Item');
 
 // reception creation d'un item vierge
 $app->post('/addItem',
@@ -142,6 +135,13 @@ $app->post('/addItem',
         $controller = new ItemController($this);
         return $controller->addItem($rq, $rs, $args);
     })->setName('itemVierge');
+
+// reception edition item
+$app->post('/editItem',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ItemController($this);
+        return $controller->editItem($rq, $rs, $args);
+    })->setName('editItem');
 
 // reception suppression item
 $app->post('/removeItem',

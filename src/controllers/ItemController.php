@@ -15,6 +15,7 @@ class ItemController {
     const ITEM_VIEW_OWNER_EN_COURS = 'item_view_owner_en_cours';
     const ITEM_VIEW_OWNER_EXPIRE = 'item_view_owner_expirée';
     const ITEM_FORM_CREATE = 'form_item_create';
+    const ITEM_EDIT = "item_edit";
 
     private $c;
 
@@ -23,41 +24,6 @@ class ItemController {
      */
     public function __construct($c) {
         $this->c = $c;
-    }
-
-    public function newItem($rq, $rs, $args) {
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('New_Item');
-        $url = $base . $route_uri;
-
-        $content = $rq->getParsedBody();
-
-        $extension = $_FILES['photo']['type'];
-        $cheminServeur = $_FILES['photo']['tmp_name'];
-        $fileName = str_replace('image/',time()."_".tools::getRandomString().'.',$extension);
-        $uploadfile = './img/'.$fileName;
-
-        move_uploaded_file($cheminServeur, $uploadfile);
-
-        $nomItem = filter_var($content['nom'], FILTER_SANITIZE_STRING);
-        $listeId = filter_var($content['liste_id'], FILTER_SANITIZE_STRING);
-        $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
-
-        $url = filter_var($content['url'], FILTER_SANITIZE_STRING);
-        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_NUMBER_FLOAT);
-
-        $newItem = new Item();
-        $newItem->nom = $nomItem;
-        $newItem->liste_id = $listeId;
-        $newItem->descr = $descr;
-        $newItem->img = $fileName;
-        $newItem->url = $url;
-        $newItem->tarif = $tarif;
-        $newItem->save();
-
-        $notifMsg = urlencode("L'item $newItem->nom a été créé et ajouté dans la liste {$newItem->liste->titre}.");
-        return $rs->withRedirect($base."/item/$newItem->id/view?token={$newItem->liste->token}&notif=$notifMsg");
     }
 
     public function addItem($rq, $rs, $args) {
@@ -86,6 +52,76 @@ class ItemController {
         }
     }
 
+    public function editItem($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('editItem');
+        $url = $base . $route_uri;
+
+        $token = $rq->getQueryParams('token');
+        $idItem = $rq->getQueryParams('id');
+        $typeEdit = $rq->getQueryParams()["type"];
+        $list = Liste::where("token_edit", "=", $token)->first();
+        $item = Item::where("id", "=", $idItem['id'])->first();
+        $user = $list->user;
+
+
+        if (!isset($rq->getQueryParams()['token']) || is_null($list) || !isset($rq->getQueryParams()['id']) || is_null($item) || $list->token_edit != $token["token"]) {
+            $notifMsg = urlencode("L'association token de modification / id ne correspond à aucun item.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights']) || $user->username != $_SESSION['username']) {
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cet item car vous n'en êtes pas le créateur.");
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
+        } else {
+            if ($item->etat_reserv == 1) {
+                $notifMsg = urlencode("Vous ne pouvez pas modifier l'item \"$item->nom\" car quelqu'un l'a réservé.");
+            } else {
+                $content = $rq->getParsedBody();
+
+                switch ($typeEdit) {
+                    case "edit" : {
+                        $nomItem = filter_var($content['nom'], FILTER_SANITIZE_STRING);
+                        $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
+                        $url = filter_var($content['url'], FILTER_SANITIZE_STRING);
+                        $tarif = filter_var($content['tarif'], FILTER_SANITIZE_NUMBER_FLOAT);
+
+                        Item::where('id', '=', $item->id)->update(['nom' => $nomItem]);
+                        Item::where('id', '=', $item->id)->update(['descr' => $descr]);
+                        Item::where('id', '=', $item->id)->update(['url' => $url]);
+                        Item::where('id', '=', $item->id)->update(['tarif' => $tarif]);
+
+                        $notifMsg = urlencode("L'item a été mis à jour.");
+                        break;
+                    }
+                    case "rmImg" : {
+                        is_null($item->img) || $item->img == "" ? : unlink("./img/$item->img");
+                        Item::where('id', '=', $item->id)->update(['img' => ""]);
+
+                        $notifMsg = urlencode("L'image a été supprimée.");
+                        break;
+                    }
+                    case "addImg" : {
+                        $extension = $_FILES['photo']['type'];
+                        $cheminServeur = $_FILES['photo']['tmp_name'];
+                        $fileName = str_replace('image/', time() . "_" . tools::getRandomString() . '.', $extension);
+                        $uploadfile = './img/' . $fileName;
+                        move_uploaded_file($cheminServeur, $uploadfile);
+
+                        Item::where('id', '=', $item->id)->update(['img' => $fileName]);
+
+                        $notifMsg = urlencode("L'image a été ajoutée.");
+                        break;
+                    }
+                    default : {
+                        $notifMsg = urlencode("Le type d'édition est invalide.");
+                        break;
+                    }
+                }
+            }
+            return $rs->withRedirect($base."/item/$item->id/view?token={$item->liste->token}&notif=$notifMsg");
+        }
+    }
+
     public function removeItem($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
@@ -106,7 +142,7 @@ class ItemController {
                 $notifMsg = urlencode("Vous ne pouvez pas supprimer l'item \"$item->nom\" car quelqu'un l'a réservé.");
             } else {
                 $image = $item->img;
-                is_null($image) ? : unlink("./img/$image");
+                is_null($image) || $image == "" ? : unlink("./img/$image");
                 $item->delete();
 
                 $notifMsg = urlencode("L'item \"$item->nom\" a bien été supprimé.");
@@ -151,15 +187,34 @@ class ItemController {
         return $rs;
     }
 
-    public function createItem($rq, $rs, $args) {
+    public function editItemPage($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('formulaireItemCreate');
+        $route_uri = $container->router->pathFor('editItemPage', $args);
         $url = $base . $route_uri;
+
+        $id = $args['id'];
+        $token = $rq->getQueryParams('token');
+        $item = Item::where('id','=',$id)->first();
+        $list = $item->liste;
+        $user = $list->user;
+
+        if (!isset($rq->getQueryParams()['token']) || is_null($list) || is_null($item) || $list->token_edit != $token["token"]) {
+            $notifMsg = urlencode("L'association token de modification / id ne correspond à aucun item.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights']) || $user->username != $_SESSION['username']) {
+            $notifMsg = urlencode("Vous ne pouvez pas modifier cet item car vous n'en êtes pas le créateur.");
+            return $rs->withRedirect($base."/list?notif=$notifMsg");
+        } else {
+            if ($item->etat_reserv == 1) {
+                $notifMsg = urlencode("Vous ne pouvez pas modifier l'item \"$item->nom\" car quelqu'un l'a réservé.");
+                return $rs->withRedirect($base."/item/$item->id/view?token={$item->liste->token}&notif=$notifMsg");
+            }
+        }
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueCreateur([], ItemController::ITEM_FORM_CREATE, $notif);
+        $v = new VueCreateur([$item], ItemController::ITEM_EDIT, $notif);
         $rs->getBody()->write($v->render());
         return $rs;
     }
