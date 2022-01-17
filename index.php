@@ -37,9 +37,6 @@ $app->get('[/]',
         }
     })->setName("home");
 
-
-
-
 /*************************
  * connexion
  *************************/
@@ -80,16 +77,6 @@ $app->get('/logout',
 
     })->setName("logout");
 
-/*************************
- * gestion du compte
- *************************/
-// mon compte
-$app->get('/monCompte',
-    function (Request $rq, Response $rs, $args):Response {
-        $controller = new HomeController($this);
-        return $controller->monComptePage($rq, $rs, $args);
-
-    })->setName("monCompte");
 
 /**
  * reception de donnees
@@ -111,21 +98,62 @@ $app->post('/signupConfirm',
 
     })->setName("signupConfirm");
 
+/*************************
+ * gestion du compte
+ *************************/
+
+/**
+ * pages
+ */
+
+// mon compte
+$app->get('/monCompte',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new HomeController($this);
+        return $controller->monComptePage($rq, $rs, $args);
+
+    })->setName("monCompte");
+// gestion mail 
+$app->get('/changeMail',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new HomeController($this);
+        return $controller->changeMailPage($rq, $rs, $args);
+
+    })->setName("changeMail");
+// gestion mot de passe 
+$app->get('/changePassword',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new HomeController($this);
+        return $controller->changePswPage($rq, $rs, $args);
+
+    })->setName("changePassword");
+// gestion supprimer compte
+$app->get('/deleteAcc',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new HomeController($this);
+        return $controller->DeleteAccPage($rq, $rs, $args);
+
+    })->setName("deleteAcc");
+ /**
+ * reception de donnees
+ */
+
 // changement de mail 
-$app->post('/changeMail',
+$app->post('/changeMail_confirm',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new RegisterController($this);
         return $controller->changeMail($rq, $rs, $args);
 
-})->setName("changeMail");
+})->setName("changeMail_confirm");
 
 // changement de mot de passe
-$app->post('/changePassword',
+$app->post('/changePassword_confirm',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new RegisterController($this);
         return $controller->changePsw($rq, $rs, $args);
 
-})->setName("changePassword");
+})->setName("changePassword_confirm");
+
 
 /*************************
  * gestion listes

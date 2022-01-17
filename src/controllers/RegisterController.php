@@ -118,7 +118,7 @@ class RegisterController{
     public function changeMail($rq, $rs, $args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('changeMail');
+        $route_uri = $container->router->pathFor('changeMail_confirm');
         $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
@@ -138,14 +138,13 @@ class RegisterController{
         } else {
             $notifMsg = 'Erreur : session';
         }
-        
         return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
     }
 
     public function changePsw($rq, $rs, $args){
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('changeMail');
+        $route_uri = $container->router->pathFor('changePassword_confirm');
         $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
@@ -153,18 +152,17 @@ class RegisterController{
         $new_Psw = filter_var($content['newPsw'], FILTER_SANITIZE_STRING);
         $new_Psw_confirm = filter_var($content['newPsw_confirm'], FILTER_SANITIZE_STRING);
 
-
         if (!isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $notifMsg = 'Erreur : session';
+            $notifMsg = urlencode('Erreur : session');
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
         }else if ( strlen($new_Psw) >= self::TAILLE_MDP_MAX) {
-            $notifMsg = 'Erreur : Le mot de passe est trop long !';
+            $notifMsg = urlencode('Erreur : Le mot de passe est trop long !');
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
         }else if ( strlen($new_Psw) <= self::TAILLE_MDP_MIN) {
-            $notifMsg = 'Erreur : Le mot de passe est trop court !';
+            $notifMsg = urlencode('Erreur : Le mot de passe est trop court !');
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
         }else if ($new_Psw != $new_Psw_confirm){
-            $notifMsg = 'Erreur : les deux mots de passe sont différents !';
+            $notifMsg = urlencode('Erreur : les deux mots de passe sont différents !');
             return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
         }else{
             $options =['cost' => 12];
@@ -172,11 +170,41 @@ class RegisterController{
 
             $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
             Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
-            $args[] = "changement de mdp";
+            
+            session_destroy();
+            session_start();
+            $notifMsg = $notifMsg = urlencode("Votre mot de passe a bien été changé.");
 
-            return $this->logout($rq, $rs, $args);
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
     }
+
+    public function changeMailPage($rq, $rs, $args) {
+            $container = $this->c;
+            $base = $rq->getUri()->getBasePath();
+            $route_uri = $container->router->pathFor('login');
+            $url = $base . $route_uri;
+
+            $notif = tools::prepareNotif($rq);
+
+            $v = new VueRegister([], RegisterController::LOGIN, $notif);
+            $rs->getBody()->write($v->render());
+            return $rs;
+    }
+    
+    public function changePswPage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('login');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([], RegisterController::LOGIN, $notif);
+        $rs->getBody()->write($v->render());
+        return $rs;
+}
+
 
     public function loginPage($rq, $rs, $args) {
         $container = $this->c;
@@ -226,11 +254,9 @@ class RegisterController{
 
         session_destroy();
         session_start();
-        if(in_array('changement de mdp',$args)){
-            $notifMsg = urlencode("Votre mot de passe a bien été changé.");
-        }else{
-            $notifMsg = urlencode("Vous avez été déconnecté.");
-        }
+        
+        $notifMsg = urlencode("Vous avez été déconnecté.");
+        
         
         return $rs->withRedirect($base."/login?notif=$notifMsg");
     }

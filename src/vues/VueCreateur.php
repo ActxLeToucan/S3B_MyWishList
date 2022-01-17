@@ -33,6 +33,18 @@ class VueCreateur {
         $file =  "HTML/monCompte.html";
         return file_get_contents($file);
     }
+    private function changeMail() : string {
+        $file =  "HTML/monCompte_mail.html";
+        return file_get_contents($file);
+    }
+    private function changePsw() : string {
+        $file =  "HTML/monCompte_password.html";
+        return file_get_contents($file);
+    }
+    private function deleteAcc() : string {
+        $file =  "HTML/monCompte_supprCompte.html";
+        return file_get_contents($file);
+    }
     private function affichageListes() : string {
         $mesListes = "";
         foreach ($this->tab as $value) {
@@ -282,6 +294,21 @@ class VueCreateur {
             case HomeController::MONCOMPTE : {
                 $htmlPage = $this->monCompte();
                 $title = 'Modification du compte';
+                break;
+            }
+            case HomeController::CHANGEMAIL : {
+                $htmlPage = $this->changeMail();
+                $title = 'Modification du mail';
+                break;
+            }
+            case HomeController::CHANGEPSW : {
+                $htmlPage = $this->changePsw();
+                $title = 'Modification du mot de passe';
+                break;
+            }
+            case HomeController::DELETEACC : {
+                $htmlPage = $this->deleteAcc();
+                $title = 'Suppression du compte';
                 break;
             }
             case ListeController::LIST_FORM_CREATE : {
