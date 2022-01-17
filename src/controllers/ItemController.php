@@ -177,13 +177,13 @@ class ItemController {
             } else {
                 $affichage = ItemController::ITEM_VIEW_OWNER_EN_COURS;
             }
-            $v = new VueCreateur([$item], $affichage, $notif);
+            $v = new VueCreateur([$item], $affichage, $notif, $base);
         } else if ($liste->validee != 1) {
             $notifMsg = urlencode("Cet item n'est pas visible car la liste à laquelle il appartient n'a pas été validée.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         } else {
             $affichage = ItemController::ITEM_VIEW;
-            $v = new VueParticipant([$item], $affichage, $notif);
+            $v = new VueParticipant([$item], $affichage, $notif, $base);
         }
 
         $rs->getBody()->write($v->render());
@@ -217,7 +217,7 @@ class ItemController {
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueCreateur([$item], ItemController::ITEM_EDIT, $notif);
+        $v = new VueCreateur([$item], ItemController::ITEM_EDIT, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }

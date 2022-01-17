@@ -186,7 +186,7 @@ class RegisterController{
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueRegister([], RegisterController::LOGIN, $notif);
+        $v = new VueRegister([], RegisterController::LOGIN, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -199,7 +199,7 @@ class RegisterController{
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueRegister([], RegisterController::SIGNUP, $notif);
+        $v = new VueRegister([], RegisterController::SIGNUP, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -212,7 +212,7 @@ class RegisterController{
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueRegister([], RegisterController::TOKEN, $notif);
+        $v = new VueRegister([], RegisterController::TOKEN, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }

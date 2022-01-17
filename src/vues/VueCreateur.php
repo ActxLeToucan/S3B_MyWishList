@@ -13,11 +13,13 @@ class VueCreateur {
     private $tab;
     private $selecteur;
     private array $notif;
+    private string $base;
 
-    public function __construct(iterable $t, $s, array $n) {
+    public function __construct(iterable $t, $s, array $n, string $b) {
         $this->tab = $t;
         $this->selecteur = $s;
         $this->notif = $n;
+        $this->base = $b;
     }
 
     private function itemCreate() : string {
@@ -310,6 +312,6 @@ class VueCreateur {
                 break;
             }
         }
-        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif);
+        return tools::getHtml($from, $htmlPage, $title, $notif, $content, $this->notif, $this->base);
     }
 }

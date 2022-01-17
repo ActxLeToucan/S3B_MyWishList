@@ -107,11 +107,12 @@ class tools {
      * @param string $title
      * @param string $notif
      * @param string $content
-     * @param array $params
+     * @param array $notifParams
+     * @param string $base
      * @return string
      */
-    #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $params): string {
-        $style = $from != "" ? "<link rel='stylesheet' href='Style/$from'>" : "";
+    #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $notifParams, string $base): string {
+        $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>" : "";
         $html = $htmlPage != "" ? $htmlPage : <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
@@ -121,18 +122,18 @@ class tools {
             </head>
             <body>
             $notif
-            <div class="content">
+            <div class="content" style="margin-top: 300px;">
             $content
             </div>
             </body></html>
         END;
 
-        if (!is_null($params["notif"])) {
-            $texte = $params["notif"];
-            if (is_null($params["link"])) {
+        if (!is_null($notifParams["notif"])) {
+            $texte = $notifParams["notif"];
+            if (is_null($notifParams["link"])) {
                 $html = tools::insertIntoBody($html, tools::messageBox($texte));
             } else {
-                $lien = $params['link'];
+                $lien = $notifParams['link'];
                 $html = tools::insertIntoBody($html, tools::messageBox("<a href='$lien'>$texte</a>"));
             }
         }
