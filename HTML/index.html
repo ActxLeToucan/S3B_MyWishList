@@ -6,16 +6,45 @@
     <link rel="stylesheet" href="Style/indexStyle.css">
 </head>
 <body>
-
+<!--
 <div class="test">
 
     <button class="boutons" onclick="window.location.href = './list';">Liste des Listes de souhaits</button>
     <br>
     <button class="boutons" onclick="window.location.href = './formulaireListe';">Créer une liste</button>
 
-
-
 </div>
+-->
+<nav id="navbar" class="">
+    <div class="nav-wrapper">
+        <!-- Navbar Logo -->
+        <div class="logo">
+            <!-- Logo Placeholder for Inlustration -->
+            <a href="./"> MyWishList</a>
+        </div>
+
+
+        <ul id="menu">
+            <li><a href="./list">Les listes</a></li>
+            <li><a href="./formulaireListe">Créer ma liste</a></li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+
+    window.addEventListener("load", () => {
+        const idLi1 = document.getElementById('L1');
+        const idLi2 = document.getElementById('L2');
+        const ul = document.getElementById('menu');
+        ul.appendChild(idLi2);
+        ul.appendChild(idLi1);
+    });
+
+
+
+</script>
 
 </body>
+
 </html>

@@ -39,7 +39,7 @@ class ListeController {
             $user = Authenticate::where('username','=',$_SESSION['username'])->first();
             $lists = Liste::where('user_id','=',$user->id)->get();
 
-            $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif);
+            $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif, $base);
         } else {
             $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
             return $rs->withRedirect($base."/login?notif=$notifMsg");
@@ -61,12 +61,12 @@ class ListeController {
         $notif = tools::prepareNotif($rq);
 
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights']) && $user->username == $_SESSION['username']) {
-            $v = new VueCreateur([$liste], ListeController::LIST_VIEW, $notif);
+            $v = new VueCreateur([$liste], ListeController::LIST_VIEW, $notif, $base);
         } else if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
             $notifMsg = urlencode("La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         } else {
-            $v = new VueParticipant([$liste], ListeController::LIST_VIEW, $notif);
+            $v = new VueParticipant([$liste], ListeController::LIST_VIEW, $notif, $base);
         }
 
         $rs->getBody()->write($v->render());
@@ -96,7 +96,7 @@ class ListeController {
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueCreateur([$liste], ListeController::LIST_EDIT, $notif);
+        $v = new VueCreateur([$liste], ListeController::LIST_EDIT, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -185,7 +185,7 @@ class ListeController {
             return $rs->withRedirect($base."/login?notif=$notifMsg");
         }
 
-        $v = new VueCreateur([], ListeController::LIST_FORM_CREATE, $notif);
+        $v = new VueCreateur([], ListeController::LIST_FORM_CREATE, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs ;
     }

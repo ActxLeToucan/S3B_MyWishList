@@ -29,7 +29,7 @@ class HomeController {
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueHome([], HomeController::HOME, $notif);
+        $v = new VueHome([], HomeController::HOME, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }
@@ -41,7 +41,7 @@ class HomeController {
 
         $notif = tools::prepareNotif($rq);
 
-        $v = new VueCreateur([], HomeController::MONCOMPTE, $notif);
+        $v = new VueCreateur([], HomeController::MONCOMPTE, $notif, $base);
         $rs->getBody()->write($v->render());
 
         return $rs;

@@ -2,37 +2,57 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="Style/FormItemStyle.css">
+    <link rel="stylesheet" href="Style/indexStyle.css">
     <meta charset="UTF-8">
     <title>Nouvelle liste</title>
 </head>
 <body>
 
-<form action="./newListe" method="post" enctype="multipart/form-data">
+<nav id="navbar" class="">
+    <div class="nav-wrapper">
+        <!-- Navbar Logo -->
+        <div class="logo">
+            <!-- Logo Placeholder for Inlustration -->
+            <a href="./"> MyWishList</a>
+        </div>
 
-    <div class="nom">
-        <label for="nom">Nom de la liste :</label>
-        <input type="text" id="nom" name="nom" required>
+
+        <ul id="menu">
+            <li><a href="./list">Les listes</a></li>
+            <li><a href="./formulaireListe">Créer ma liste</a></li>
+
+        </ul>
     </div>
-
-    <br>
-
-    <div class="description">
-        <label for="descr">Description de la liste :</label>
-        <textarea id="descr" name="descr"></textarea>
-    </div>
-
-    <br>
-
-    <div class="date">
-        <label for="dateExp">Date d'expiration :</label>
-        <input type="date" id="dateExp" name="dateExp" required>
-    </div>
-
-    <br>
-
-    <button type="submit">Créer la liste</button>
+</nav>
+<div class="content">
+    <form action="./newListe" method="post" enctype="multipart/form-data">
 
 
-</form>
+        <div class="nom">
+            <label for="nom">Nom de la liste :</label>
+            <input type="text" id="nom" name="nom" required>
+        </div>
+
+        <br>
+
+        <div class="description">
+            <label for="descr">Description de la liste :</label>
+            <textarea id="descr" name="descr"></textarea>
+        </div>
+
+        <br>
+
+        <div class="date">
+            <label for="dateExp">Date d'expiration :</label>
+            <input type="date" id="dateExp" name="dateExp" required>
+        </div>
+
+        <br>
+
+        <button type="submit">Créer la liste</button>
+
+    </form>
+</div>
+
 </body>
 </html>

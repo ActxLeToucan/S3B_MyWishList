@@ -45,8 +45,8 @@ class tools {
         </script>
         <style>
         #notif-box {
-            top:18px;
-            right:84px;
+            top:100px;
+            right:20px;
             position:fixed;
             z-index:300;
         }
@@ -107,32 +107,49 @@ class tools {
      * @param string $title
      * @param string $notif
      * @param string $content
-     * @param array $params
+     * @param array $notifParams
+     * @param string $base
      * @return string
      */
-    #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $params): string {
-        $style = $from != "" ? "<link rel='stylesheet' href='Style/$from'>" : "";
+    #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $notifParams, string $base): string {
+        $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>" : "";
         $html = $htmlPage != "" ? $htmlPage : <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
+                <link rel="stylesheet" href="$base/Style/indexStyle.css">
                 <title>$title</title>
                 $style
             </head>
             <body>
             $notif
+            <nav id="navbar" class="">
+                <div class="nav-wrapper">
+                    <!-- Navbar Logo -->
+                    <div class="logo">
+                        <!-- Logo Placeholder for Inlustration -->
+                        <a href="$base/"> MyWishList</a>
+                    </div>
+            
+            
+                    <ul id="menu">
+                        <li><a href="$base/list">Les listes</a></li>
+                        <li><a href="$base/formulaireListe">Créer ma liste</a></li>
+                    </ul>
+                </div>
+            </nav>
             <div class="content">
             $content
             </div>
             </body></html>
         END;
 
-        if (!is_null($params["notif"])) {
-            $texte = $params["notif"];
-            if (is_null($params["link"])) {
+        if (!is_null($notifParams["notif"])) {
+            $texte = $notifParams["notif"];
+            if (is_null($notifParams["link"])) {
                 $html = tools::insertIntoBody($html, tools::messageBox($texte));
             } else {
-                $lien = $params['link'];
+                $lien = $notifParams['link'];
                 $html = tools::insertIntoBody($html, tools::messageBox("<a href='$lien'>$texte</a>"));
             }
         }
