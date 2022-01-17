@@ -45,8 +45,8 @@ class tools {
         </script>
         <style>
         #notif-box {
-            top:18px;
-            right:84px;
+            top:100px;
+            right:20px;
             position:fixed;
             z-index:300;
         }
@@ -117,12 +117,28 @@ class tools {
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
+                <link rel="stylesheet" href="$base/Style/indexStyle.css">
                 <title>$title</title>
                 $style
             </head>
             <body>
             $notif
-            <div class="content" style="margin-top: 300px;">
+            <nav id="navbar" class="">
+                <div class="nav-wrapper">
+                    <!-- Navbar Logo -->
+                    <div class="logo">
+                        <!-- Logo Placeholder for Inlustration -->
+                        <a href="$base/"> MyWishList</a>
+                    </div>
+            
+            
+                    <ul id="menu">
+                        <li><a href="$base/list">Les listes</a></li>
+                        <li><a href="$base/formulaireListe">Créer ma liste</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="content">
             $content
             </div>
             </body></html>
