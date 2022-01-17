@@ -55,9 +55,12 @@ class VueCreateur {
         $listesPubliques = "";
 
         return <<<END
-        <h1>Mes listes</h1>
+        <h1>Mes listes crées :</h1>
+        <br>
         <section><ul>$mesListes</ul></section>
+        <br>
         <h1>Listes publiques</h1>
+        <br>
         <section><ul>$listesPubliques</ul></section>
         END;
     }
@@ -281,11 +284,14 @@ class VueCreateur {
             case ListeController::LISTS_VIEW : {
                 $content = $this->affichageListes();
                 $title = 'Listes';
+                $from = "LesListesStyle.css";
                 break;
             }
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
+                $from = 'ListeInfoStyle.css';
+
                 break;
             }
             case ItemController::ITEM_FORM_CREATE : {
@@ -335,7 +341,7 @@ class VueCreateur {
             }
             case ItemController::ITEM_EDIT : {
                 $content = $this->editItem();
-                $from = "FormItemStyle.css";
+                $from = "FormItemStyle.scss";
 
                 $title = "Modification item";
                 break;

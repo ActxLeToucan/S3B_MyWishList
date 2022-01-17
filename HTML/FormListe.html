@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="Style/FormItemStyle.css">
+    <link rel="stylesheet" href="Style/FormItemStyle.scss">
     <link rel="stylesheet" href="Style/indexStyle.css">
     <meta charset="UTF-8">
     <title>Nouvelle liste</title>
@@ -24,6 +24,7 @@
         </ul>
     </div>
 </nav>
+<!--
 <div class="content">
     <form action="./newListe" method="post" enctype="multipart/form-data">
 
@@ -53,6 +54,34 @@
 
     </form>
 </div>
+-->
+
+<div class="formulaire">
+    <form action="./newListe" method="post" enctype="multipart/form-data">
+
+        <input id="input-1" type="text" name="nom" required autofocus />
+        <label for="input-1">
+            <span class="label-text">Nom de la liste</span>
+            <span class="nav-dot"></span>
+            <div class="signup-button-trigger">Sign Up</div>
+        </label>
+        <input id="input-2" name="descr" required />
+        <label for="input-2">
+            <span class="label-text">Description</span>
+            <span class="nav-dot"></span>
+        </label>
+        <input id="input-3" type="date" name="dateExp" required />
+        <label for="input-3">
+            <span class="label-text">Date d'expiration</span>
+            <span class="nav-dot"></span>
+        </label>
+        <button type="submit" >Créer la liste</button>
+        <p class="tip">Press Tab</p>
+        <div class="signup-button">Créer ma liste</div>
+    </form>
+</div>
+
+
 
 </body>
 </html>

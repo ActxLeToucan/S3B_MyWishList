@@ -8,7 +8,7 @@
 body{
     margin: 0;
     padding: 0;
-    background: linear-gradient(120deg, #2b3033, #514e52);
+    background: #2B3033FF;
     height: 100vh;
     overflow: hidden;
 }
@@ -26,7 +26,6 @@ body{
     text-align: center;
     padding: 20px 0;
     border-bottom: 1px solid silver;
-
 }
 .center form{
     padding: 0 40px;
@@ -63,13 +62,13 @@ form .txt_field{
     left: 0;
     width: 0;
     height: 2px;
-    background: #2b3033;
+    background: #44907AFF;
     transition: .5s;
 }
 .txt_field input:focus ~ label,
 .txt_field input:valid ~ label{
     top: -10px;
-    color: #2b3033;
+    color: #44907AFF;
 }
 .txt_field input:focus ~ span::before,
 .txt_field input:valid ~ span::before{
@@ -97,7 +96,7 @@ input[type="submit"]{
 }
 input[type="submit"]:hover{
     transition: .5s;
-    background-color: #0E0E10;
+    background-color: #44907AFF;
 
 }
 .signup_link{
@@ -107,7 +106,7 @@ input[type="submit"]:hover{
     color: #666666;
 }
 .signup_link a{
-    color: #252526;
+    color: #44907a;
     text-decoration: none;
 }
 .signup_link a:hover{
