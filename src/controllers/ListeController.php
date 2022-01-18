@@ -160,10 +160,11 @@ class ListeController {
             $newListe->description = $descr;
             $newListe->expiration = $exp;
             $newListe->token = $token;
+            $newListe->token_edit = tools::generateToken();
             $newListe->user_id = $user->id;
             $newListe->save();
 
-            $liste = Liste::where('token_edit','=',$token)->first();
+            $liste = Liste::where('token','=',$token)->first();
             $notifMsg = urlencode("Liste créée !");
             return $rs->withRedirect($base."/list/view?token=$liste->token&notif=$notifMsg");
         } else {
