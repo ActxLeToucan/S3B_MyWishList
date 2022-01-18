@@ -137,12 +137,12 @@ $app->get('/changePassword',
     })->setName("changePassword");
 
 // gestion supprimer compte
-$app->get('/deleteAcc',
+$app->get('/deleteAccount',
     function (Request $rq, Response $rs, $args):Response {
         $controller = new RegisterController($this);
-        return $controller->DeleteAccPage($rq, $rs, $args);
+        return $controller->deleteAccountPage($rq, $rs, $args);
 
-    })->setName("deleteAcc");
+    })->setName("deleteAccountPage");
 
 
  /**
@@ -164,6 +164,13 @@ $app->post('/changePasswordConfirm',
         return $controller->changePsw($rq, $rs, $args);
 
 })->setName("changePasswordConfirm");
+
+// reception suppression compte
+$app->post('/deleteAccountConfirm',
+    function (Request $rq, Response $rs, $args) : Response {
+        $controller = new RegisterController($this);
+        return $controller->deleteAccount($rq, $rs, $args);
+    })->setName('delAccConfirm');
 
 
 

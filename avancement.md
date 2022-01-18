@@ -116,7 +116,7 @@ images.
 * ✅ Le upload de fichiers sensibles (PHP ou autres) est rendu impossible
 
 ## 25 Créer un compte participant
-* 🔶 La création d'un compte peut aussi être utile aux participants afin de consulter les
+* ✅ La création d'un compte peut aussi être utile aux participants afin de consulter les
 participations qu'ils ont saisies et de ne plus saisir leur nom lors d'une participation
 
 ## 26 Afficher la liste des créateurs
@@ -124,8 +124,8 @@ participations qu'ils ont saisies et de ne plus saisir leur nom lors d'une parti
 publique active jointe à leur compte.
 
 ## 27 Supprimer son compte
-* Tous les utilisateurs enregistrés peuvent supprimer leur compte
-* La suppression de son compte entraîne la suppression des listes, des items et images, des
+* ✅ Tous les utilisateurs enregistrés peuvent supprimer leur compte
+* ✅ La suppression de son compte entraîne la suppression des listes, des items et images, des
 participations uniquement avant échéance et de tous les messages
 
 ## 28 Joindre des listes à son compte

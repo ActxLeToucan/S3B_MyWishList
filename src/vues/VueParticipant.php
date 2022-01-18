@@ -33,7 +33,7 @@ class VueParticipant {
         }
         $messages = "";
         foreach ($msgs as $message) {
-            $author = (is_null($message->id_user) ? $message->pseudo : $message->user->username);
+            $author = ($message->id_user == 0 ? $message->pseudo : $message->user->username);
             $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
         }
         $username = "";

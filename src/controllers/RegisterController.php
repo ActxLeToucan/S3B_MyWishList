@@ -3,6 +3,9 @@
 namespace wishlist\controllers;
 
 use wishlist\models\Authenticate;
+use wishlist\models\Item;
+use wishlist\models\Liste;
+use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueRegister;
 
@@ -14,7 +17,7 @@ class RegisterController{
     const MONCOMPTE = 'monCompte';
     const CHANGEMAIL = 'changeMail';
     const CHANGEPSW = 'changePsw';
-    const DELETEACC = 'deleteAcc';
+    const DELETE_ACCOUNT = 'deleteAcc';
     const TAILLE_USERNAME_MIN = 4;
     const TAILLE_USERNAME_MAX = 100;
     const TAILLE_MDP_MIN = 8;
@@ -257,7 +260,7 @@ class RegisterController{
         return $rs;
     }
 
-    public function changePsw($rq, $rs, $args){
+    public function changePsw($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('changePasswordConfirm');
@@ -299,6 +302,90 @@ class RegisterController{
 
             $notifMsg = $notifMsg = urlencode("Votre mot de passe a été modifié. Reconnectez-vous.");
             return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+    }
+
+    public function deleteAccountPage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('deleteAccountPage');
+        $url = $base . $route_uri;
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([$user], RegisterController::DELETE_ACCOUNT, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function deleteAccount($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('delAccConfirm');
+        $url = $base . $route_uri;
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $content = $rq->getParsedBody();
+
+        $confirmation = (isset($content['confirm']) && filter_var($content['confirm'], FILTER_SANITIZE_NUMBER_INT) == 1 ? 1 : 0);
+        if ($confirmation != 1) {
+            $notifMsg = urlencode("Cochez la case pour supprimer votre compte.");
+            return $rs->withRedirect($base."/deleteAccount?notif=$notifMsg");
+        } else {
+            $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+            $lists = Liste::where("user_id", "=", $user->id)->get();
+            foreach ($lists as $list) {
+                $items = $list->items;
+                foreach ($items as $item) {
+                    $image = $item->img;
+                    is_null($image) || $image == "" ? : unlink("./img/$image");
+                    $item->delete();
+                }
+                $messages = $list->messages;
+                foreach ($messages as $message) {
+                    $message->delete();
+                }
+                $list->delete();
+            }
+
+            $mesMessages = Message::where("id_user", "=", $user->id)->get();
+            foreach ($mesMessages as $monMessage) {
+                $monMessage->delete();
+            }
+
+            $mesReservations = Item::where("reserv_par", "=", $user->id)->get();
+            foreach ($mesReservations as $maReservation) {
+                $l = $maReservation->liste;
+                if ((strtotime($l->expiration) < strtotime(date("Y-m-d")))) {
+                    // liste expiree
+                    $maReservation->update(["pseudo" => $user->username]);
+                } else {
+                    // liste toujours en cours
+                    $maReservation->update(["etat_reserv" => 0]);
+                    $maReservation->update(["msg_reserv" => ""]);
+                }
+                $maReservation->update(["reserv_par" => 0]);
+            }
+
+            $user->delete();
+
+            session_destroy();
+            session_start();
+
+            $notifMsg = urlencode("Votre compte a bien été supprimé.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
         }
     }
 

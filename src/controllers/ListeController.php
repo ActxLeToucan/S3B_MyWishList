@@ -205,7 +205,7 @@ class ListeController {
             $msg->id_user = $user->id;
             $msg->pseudo = null;
         } else {
-            $msg->id_user = null;
+            $msg->id_user = 0;
             $msg->pseudo = filter_var($content['pseudo'], FILTER_SANITIZE_STRING);
         }
         $msg->texte = filter_var($content['texte'], FILTER_SANITIZE_STRING);

@@ -121,6 +121,21 @@ class VueRegister{
         END;
     }
 
+    private function deleteAccount() : string {
+        return <<<END
+        <form action="./deleteAccountConfirm" method="post" enctype="multipart/form-data">
+            <div class="confirm">
+                <input type="checkbox" id="confirm" name="confirm" value="1" />
+                <label for="confirm"> Je confirme vouloir supprimer mon compte définitivement ainsi que toutes les listes et items associés.</label>
+            </div>
+            
+            <br />
+        
+            <button type="submit">Supprimer mon compte</button>
+        </form>
+        END;
+    }
+
     public function render() : string {
         $from = "";
         $htmlPage = "";
@@ -153,6 +168,11 @@ class VueRegister{
             case RegisterController::CHANGEPSW : {
                 $content = $this->changePass();
                 $title = "Changement mot de passe";
+                break;
+            }
+            case RegisterController::DELETE_ACCOUNT : {
+                $content = $this->deleteAccount();
+                $title = "Supprimer mon compte";
                 break;
             }
         }
