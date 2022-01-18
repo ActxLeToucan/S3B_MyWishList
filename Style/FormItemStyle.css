@@ -24,7 +24,8 @@ input {
 input::selection {
     background: rgb(68, 144, 122);
 }
-button, .signup-button {
+
+button, .create-button {
     padding: 0.25em 0;
     border: 0;
     outline: 0;
@@ -54,7 +55,7 @@ input:focus ~ label .label-text {
 input:focus ~ .tip {
     opacity: 1;
 }
-input:focus ~ .signup-button, button:focus ~ .signup-button {
+input:focus ~ .create-button, button:focus ~ .create-button {
     opacity: 0;
 }
 input:focus + label .label-text {
@@ -81,7 +82,7 @@ input:focus + label .nav-dot:before {
     text-align: right;
     transition: opacity 0.25s 0.5s;
 }
-.signup-button, .signup-button-trigger {
+.create-button, .creation-button-trigger {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -94,7 +95,7 @@ input:focus + label .nav-dot:before {
     cursor: pointer;
     transition: opacity 0.4s 0.3s;
 }
-.signup-button-trigger {
+.creation-button-trigger {
     opacity: 0;
     pointer-events: auto;
 }
@@ -152,9 +153,7 @@ label[for="input-3"] .nav-dot {
 label[for="input-4"] .nav-dot {
     margin-top: -50px;
 }
-label[for="input-5"] .nav-dot {
-    margin-top: -25px;
-}
+
 * {
     margin: 0;
     padding: 0;

@@ -24,37 +24,7 @@
         </ul>
     </div>
 </nav>
-<!--
-<div class="content">
-    <form action="./newListe" method="post" enctype="multipart/form-data">
 
-
-        <div class="nom">
-            <label for="nom">Nom de la liste :</label>
-            <input type="text" id="nom" name="nom" required>
-        </div>
-
-        <br>
-
-        <div class="description">
-            <label for="descr">Description de la liste :</label>
-            <textarea id="descr" name="descr"></textarea>
-        </div>
-
-        <br>
-
-        <div class="date">
-            <label for="dateExp">Date d'expiration :</label>
-            <input type="date" id="dateExp" name="dateExp" required>
-        </div>
-
-        <br>
-
-        <button type="submit">Créer la liste</button>
-
-    </form>
-</div>
--->
 
 <div class="formulaire">
     <form action="./newListe" method="post" enctype="multipart/form-data">
@@ -63,7 +33,7 @@
         <label for="input-1">
             <span class="label-text">Nom de la liste</span>
             <span class="nav-dot"></span>
-            <div class="signup-button-trigger">Sign Up</div>
+            <div class="creation-button-trigger">Sign Up</div>
         </label>
         <input id="input-2" name="descr" required />
         <label for="input-2">
@@ -75,9 +45,12 @@
             <span class="label-text">Date d'expiration</span>
             <span class="nav-dot"></span>
         </label>
-        <button type="submit" >Créer la liste</button>
+        <label for="input-4">
+        <button id="input-4" type="submit" >Créer la liste</button>
         <p class="tip">Press Tab</p>
-        <div class="signup-button">Créer ma liste</div>
+        <span class="nav-dot"></span>
+        </label>
+        <div class="create-button">Créer ma liste</div>
     </form>
 </div>
 
