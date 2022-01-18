@@ -11,6 +11,10 @@ class RegisterController{
     const LOGIN = 'login';
     const SIGNUP = 'signUp';
     const TOKEN = 'token';
+    const MONCOMPTE = 'monCompte';
+    const CHANGEMAIL = 'changeMail';
+    const CHANGEPSW = 'changePsw';
+    const DELETEACC = 'deleteAcc';
     const TAILLE_USERNAME_MIN = 4;
     const TAILLE_USERNAME_MAX = 100;
     const TAILLE_MDP_MIN = 8;
@@ -30,19 +34,17 @@ class RegisterController{
      */
 
     public function newUser($rq, $rs, $args)  {
-        
-
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('signupConfirm');
         $url = $base . $route_uri;
         $content = $rq->getParsedBody();
 
-        $NomUtilisateur = $content['username'];
+        $NomUtilisateur = filter_var($content['username'], FILTER_SANITIZE_STRING);
         $MotDePasse = $content['password'];
-        $options =['cost' => 12];
+        $options = ['cost' => 12];
         $MotDePasseConfirm = $content['password_confirm'];
-        $Email=$content['email'];
+        $Email = filter_var($content['email'], FILTER_SANITIZE_EMAIL);
 
         $userNameExist = Authenticate::where("username", "=", $NomUtilisateur)->count();
 
@@ -113,98 +115,7 @@ class RegisterController{
 
         $notifMsg = urlencode("Mot de passe ou nom d'utilisateur incorrect.");
         return $rs->withRedirect($base."/login?notif=$notifMsg");
-    }   
-
-    public function changeMail($rq, $rs, $args){
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('changeMail_confirm');
-        $url = $base . $route_uri;
-
-        $content = $rq->getParsedBody();
-
-        $new_mail = filter_var($content['newMail'], FILTER_SANITIZE_STRING);
-        $new_mail_confirm = filter_var($content['newMail_confirm'], FILTER_SANITIZE_STRING);
-
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
-
-            if($new_mail == $new_mail_confirm){
-                Authenticate::where("id", "=", $user->id)->update(['email' => $new_mail]);
-                $notifMsg = 'Votre email a bien été changé en :'.$new_mail;
-            }else{
-                $notifMsg = 'Erreur : les deux adresses mails sont différentes !';
-            }
-        } else {
-            $notifMsg = 'Erreur : session';
-        }
-        return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
     }
-
-    public function changePsw($rq, $rs, $args){
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('changePassword_confirm');
-        $url = $base . $route_uri;
-
-        $content = $rq->getParsedBody();
-
-        $new_Psw = filter_var($content['newPsw'], FILTER_SANITIZE_STRING);
-        $new_Psw_confirm = filter_var($content['newPsw_confirm'], FILTER_SANITIZE_STRING);
-
-        if (!isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $notifMsg = urlencode('Erreur : session');
-            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else if ( strlen($new_Psw) >= self::TAILLE_MDP_MAX) {
-            $notifMsg = urlencode('Erreur : Le mot de passe est trop long !');
-            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else if ( strlen($new_Psw) <= self::TAILLE_MDP_MIN) {
-            $notifMsg = urlencode('Erreur : Le mot de passe est trop court !');
-            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else if ($new_Psw != $new_Psw_confirm){
-            $notifMsg = urlencode('Erreur : les deux mots de passe sont différents !');
-            return $rs->withRedirect($base."/monCompte?notif=$notifMsg");
-        }else{
-            $options =['cost' => 12];
-            $new_Psw = password_hash($new_Psw, PASSWORD_DEFAULT,$options);
-
-            $user = Authenticate::where("username", "=", $_SESSION["username"])->first();
-            Authenticate::where("id", "=", $user->id)->update(['password' => $new_Psw]);
-            
-            session_destroy();
-            session_start();
-            $notifMsg = $notifMsg = urlencode("Votre mot de passe a bien été changé.");
-
-            return $rs->withRedirect($base."/login?notif=$notifMsg");
-        }
-    }
-
-    public function changeMailPage($rq, $rs, $args) {
-            $container = $this->c;
-            $base = $rq->getUri()->getBasePath();
-            $route_uri = $container->router->pathFor('login');
-            $url = $base . $route_uri;
-
-            $notif = tools::prepareNotif($rq);
-
-            $v = new VueRegister([], RegisterController::LOGIN, $notif);
-            $rs->getBody()->write($v->render());
-            return $rs;
-    }
-    
-    public function changePswPage($rq, $rs, $args) {
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('login');
-        $url = $base . $route_uri;
-
-        $notif = tools::prepareNotif($rq);
-
-        $v = new VueRegister([], RegisterController::LOGIN, $notif);
-        $rs->getBody()->write($v->render());
-        return $rs;
-}
-
 
     public function loginPage($rq, $rs, $args) {
         $container = $this->c;
@@ -259,6 +170,136 @@ class RegisterController{
         
         
         return $rs->withRedirect($base."/login?notif=$notifMsg");
+    }
+
+    public function monComptePage ($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('monCompte');
+        $url = $base . $route_uri;
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([$user], RegisterController::MONCOMPTE, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function changeMailPage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMailPage');
+        $url = $base . $route_uri;
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([$user], RegisterController::CHANGEMAIL, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function changeMail($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changeMailConfirm');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $email1 = filter_var($content['email'], FILTER_SANITIZE_EMAIL);
+        $email2 = filter_var($content['email_confirm'], FILTER_SANITIZE_EMAIL);
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        } else if ($email1 != $email2) {
+            $notifMsg = urlencode("Les adresses email ne correspondent pas. Réessayez.");
+            return $rs->withRedirect($base . "/changeMail?notif=$notifMsg");
+        }
+
+        Authenticate::where("username", "=", $_SESSION['username'])->update(['email' => $email1]);
+
+        $notifMsg = urlencode("Votre adresse mail a bien été modifiée en \"$email1\".");
+        return $rs->withRedirect($base . "/monCompte?notif=$notifMsg");
+    }
+
+    public function changePswPage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changePassword');
+        $url = $base . $route_uri;
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+        $notif = tools::prepareNotif($rq);
+
+        $v = new VueRegister([$user], RegisterController::CHANGEPSW, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
+
+    public function changePsw($rq, $rs, $args){
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('changePasswordConfirm');
+        $url = $base . $route_uri;
+
+        $content = $rq->getParsedBody();
+
+        $oldpass = $content['oldpass'];
+        $newPass1 = $content['newpass1'];
+        $newPass2 = $content['newpass2'];
+
+        if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
+            $notifMsg = urlencode("Vous devez être connecté pour accéder à cette page.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
+
+        $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
+
+        if (strlen($newPass1) < self::TAILLE_MDP_MIN) {
+            $notifMsg = urlencode("Ce mot de passe est trop court. Réessayez.");
+            return $rs->withRedirect($base."/changePassword?notif=$notifMsg");
+        } else if (strlen($newPass1) > self::TAILLE_MDP_MAX) {
+            $notifMsg = urlencode("Ce mot de passe est trop long. Réessayez.");
+            return $rs->withRedirect($base."/changePassword?notif=$notifMsg");
+        } else if ($newPass1 != $newPass2) {
+            $notifMsg = urlencode("Les mots de passe ne correspondent pas. Réessayez.");
+            return $rs->withRedirect($base."/changePassword?notif=$notifMsg");
+        } else if (!password_verify($oldpass, $user->password)) {
+            $notifMsg = urlencode("Mot de passe incorrect.");
+            return $rs->withRedirect($base."/changePassword?notif=$notifMsg");
+        } else {
+            $options = ['cost' => 12];
+            $newHash = password_hash($newPass2, PASSWORD_DEFAULT, $options);
+
+            Authenticate::where("id", "=", $user->id)->update(['password' => $newHash]);
+
+            session_destroy();
+            session_start();
+
+            $notifMsg = $notifMsg = urlencode("Votre mot de passe a été modifié. Reconnectez-vous.");
+            return $rs->withRedirect($base."/login?notif=$notifMsg");
+        }
     }
 
     /**
