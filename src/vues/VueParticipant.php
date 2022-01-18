@@ -111,6 +111,7 @@ class VueParticipant {
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
+                $from = "LesListesStyle.css";
                 break;
             }
             case ItemController::ITEMS_VIEW : {
