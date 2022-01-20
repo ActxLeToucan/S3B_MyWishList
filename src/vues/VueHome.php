@@ -21,7 +21,21 @@ class VueHome {
     private function home() : string {
         $user = $_SESSION['username'] ?? "";
         $file =  "HTML/index.html";
+
+
         return tools::insertIntoBody(file_get_contents($file), "<li id='L1'> <a href='logout'>Se déconnecter</a> </li> <li id='L2'>  <a href='monCompte'> 👤 $user </a>  </li>");
+    }
+
+    private function listespubliques() :string{
+        $listesPubliques = "";
+        foreach ($this->tab as $value) {
+            $listesPubliques= $listesPubliques . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
+        }
+        return <<<END
+        <h1>Listes publiques</h1>
+        <br>
+        <section><ul>$listesPubliques</ul></section>
+        END;
     }
 
     public function render() : string {
@@ -32,7 +46,8 @@ class VueHome {
         $content = "";
         switch ($this->selecteur) {
             case HomeController::HOME : {
-                $htmlPage = $this->home();
+                //$htmlPage = $this->home();
+                $content =$this->listespubliques();
                 $title = 'MyWishList - Accueil';
                 break;
             }

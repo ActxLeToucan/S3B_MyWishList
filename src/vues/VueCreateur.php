@@ -183,6 +183,11 @@ class VueCreateur {
                 <label for="validee"> Rendre la liste visible</label>
             </div>
             
+            <div class="liste_publique">
+                <input type="checkbox" id="publique" name="publique" value="1" $listeVisible />
+                <label for="publique"> Rendre la liste publique</label>
+            </div>
+            
             <br />
         
             <button type="submit">Valider les changements sur cette liste</button>

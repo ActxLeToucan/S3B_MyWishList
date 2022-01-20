@@ -7,6 +7,7 @@ use wishlist\models\Liste;
 use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
+use wishlist\vues\VueHome;
 use wishlist\vues\VueParticipant;
 
 class ListeController {
@@ -24,6 +25,25 @@ class ListeController {
         $this->c = $c;
     }
 
+    /**
+     * Affiche de la page home
+     */
+
+
+    public function getHomePage($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('home');
+        $url = $base . $route_uri;
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where('username','=',$_SESSION['username'])->first();
+            $lists = Liste::where('publique','=',1)->orderBy('expiration','ASC')->get();
+        }
+        $notif = tools::prepareNotif($rq);
+        $v = new VueHome($lists, HomeController::HOME, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
     /**
      * pour qqn connecté
      */
@@ -47,7 +67,24 @@ class ListeController {
         $rs->getBody()->write($v->render());
         return $rs;
     }
+    public function getListePublic($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('Listes');
+        $url = $base . $route_uri;
 
+        $notif = tools::prepareNotif($rq);
+
+        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+            $user = Authenticate::where('username','=',$_SESSION['username'])->first();
+            $lists = Liste::where('publique','=',1)->get();
+
+            $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif, $base);
+        } else {
+        }
+        $rs->getBody()->write($v->render());
+        return $rs;
+    }
     public function getListByToken($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
@@ -127,11 +164,14 @@ class ListeController {
             $descr = filter_var($content['descr'], FILTER_SANITIZE_STRING);
             $exp = filter_var($content['dateExp'], FILTER_SANITIZE_STRING);
             $validee = (isset($content['validee']) && filter_var($content['validee'], FILTER_SANITIZE_NUMBER_INT) == 1 ? 1 : 0);
+            $publique = (isset($content['publique']) && filter_var($content['publique'], FILTER_SANITIZE_NUMBER_INT) == 1 ? 1 : 0);
+
 
             Liste::where('token_edit', '=', $token)->update(['titre' => $titre]);
             Liste::where('token_edit', '=', $token)->update(['description' => $descr]);
             Liste::where('token_edit', '=', $token)->update(['expiration' => $exp]);
             Liste::where('token_edit', '=', $token)->update(['validee' => $validee]);
+            Liste::where('token_edit', '=', $token)->update(['publique' => $publique]);
 
             $liste = Liste::where('token_edit','=',$token)->first();
             $notifMsg = urlencode("La liste a été mise à jour.");

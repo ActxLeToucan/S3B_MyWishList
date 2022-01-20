@@ -29,8 +29,9 @@ $app = new App(dbInit::init());
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $controller = new HomeController($this);
+            $controller = new ListeController($this);
             return $controller->getHomePage($rq, $rs, $args);
+
         } else {
             $controller = new RegisterController($this);
             return $controller->loginPage($rq, $rs, $args);
