@@ -113,6 +113,14 @@ class tools {
      */
     #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $notifParams, string $base): string {
         $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>" : "";
+        $connexion = !isset($_SESSION['username'])
+            ? "<li><a href='$base/login'>Connexion</a></li>"
+            : <<<END
+            <li><a href="$base/list">Mes listes</a></li>
+            <li><a href='monCompte'>👤 {$_SESSION['username']}</a></li>
+            <li><a href='$base/logout'>Se déconnecter</a></li>"
+            END;
+
         $html = $htmlPage != "" ? $htmlPage : <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
@@ -133,8 +141,9 @@ class tools {
             
             
                     <ul id="menu">
-                        <li><a href="$base/list">Les listes</a></li>
                         <li><a href="$base/formulaireListe">Créer ma liste</a></li>
+                        <li><a href="$base/token">Trouer une liste avec un token</a></li>
+                        $connexion
                     </ul>
                 </div>
             </nav>

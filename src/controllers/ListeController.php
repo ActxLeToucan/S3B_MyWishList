@@ -7,7 +7,6 @@ use wishlist\models\Liste;
 use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
-use wishlist\vues\VueHome;
 use wishlist\vues\VueParticipant;
 
 class ListeController {
@@ -15,6 +14,7 @@ class ListeController {
     const LIST_VIEW = 'list_view';
     const LIST_FORM_CREATE = 'list_form_create';
     const LIST_EDIT = 'list_edit';
+    const PUBLIC = "public";
 
     private $c;
 
@@ -28,22 +28,20 @@ class ListeController {
     /**
      * Affiche de la page home
      */
-
-
     public function getHomePage($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('home');
         $url = $base . $route_uri;
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $user = Authenticate::where('username','=',$_SESSION['username'])->first();
-            $lists = Liste::where('publique','=',1)->orderBy('expiration','ASC')->get();
-        }
+
+        $lists = Liste::where('publique','=',1)->orderBy('expiration','ASC')->get();
+
         $notif = tools::prepareNotif($rq);
-        $v = new VueHome($lists, HomeController::HOME, $notif, $base);
+        $v = new VueParticipant($lists, ListeController::PUBLIC, $notif, $base);
         $rs->getBody()->write($v->render());
         return $rs;
     }
+
     /**
      * pour qqn connecté
      */
@@ -67,24 +65,7 @@ class ListeController {
         $rs->getBody()->write($v->render());
         return $rs;
     }
-    public function getListePublic($rq, $rs, $args) {
-        $container = $this->c;
-        $base = $rq->getUri()->getBasePath();
-        $route_uri = $container->router->pathFor('Listes');
-        $url = $base . $route_uri;
 
-        $notif = tools::prepareNotif($rq);
-
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $user = Authenticate::where('username','=',$_SESSION['username'])->first();
-            $lists = Liste::where('publique','=',1)->get();
-
-            $v = new VueCreateur($lists, ListeController::LISTS_VIEW, $notif, $base);
-        } else {
-        }
-        $rs->getBody()->write($v->render());
-        return $rs;
-    }
     public function getListByToken($rq, $rs, $args) {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
@@ -101,6 +82,9 @@ class ListeController {
             $v = new VueCreateur([$liste], ListeController::LIST_VIEW, $notif, $base);
         } else if (!isset($rq->getQueryParams()['token']) || is_null($liste)) {
             $notifMsg = urlencode("La liste demandée n'existe pas. Assurez-vous d'avoir le bon token.");
+            return $rs->withRedirect($base."?notif=$notifMsg");
+        } else if ($liste->validee != 1) {
+            $notifMsg = urlencode("Cette liste n'est pas visible car elle n'a pas été validée.");
             return $rs->withRedirect($base."?notif=$notifMsg");
         } else {
             $v = new VueParticipant([$liste], ListeController::LIST_VIEW, $notif, $base);

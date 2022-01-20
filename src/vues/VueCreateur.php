@@ -36,16 +36,11 @@ class VueCreateur {
         foreach ($this->tab as $value) {
             $mesListes = $mesListes . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
-        $listesPubliques = "";
 
         return <<<END
         <h1>Mes listes crées :</h1>
         <br>
         <section><ul>$mesListes</ul></section>
-        <br>
-        <h1>Listes publiques</h1>
-        <br>
-        <section><ul>$listesPubliques</ul></section>
         END;
     }
 

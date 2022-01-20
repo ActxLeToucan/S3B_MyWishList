@@ -13,7 +13,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
-use wishlist\controllers\HomeController;
 use wishlist\controllers\ItemController;
 use wishlist\controllers\ListeController;
 use wishlist\controllers\RegisterController;
@@ -28,14 +27,8 @@ $app = new App(dbInit::init());
  *************************/
 $app->get('[/]',
     function (Request $rq, Response $rs, $args):Response {
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
-            $controller = new ListeController($this);
-            return $controller->getHomePage($rq, $rs, $args);
-
-        } else {
-            $controller = new RegisterController($this);
-            return $controller->loginPage($rq, $rs, $args);
-        }
+        $controller = new ListeController($this);
+        return $controller->getHomePage($rq, $rs, $args);
     })->setName("home");
 
 

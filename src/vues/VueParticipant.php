@@ -101,6 +101,18 @@ class VueParticipant {
         return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur." : "Réservé par personne.<br />$formulaire");
     }
 
+    private function listesPubliques() :string{
+        $listesPubliques = "";
+        foreach ($this->tab as $value) {
+            if ($value->validee == 1) $listesPubliques = $listesPubliques . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
+        }
+        return <<<END
+        <h1>Listes publiques</h1>
+        <br>
+        <section><ul>$listesPubliques</ul></section>
+        END;
+    }
+
     public function render() : string {
         $from = "";
         $htmlPage = "";
@@ -123,6 +135,11 @@ class VueParticipant {
             case ItemController::ITEM_VIEW : {
                 $content = $this->affichageItem();
                 $title = 'Item';
+                break;
+            }
+            case ListeController::PUBLIC : {
+                $content = $this->listespubliques();
+                $title = 'MyWishList - Accueil';
                 break;
             }
         }
