@@ -1,3 +1,8 @@
+# Légende
+* ✅ : Fonctionnalité réalisée.
+* ✅ 🟨 : Fonctionnalité réalisée, mais fonctionne different de ce qui a été demandé. Une précision est présente en dessous.
+* ⛔ : On a décidé de ne pas travailler sur cette fonctionnalité.
+
 # Participant
 ## 1 Afficher une liste de souhaits
 * ✅ L'affichage du détail d'une liste présente toutes les informations de la liste accompagnées de la liste des items
@@ -7,7 +12,7 @@
 * ✅ Pour afficher une liste, il faut connaître son URL contenant un token
 
 ## 2 Afficher un item d'une liste
-* ✅ L'affichage d'un item présente toutes ses informations détaillées, son image, et l'état de la réservation (nom du participant sans message)
+* ✅ L'affichage d'un item présente toutes ses informations détaillées, son image et l'état de la réservation (nom du participant sans message)
 * ✅ L'état de la réservation est restreint pour le propriétaire de la liste (basé sur un cookie) : le nom du participant n’apparaît pas
 * ✅ Un item appartenant à aucune liste validée (par son créateur) ne peut pas être affiché
 * ✅ Pour afficher un item d'une liste, il faut connaître l'URL de sa liste contenant un token
@@ -15,7 +20,7 @@
 ## 3 Réserver un item
 * ✅ Dans la page de l'item, si l'item n'est pas réservé, un formulaire permet de saisir le nom du participant
 * ✅ La validation du formulaire enregistre la participation
-* ✅ Le nom du participant peut être mémorisé dans une variable de session ou un cookie pour pré-remplir le champ afin de ne pas avoir à le retaper
+* ✅ Le nom du participant peut être mémorisé dans une variable de session ou un cookie pour préremplir le champ afin de ne pas avoir à le retaper
 
 ## 4 Ajouter un message avec sa réservation
 * ✅ Dans la page de l'item, si l'item n'est pas réservé, le formulaire de participation permet également de saisir un message destiné le créateur
@@ -41,7 +46,7 @@
 * ✅ Le créateur d'une liste peut ajouter des items à une de ses listes après l'avoir sélectionnée par son URL de modification (avec token)
 * ✅ 🟨 Un formulaire permet de saisir les informations de l'item
 * ✅ 🟨 les informations sont : nom et description et prix
-* ✅ 🟨 il peut aussi fournir l'URL d'une page externe qui détaille le produit (sur un site de ecommerce par exemple)
+* ✅ 🟨 il peut aussi fournir l'URL d'une page externe qui détaille le produit (sur un site d'e-commerce par exemple)
   * _Finalement, on crée un item par défaut, et si on veut ajouter des informations, on peut le modifier._
 
 ## 9 Modifier un item
@@ -49,7 +54,7 @@
 * ✅ Une fois réservé, un item ne peut plus être modifié
 
 ## 10 Supprimer un item
-* ✅ Le créateur d'une liste peut supprimer un item d'un de ses listes si il n'est pas reservé
+* ✅ Le créateur d'une liste peut supprimer un item d'un de ses listes s'il n'est pas réservé
 
 ## 11 Rajouter une image à un item
 * ✅ Le créateur d'une liste peut ajouter une image à un de ses items
@@ -58,12 +63,12 @@
 
 ## 12 Modifier une image d'un item
 * ✅ 🟨 ~~Le créateur d'une liste peut modifier l'URL de l'image de ses items~~
-  * _Le créateur d'une liste peut modifier l'image en faisait un réupload._
+  * _Le créateur d'une liste peut modifier l'image en faisant un ré-upload._
 
 ## 13 Supprimer une image d'un item
 * ✅ Le créateur d'une liste peut supprimer l'image de ses items
 * ✅ 🟨 ~~Dans le cas d'une image locale, le fichier de l'image n'est pas supprimé~~
-  * _Alors, si. Nous on supprime le fichier puisque le nom du fichier est unique._
+  * _Alors, si. Nous, on supprime le fichier puisque le nom du fichier est unique._
 
 ## 14 Partager une liste
 * ✅ Une fois la liste entièrement saisie, le créateur peut la partager
@@ -75,7 +80,7 @@
 * ✅ un cookie permet d'identifier le créateur de la liste qu'il soit authentifié ou non afin de cacher les noms des participants (seuls les participants voient les noms des autres participants). On suppose que le créateur accède à la liste avec son navigateur habituel (celui sur lequel il s'est déjà authentifié)
 
 ## 16 Consulter les réservations et messages d'une de ses listes après échéance
-* ✅ Après la date d'échéance de la liste, le créateur authentifié d'une liste partagée peut consulter les réservations effectuées sur sa liste avec les noms des participants et les message associés aux réservations
+* ✅ Après la date d'échéance de la liste, le créateur authentifié d'une liste partagée peut consulter les réservations effectuées sur sa liste avec les noms des participants et les messages associés aux réservations
 
 # Extensions
 ## 17 Créer un compte
@@ -88,7 +93,7 @@
 ## 19 Modifier son compte
 * ✅ Un utilisateur authentifié peut modifier son compte
 * ✅ Seul le login ne peut pas être modifié
-* ✅ Si il modifie son mot de passe, il doit alors à nouveau s'authentifier
+* ✅ S'il modifie son mot de passe, il doit alors à nouveau s'authentifier
 
 ## 20 Rendre une liste publique
 * ✅ Le créateur d'une liste peut la rendre publique
@@ -113,7 +118,7 @@
 * ✅ Le fichier de l'image est alors écrit sur le serveur.
 * ✅ Une sécurisation empêche d'écraser une image existante et autorise uniquement les fichiers
 images.
-* ✅ Le upload de fichiers sensibles (PHP ou autres) est rendu impossible
+* ✅ L'upload de fichiers sensibles (PHP ou autres) est rendu impossible
 
 ## 25 Créer un compte participant
 * ✅ La création d'un compte peut aussi être utile aux participants afin de consulter les
@@ -131,5 +136,5 @@ participations uniquement avant échéance et de tous les messages
 ## 28 Joindre des listes à son compte
 * Un utilisateur authentifié peut joindre des listes existantes à son compte en fournissant leurs
 tokens de modification
-* ✅ Quand un utilisateurs authentifié crée une nouvelle liste, elle est automatiquement jointe à
+* ✅ Quand un utilisateur authentifié crée une nouvelle liste, elle est automatiquement jointe à
 son compte
