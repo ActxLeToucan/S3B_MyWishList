@@ -119,12 +119,52 @@ class VueCreateur {
     }
 
     private function affichageItemListeEnCours(): string {
-        $item = $this->tab[0];
+        $item = $this->tab[0]; 
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
-        return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
+        $visible = ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>");
+        $nomListe = ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
+        $reservation = ($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
+
+        return <<<END
+        <h1> 
+            $item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a>
+        </h1>
+
+        <div class=estVisible>
+            $visible
+        </div>
+
+        <img src='$this->base/img/$item->img' height='100px' alt='$item->nom' />
+
+        <br>
+
+        <div class="id">
+            ID : $item->id
+        </div>
+
+        <div class="description">
+            Description : $item->descr
+        </div>
+
+        <div class="tarif">
+            Tarif : $item->tarif
+        </div>
+
+        <div class="url">
+            URL : $item->url
+        </div>
+
+        <div class="liste">
+            Liste : $nomListe
+        </div>
+
+        <h2>Réservation</h2>
+
+        <div>
+            $reservation
+        </div>
+        END;
     }
 
     private function editList(): string {
