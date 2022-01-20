@@ -198,6 +198,20 @@ $app->get('/item/{id}/edit',
         return $controller->editItemPage($rq, $rs, $args);
     })->setName('editItemPage');
 
+// liste des createurs
+$app->get('/createurs',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ListeController($this);
+        return $controller->createurs($rq, $rs, $args);
+    })->setName('createurs');
+
+// listes d'un createur
+$app->get('/createurs/{username}',
+    function (Request $rq, Response $rs, $args):Response {
+        $controller = new ListeController($this);
+        return $controller->createur($rq, $rs, $args);
+    })->setName('createur');
+
 
 /**
  * reception de donnees

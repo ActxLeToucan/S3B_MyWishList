@@ -29,7 +29,7 @@ class VueParticipant {
         $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
         $items = "";
         foreach ($list->items as $item) {
-            $items = $items . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
+            $items = $items . "<li><a href='$this->base/item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
         $messages = "";
         foreach ($msgs as $message) {
@@ -38,7 +38,7 @@ class VueParticipant {
         }
         $username = "";
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
-            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
+            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='$this->base/login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
         }
 
 
@@ -52,7 +52,7 @@ class VueParticipant {
         <section><ol>$items</ol></section>
         Messages :
         <section><ul>$messages</ul></section>
-        <form action='../addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
+        <form action='$this->base/addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
             $username
             <textarea id='texte' name='texte'></textarea>
             <button type='submit'>Ajouter un message</button>
@@ -69,22 +69,20 @@ class VueParticipant {
     }
 
     private function affichageItem() : string {
-        $path = "../..";
-
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
+        $str = "<h1>$item->nom</h1><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
 
         $username = "";
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
-            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='../../login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
+            $username = "<label for='pseudo'>Entrez un pseudo ou <a href='$this->base/login'>connectez-vous</a> : </label><input type='text' required id='pseudo' name='pseudo'><br />";
         }
 
 
         $formulaire = <<<END
-            <form action='../../reservation?id=$item->id' method='post' enctype='multipart/form-data'>
+            <form action='$this->base/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
                 $username
                 <label for='message'>Entrez un message pour réserver l'item :</label>
                 <br>
@@ -104,13 +102,34 @@ class VueParticipant {
     private function listesPubliques() :string{
         $listesPubliques = "";
         foreach ($this->tab as $value) {
-            if ($value->validee == 1) $listesPubliques = $listesPubliques . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
+            if ($value->validee == 1) $listesPubliques = $listesPubliques . "<li><a href='$this->base/list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
         return <<<END
         <h1>Listes publiques</h1>
         <br>
         <section><ul>$listesPubliques</ul></section>
         END;
+    }
+
+    private function createurs() : string {
+        $users = "";
+        foreach ($this->tab as $user) {
+            $users = $users . "<li><a href='$this->base/createurs/$user->username'>$user->username</a></li>";
+        }
+        return $users;
+    }
+
+    private function createur() : string {
+        $user = $this->tab[0];
+        if (is_null($user)) {
+            $lists = "Cet utilisateur n'existe pas, ou il ne possède aucune liste publique.";
+        } else {
+            $lists = "";
+            foreach ($user->lists as $list) {
+                if ($list->validee == 1 && $list->publique == 1) $lists = "<li><a href='$this->base/list/view?token=$list->token'>$list->titre</a></li>";
+            }
+        }
+        return $lists;
     }
 
     public function render() : string {
@@ -140,6 +159,16 @@ class VueParticipant {
             case ListeController::PUBLIC : {
                 $content = $this->listespubliques();
                 $title = 'MyWishList - Accueil';
+                break;
+            }
+            case ListeController::CREATEURS : {
+                $content = $this->createurs();
+                $title = 'Créateurs';
+                break;
+            }
+            case ListeController::CREATEUR : {
+                $content = $this->createur();
+                $title = 'Créateur';
                 break;
             }
         }

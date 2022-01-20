@@ -15,6 +15,8 @@ class ListeController {
     const LIST_FORM_CREATE = 'list_form_create';
     const LIST_EDIT = 'list_edit';
     const PUBLIC = "public";
+    const CREATEURS = "createurs";
+    const CREATEUR = "createur";
 
     private $c;
 
@@ -237,5 +239,41 @@ class ListeController {
         $msg->save();
 
         return $rs->withRedirect($base."/list/view?token={$msg->list->token}");
+    }
+
+    public function createurs($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('createurs');
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $lists = Liste::where(["publique" => 1, "validee" => 1])->get();
+        $users = [];
+        foreach ($lists as $list) {
+            $user = $list->user;
+            in_array($user, $users) ? : array_push($users, $user);
+        }
+
+        $v = new VueParticipant($users, ListeController::CREATEURS, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs ;
+    }
+
+    public function createur($rq, $rs, $args) {
+        $container = $this->c;
+        $base = $rq->getUri()->getBasePath();
+        $route_uri = $container->router->pathFor('createur', $args);
+        $url = $base . $route_uri;
+
+        $notif = tools::prepareNotif($rq);
+
+        $username = $args['username'];
+        $user = Authenticate::where("username", "=", $username)->first();
+
+        $v = new VueParticipant([$user], ListeController::CREATEUR, $notif, $base);
+        $rs->getBody()->write($v->render());
+        return $rs ;
     }
 }

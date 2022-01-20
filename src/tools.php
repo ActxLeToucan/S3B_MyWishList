@@ -143,6 +143,7 @@ class tools {
                     <ul id="menu">
                         <li><a href="$base/formulaireListe">Créer ma liste</a></li>
                         <li><a href="$base/token">Trouer une liste avec un token</a></li>
+                        <li><a href="$base/createurs">Créateurs</a></li>
                         $connexion
                     </ul>
                 </div>

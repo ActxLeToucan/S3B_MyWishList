@@ -34,7 +34,7 @@ class VueCreateur {
     private function affichageListes() : string {
         $mesListes = "";
         foreach ($this->tab as $value) {
-            $mesListes = $mesListes . "<li><a href='./list/view?token=$value->token'>" . $value->titre . "</a></li>";
+            $mesListes = $mesListes . "<li><a href='$this->base/list/view?token=$value->token'>" . $value->titre . "</a></li>";
         }
 
         return <<<END
@@ -54,7 +54,7 @@ class VueCreateur {
         $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
         $items = "";
         foreach ($list->items as $item) {
-            $items = $items . "<li><a href='../item/$item->id/view?token=$list->token'>$item->nom</a></li>";
+            $items = $items . "<li><a href='$this->base/item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
         $messages = "";
         foreach ($msgs as $message) {
@@ -104,12 +104,10 @@ class VueCreateur {
     }
 
     private function affichageItemListeExpiree(): string {
-        $path = "../..";
-
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
+        $str = "<h1>$item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
         $pseudo = $item->pseudo;
@@ -121,12 +119,10 @@ class VueCreateur {
     }
 
     private function affichageItemListeEnCours(): string {
-        $path = "../..";
-
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$path/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$path/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$path/list/view?token=$list->token'>$list->titre</a>");
+        $str = "<h1>$item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
         return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
     }
@@ -137,21 +133,21 @@ class VueCreateur {
         $items = "";
         foreach ($list->items as $item) {
             $removeItem = <<<END
-            <form style="display:inline;" action="../removeItem?token=$list->token_edit&id=$item->id" method="post">
+            <form style="display:inline;" action="$this->base/removeItem?token=$list->token_edit&id=$item->id" method="post">
                 <input type="submit" name="removeItem" value="🗑️" />
             </form>
             END;
 
-            $items = $items . "<li><a href='../item/$item->id/edit?token=$list->token_edit'>$item->nom</a> $removeItem</li>";
+            $items = $items . "<li><a href='$this->base/item/$item->id/edit?token=$list->token_edit'>$item->nom</a> $removeItem</li>";
         }
         $items = $items . <<<END
-        <form action="../addItem?token=$list->token_edit" method="post">
+        <form action="$this->base/addItem?token=$list->token_edit" method="post">
             <input type="submit" name="addItem" value="Ajouter un item" />
         </form>
         END;
 
         return <<<END
-        <form action="../editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
+        <form action="$this->base/editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
             <div class="nom">
                 <label for="nom">Nom de la liste :</label>
                 <input type="text" id="nom" name="nom" value="$list->titre" required />
@@ -201,7 +197,7 @@ class VueCreateur {
 
         $image = is_null($item->img) || $item->img == ""
             ? <<<END
-            <form action="../../editItem?token=$list->token_edit&id=$item->id&type=addImg" method="post" enctype="multipart/form-data">
+            <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=addImg" method="post" enctype="multipart/form-data">
                 Image associée à l'item :<br />
                 <input type="file"
                        id="photo"
@@ -212,8 +208,8 @@ class VueCreateur {
             END
             : <<<END
             Image associée à l'item :<br />
-            <img src='../../img/$item->img' height='100px' alt='$item->nom' />
-            <form style="display:inline;" action="../../editItem?token=$list->token_edit&id=$item->id&type=edit&type=rmImg" method="post">
+            <img src='$this->base/img/$item->img' height='100px' alt='$item->nom' />
+            <form style="display:inline;" action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=edit&type=rmImg" method="post">
                 <input type="submit" name="removeImage" value="🗑️" />
             </form>
             END;
@@ -222,7 +218,7 @@ class VueCreateur {
         return <<<END
         $image
         <br /><br />
-        <form action="../../editItem?token=$list->token_edit&id=$item->id&type=edit" method="post" enctype="multipart/form-data">
+        <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=edit" method="post" enctype="multipart/form-data">
             <div class="nom">
                 <label for="nom">Nom de l'item :</label>
                 <input type="text" id="nom" name="nom" value="$item->nom" required />

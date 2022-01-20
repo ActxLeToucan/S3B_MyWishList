@@ -123,7 +123,7 @@ class VueRegister{
 
     private function deleteAccount() : string {
         return <<<END
-        <form action="./deleteAccountConfirm" method="post" enctype="multipart/form-data">
+        <form action="$this->base/deleteAccountConfirm" method="post" enctype="multipart/form-data">
             <div class="confirm">
                 <input type="checkbox" id="confirm" name="confirm" value="1" />
                 <label for="confirm"> Je confirme vouloir supprimer mon compte définitivement ainsi que toutes les listes et items associés.</label>
