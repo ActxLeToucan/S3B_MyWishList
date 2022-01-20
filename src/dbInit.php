@@ -7,7 +7,7 @@ use Slim\Container;
 
 class dbInit {
     public static function init() : Container {
-        $tabFile = parse_ini_file("src\conf\conf.init.dist");
+        $tabFile = parse_ini_file("src".DIRECTORY_SEPARATOR."conf".DIRECTORY_SEPARATOR."conf.init.dist");
 
         $db = new DB();
 
