@@ -60,13 +60,6 @@ class VueParticipant {
         EOF;
     }
 
-    private function affichageItems() : string {
-        $str = "<section><ol>";
-        foreach ($this->tab as $value) {
-            $str = $str . "<li>".$value->nom."<img src='img/$value->img' height='100px' width='100px' alt='$value->nom'>" . "<br>" . $value->descr . " <br> tarif : " .  $value->tarif . "<br>".$value->url . " </li>";
-        }
-        return $str . "</ol></section>";
-    }
 
     private function affichageItem() : string {
         $item = $this->tab[0];
@@ -143,12 +136,6 @@ class VueParticipant {
                 $content = $this->affichageListe();
                 $title = 'Liste';
                 $from = "LesListesStyle.css";
-                break;
-            }
-            case ItemController::ITEMS_VIEW : {
-                $content = $this->affichageItems();
-                $from = 'ItemsStyle.css';
-                $title = 'Items';
                 break;
             }
             case ItemController::ITEM_VIEW : {

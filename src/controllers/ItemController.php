@@ -10,7 +10,6 @@ use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
 
 class ItemController {
-    const ITEMS_VIEW = 'items';
     const ITEM_VIEW = 'item';
     const ITEM_VIEW_OWNER_EN_COURS = 'item_view_owner_en_cours';
     const ITEM_VIEW_OWNER_EXPIRE = 'item_view_owner_expirée';
