@@ -106,16 +106,36 @@ class VueCreateur {
     private function affichageItemListeExpiree(): string {
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a></h1>". ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>") ."<br /><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
+        
+        $visible = ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>");
+        $nomListe = ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
         $pseudo = $item->pseudo;
 
         $reserveur = isset($user) ? $user->username : $pseudo;
         $msg = ($item->msg_reserv == "" ? " sans laisser de message." : ": <br />$item->msg_reserv");
+        
+        $reservation = ($item->etat_reserv == 1 ? "Réservé par $reserveur $msg" : "Réservé par personne.");
 
-        return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur $msg" : "Réservé par personne.");
+        return <<<END
+        <h1> 
+            $item->nom 
+            <a href='$this->base/item/$item->id/edit?token=$list->token_edit'>
+                <button>éditer ✏️</button>
+            </a>
+        </h1>
+        $visible <br />
+        <img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /> <br /> 
+        ID : $item->id <br />
+        Description : $item->descr <br />
+        Tarif : $item->tarif <br />
+        URL : $item->url <br />
+        Liste : $nomListe <br />
+        <h2>Réservation</h2>
+        $reservation
+
+        END;
     }
 
     private function affichageItemListeEnCours(): string {
