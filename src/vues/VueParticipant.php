@@ -64,7 +64,8 @@ class VueParticipant {
     private function affichageItem() : string {
         $item = $this->tab[0];
         $list = $item->liste;
-        $str = "<h1>$item->nom</h1><img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
+        $src = (isset($item->img)  ? '$this->base/img/$item->img' : '../../img/giftbox2.png');
+        $str = "<h1>$item->nom</h1><img src=$src height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
         $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
 
 
