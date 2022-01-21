@@ -117,7 +117,7 @@ class tools {
             ? "<li><a href='$base/login'>Connexion</a></li>"
             : <<<END
             <li><a href="$base/list">Mes listes</a></li>
-            <li><a href='monCompte'>👤 {$_SESSION['username']}</a></li>
+            <li><a href='$base/monCompte'>👤 {$_SESSION['username']}</a></li>
             <li><a href='$base/logout'>Se déconnecter</a></li>"
             END;
 

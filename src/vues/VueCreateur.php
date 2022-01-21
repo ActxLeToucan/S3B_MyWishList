@@ -109,7 +109,7 @@ class VueCreateur {
         
         $visible = ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>");
         $nomListe = ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
-        $src = (isset($item->img)  ? '$this->base/img/$item->img' : '../../img/giftbox2.png');
+        $src = (isset($item->img)  ? "$this->base/img/$item->img" : "$this->base/img/giftbox2.png");
 
         $user = Authenticate::where("id", "=", $item->reserv_par)->first();
         $pseudo = $item->pseudo;
@@ -147,7 +147,7 @@ class VueCreateur {
         $visible = ($list->validee == 1 ? "" : "<i><b>Attention ! Cet item n'est visible que par vous.</b></i>");
         $nomListe = ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
         $reservation = ($item->etat_reserv == 1 ? "Réservé par quelqu'un. Attendez que la liste arrive à échéance pour voir qui." : "Réservé par personne.");
-        $src = (isset($item->img)  ? '$this->base/img/$item->img' : '../../img/giftbox2.png');
+        $src = (isset($item->img)  ? "$this->base/img/$item->img" : "$this->base/img/giftbox2.png");
         
         return <<<END
         <h1> 

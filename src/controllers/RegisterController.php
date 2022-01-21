@@ -350,7 +350,7 @@ class RegisterController{
                 $items = $list->items;
                 foreach ($items as $item) {
                     $image = $item->img;
-                    is_null($image) || $image == "" ? : unlink("./img/$image");
+                    is_null($image) || $image == "" ? : unlink("$base/img/$image");
                     $item->delete();
                 }
                 $messages = $list->messages;

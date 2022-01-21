@@ -93,7 +93,7 @@ class ItemController {
                         break;
                     }
                     case "rmImg" : {
-                        is_null($item->img) || $item->img == "" ? : unlink("./img/$item->img");
+                        is_null($item->img) || $item->img == "" ? : unlink("$base/img/$item->img");
                         Item::where('id', '=', $item->id)->update(['img' => ""]);
 
                         $notifMsg = urlencode("L'image a été supprimée.");
@@ -103,7 +103,7 @@ class ItemController {
                         $extension = $_FILES['photo']['type'];
                         $cheminServeur = $_FILES['photo']['tmp_name'];
                         $fileName = str_replace('image/', time() . "_" . tools::getRandomString() . '.', $extension);
-                        $uploadfile = './img/' . $fileName;
+                        $uploadfile = "$base/img/$fileName";
                         move_uploaded_file($cheminServeur, $uploadfile);
 
                         Item::where('id', '=', $item->id)->update(['img' => $fileName]);
