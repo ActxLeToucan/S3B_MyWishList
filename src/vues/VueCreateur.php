@@ -344,8 +344,6 @@ class VueCreateur {
             }
             case ItemController::ITEM_EDIT : {
                 $content = $this->editItem();
-                $from = "FormItemStyle.css";
-
                 $title = "Modification item";
                 break;
             }
