@@ -225,9 +225,8 @@ class VueCreateur {
             <br />
         
             <button type="submit">Valider les changements sur cette liste</button>
-        
-        
         </form>
+        <a href="$this->base/list/view?token=$list->token"><button>Annuler ❌</button></a>
         <br /><br />
         Items :
         <section><ul>$items</ul></section>
@@ -294,6 +293,7 @@ class VueCreateur {
         
             <button type="submit">Valider les changements sur cet item</button>
         </form>
+        <a href="$this->base/item/$item->id/view?token=$list->token"><button>Annuler ❌</button></a>
         END;
     }
 
