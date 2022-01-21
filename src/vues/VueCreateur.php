@@ -128,42 +128,21 @@ class VueCreateur {
 
         return <<<END
         <h1> 
-            $item->nom <a href='$this->base/item/$item->id/edit?token=$list->token_edit'><button>éditer ✏️</button></a>
+            $item->nom 
+            <a href='$this->base/item/$item->id/edit?token=$list->token_edit'>
+                <button>éditer ✏️</button>
+            </a>
         </h1>
-
-        <div class=estVisible>
-            $visible
-        </div>
-
-        <img src='$this->base/img/$item->img' height='100px' alt='$item->nom' />
-
-        <br>
-
-        <div class="id">
-            ID : $item->id
-        </div>
-
-        <div class="description">
-            Description : $item->descr
-        </div>
-
-        <div class="tarif">
-            Tarif : $item->tarif
-        </div>
-
-        <div class="url">
-            URL : $item->url
-        </div>
-
-        <div class="liste">
-            Liste : $nomListe
-        </div>
-
+        $visible <br />
+        <img src='$this->base/img/$item->img' height='100px' alt='$item->nom' /> <br /> 
+        ID : $item->id <br />
+        Description : $item->descr <br />
+        Tarif : $item->tarif <br />
+        URL : $item->url <br />
+        Liste : $nomListe <br />
         <h2>Réservation</h2>
+        $reservation
 
-        <div>
-            $reservation
-        </div>
         END;
     }
 
