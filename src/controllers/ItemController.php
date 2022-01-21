@@ -103,8 +103,8 @@ class ItemController {
                         $extension = $_FILES['photo']['type'];
                         $cheminServeur = $_FILES['photo']['tmp_name'];
                         $fileName = str_replace('image/', time() . "_" . tools::getRandomString() . '.', $extension);
-                        $uploadfile = "$base/img/$fileName";
-                        move_uploaded_file($cheminServeur, $uploadfile);
+                        $uploadFile = "./img/$fileName";
+                        move_uploaded_file($cheminServeur, $uploadFile);
 
                         Item::where('id', '=', $item->id)->update(['img' => $fileName]);
 
