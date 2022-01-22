@@ -134,7 +134,8 @@ publique active jointe à leur compte.
 participations uniquement avant échéance et de tous les messages
 
 ## 28 Joindre des listes à son compte
-* Un utilisateur authentifié peut joindre des listes existantes à son compte en fournissant leurs
+* ⛔ Un utilisateur authentifié peut joindre des listes existantes à son compte en fournissant leurs
 tokens de modification
+  * Puisque nous avons choisi de ne rendre modifiable une liste que par son créateur, et qu'on ne peut créer une liste qu'en étant connecté, cette fonctionnalité n'a plus de sens.
 * ✅ Quand un utilisateur authentifié crée une nouvelle liste, elle est automatiquement jointe à
 son compte
