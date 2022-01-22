@@ -101,7 +101,7 @@ class VueParticipant {
         }
 
 
-        $formulaire = <<<END
+        $formulaire = (strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? "" : <<<END
             <form action='$this->base/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
                 $username
                 <label for='message'>Entrez un message pour réserver l'item :</label>

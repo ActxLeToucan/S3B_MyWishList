@@ -277,8 +277,14 @@ class ItemController {
         $content = $rq->getParsedBody();
         $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING): "Aucun message.";
         $item_id = $rq->getQueryParams('id');
+        $item = Item::where('id',$item_id)->first();
+        $list = $item->liste;
 
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+        if ($item->etat_reserv == 1) {
+            $notifMsg = urlencode("Cet item a déjà été réservé par quelqu'un.");
+        } else if (strtotime($list->expiration) < strtotime(date("Y-m-d"))) {
+            $notifMsg = urlencode("Vous ne pouvez pas réserver cet item car la liste a expirée.");
+        } else if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
             $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
             Item::where('id', $item_id)->update(['etat_reserv' => 1]);
@@ -287,7 +293,9 @@ class ItemController {
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
             $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" $avecOuSansMsg");
-        } else if (isset($content["pseudo"])) {
+        } else if (!isset($content["pseudo"])) {
+            $notifMsg = urlencode("Impossible de réserver l'item, pseudo non valide.");
+        } else {
             $pseudo = $content["pseudo"];
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
             Item::where('id', $item_id)->update(['etat_reserv' => 1]);
@@ -296,8 +304,6 @@ class ItemController {
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
             $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" avec le pseudo \"$item->pseudo\" $avecOuSansMsg");
-        } else {
-            $notifMsg = urlencode("Impossible de réserver l'item.");
         }
         $item = Item::where('id',$item_id)->first();
 
