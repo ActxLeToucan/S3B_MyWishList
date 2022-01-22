@@ -8,6 +8,8 @@ use wishlist\models\Liste;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class ItemController {
     const ITEM_VIEW = 'item';
@@ -16,16 +18,27 @@ class ItemController {
     const ITEM_FORM_CREATE = 'form_item_create';
     const ITEM_EDIT = "item_edit";
 
-    private $c;
+    /**
+     * @var object container
+     */
+    private object $c;
 
     /**
-     * @param $c
+     * Constructeur d'ItemController
+     * @param object $c container
      */
-    public function __construct($c) {
+    public function __construct(object $c) {
         $this->c = $c;
     }
 
-    public function addItem($rq, $rs, $args) {
+    /**
+     * Traitement de l'ajout d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function addItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('itemVierge');
@@ -51,7 +64,14 @@ class ItemController {
         }
     }
 
-    public function editItem($rq, $rs, $args) {
+    /**
+     * Traitement modification d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('editItem');
@@ -121,7 +141,14 @@ class ItemController {
         }
     }
 
-    public function removeItem($rq, $rs, $args) {
+    /**
+     * Traitement suppression d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function removeItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('supprItem');
@@ -153,7 +180,14 @@ class ItemController {
         }
     }
 
-    public function getItemById($rq, $rs, $args) {
+    /**
+     * Affichage d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function getItemById(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('Item_ID', $args);
@@ -184,12 +218,18 @@ class ItemController {
             $affichage = ItemController::ITEM_VIEW;
             $v = new VueParticipant([$item], $affichage, $notif, $base);
         }
-
         $rs->getBody()->write($v->render());
         return $rs;
     }
 
-    public function editItemPage($rq, $rs, $args) {
+    /**
+     * Affichage de la page permettant d'éditer un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editItemPage(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('editItemPage', $args);
@@ -221,14 +261,21 @@ class ItemController {
         return $rs;
     }
 
-    public function reservation($rq, $rs, $args) {
+    /**
+     * Traitement de la réservation d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function reservation(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('reservation');
         $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
-        $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING) : "Aucun message.";
+        $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING): "Aucun message.";
         $item_id = $rq->getQueryParams('id');
 
         if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {

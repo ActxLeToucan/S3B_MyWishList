@@ -6,34 +6,69 @@ use wishlist\controllers\RegisterController;
 use wishlist\tools;
 
 class VueRegister{
-    private $tab;
-    private $selecteur;
+    /**
+     * @var iterable Tableau d'éléments à afficher
+     */
+    private iterable $tab;
+    /**
+     * @var string Sélecteur de l'affichage à fournir
+     */
+    private string $selecteur;
+    /**
+     * @var array Propriétés de la notification
+     */
     private array $notif;
+    /**
+     * @var string Base du site
+     */
     private string $base;
 
-    public function __construct(iterable $t, $s, array $n, string $b) {
+    /**
+     * Constructeur de la vue register
+     * @param iterable $t Tableau d'éléments à afficher
+     * @param string $s Sélecteur de l'affichage à fournir
+     * @param array $n Propriétés de la notification
+     * @param string $b Base du site
+     */
+    public function __construct(iterable $t, string $s, array $n, string $b) {
         $this->tab = $t;
         $this->selecteur = $s;
         $this->notif = $n;
         $this->base = $b;
     }
 
-    private function loginPage() : string {
+    /**
+     * Récupère la page de connexion
+     * @return string
+     */
+    private function loginPage(): string {
         $file =  "HTML/formLogin.html";
         return file_get_contents($file);
     }
 
-    public function signUpPage() : string {
+    /**
+     * Récupère la page d'inscription
+     * @return string
+     */
+    public function signUpPage(): string {
         $file =  "HTML/formSignUp.html";
         return file_get_contents($file);
     }
 
-    public function tokenPage() : string {
+    /**
+     * Récupère la page permettant de trouver une liste avec un token
+     * @return string
+     */
+    public function tokenPage(): string {
         $file =  "HTML/formToken.html";
         return file_get_contents($file);
     }
 
-    private function monCompte() : string {
+    /**
+     * Affichage du compte d'un utilisateur connecté
+     * @return string
+     */
+    private function monCompte(): string {
         $user = $this->tab[0];
 
         return <<<END
@@ -46,9 +81,11 @@ class VueRegister{
         END;
     }
 
-    private function changeMail() : string {
-        $user = $this->tab[0];
-
+    /**
+     * Affichage du changement d'adresse email
+     * @return string
+     */
+    private function changeMail(): string {
         return <<<END
         <form action="$this->base/changeMailConfirm" method="post" enctype="multipart/form-data">
             <div class="email">
@@ -70,9 +107,11 @@ class VueRegister{
         END;
     }
 
-    private function changePass() : string {
-        $user = $this->tab[0];
-
+    /**
+     * Affichage du changement de mot de passe
+     * @return string
+     */
+    private function changePass(): string {
         return <<<END
         <form action="$this->base/changePasswordConfirm" method="post" enctype="multipart/form-data">
             <div class="oldpass">
@@ -121,7 +160,11 @@ class VueRegister{
         END;
     }
 
-    private function deleteAccount() : string {
+    /**
+     * Affichage de la suppression du compte
+     * @return string
+     */
+    private function deleteAccount(): string {
         return <<<END
         <form action="$this->base/deleteAccountConfirm" method="post" enctype="multipart/form-data">
             <div class="confirm">
@@ -136,7 +179,11 @@ class VueRegister{
         END;
     }
 
-    public function render() : string {
+    /**
+     * Retourne l'affichage sélectionné
+     * @return string
+     */
+    public function render(): string {
         $from = "";
         $htmlPage = "";
         $title = "";

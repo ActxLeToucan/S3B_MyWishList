@@ -8,6 +8,8 @@ use wishlist\models\Message;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class ListeController {
     const LISTS_VIEW = 'lists';
@@ -18,19 +20,27 @@ class ListeController {
     const CREATEURS = "createurs";
     const CREATEUR = "createur";
 
-    private $c;
+    /**
+     * @var object container
+     */
+    private object $c;
 
     /**
-     * @param $c
+     * Constructeur de ListeController
+     * @param object $c container
      */
-    public function __construct($c) {
+    public function __construct(object $c) {
         $this->c = $c;
     }
 
     /**
-     * Affiche de la page home
+     * Affichage de la page d'accueil
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
      */
-    public function getHomePage($rq, $rs, $args) {
+    public function getHomePage(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('home');
@@ -45,9 +55,13 @@ class ListeController {
     }
 
     /**
-     * pour qqn connecté
+     * Affichage de toutes les listes d'un utilisateur connecté
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
      */
-    public function getAllListe($rq, $rs, $args) {
+    public function getAllListe(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('Listes');
@@ -68,7 +82,14 @@ class ListeController {
         return $rs;
     }
 
-    public function getListByToken($rq, $rs, $args) {
+    /**
+     * Affichage d'une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function getListByToken(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('listByTokenView', $args);
@@ -96,7 +117,14 @@ class ListeController {
         return $rs;
     }
 
-    public function editListByToken($rq, $rs, $args) {
+    /**
+     * Affichage de la page permettant d'éditer une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editListByToken(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('listByTokenView', $args);
@@ -124,7 +152,14 @@ class ListeController {
         return $rs;
     }
 
-    public function editList($rq, $rs, $args) {
+    /**
+     * Traitement de l'édition d'une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editList(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('editList', $args);
@@ -165,7 +200,14 @@ class ListeController {
         }
     }
 
-    public function newListe($rq, $rs, $args) {
+    /**
+     * Traitement de la création d'une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function newListe(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('New_Liste');
@@ -199,7 +241,14 @@ class ListeController {
         }
     }
 
-    public function createList($rq, $rs, $args) {
+    /**
+     * Affichage de la page permettant de créer une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function createList(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('formulaireListCreate');
@@ -214,10 +263,17 @@ class ListeController {
 
         $v = new VueCreateur([], ListeController::LIST_FORM_CREATE, $notif, $base);
         $rs->getBody()->write($v->render());
-        return $rs ;
+        return $rs;
     }
 
-    public function addMsg($rq, $rs, $args) {
+    /**
+     * Traitement de l'ajout d'un message sur une liste
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function addMsg(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('addmsg');
@@ -241,7 +297,14 @@ class ListeController {
         return $rs->withRedirect($base."/list/view?token={$msg->list->token}");
     }
 
-    public function createurs($rq, $rs, $args) {
+    /**
+     * Affichage des créateurs qui ont au moins une liste à la fois validée et publique
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function createurs(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('createurs');
@@ -258,10 +321,17 @@ class ListeController {
 
         $v = new VueParticipant($users, ListeController::CREATEURS, $notif, $base);
         $rs->getBody()->write($v->render());
-        return $rs ;
+        return $rs;
     }
 
-    public function createur($rq, $rs, $args) {
+    /**
+     * Affichage des listes publiques et validées d'un créateur
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function createur(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('createur', $args);
@@ -274,6 +344,6 @@ class ListeController {
 
         $v = new VueParticipant([$user], ListeController::CREATEUR, $notif, $base);
         $rs->getBody()->write($v->render());
-        return $rs ;
+        return $rs;
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model {
     protected $table = 'message';
     protected $primaryKey = 'id_msg';
-    public $timestamps = false ;
+    public $timestamps = false;
 
     public function user() {
         return $this->belongsTo('wishlist\models\Authenticate', "id_user");
