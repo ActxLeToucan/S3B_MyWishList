@@ -1,9 +1,12 @@
 <?php
 /**
  * File:  index.php
- * description: ficindex projet wishlist
+ * description: fichier index projet wishlist
  *
- * @author: canals
+ * @author: contoux
+ * @author: tisserant
+ * @author: kemmler
+ * @author: lopes vaz
  */
 
 session_start();
@@ -26,7 +29,7 @@ $app = new App(dbInit::init());
  * page d'accueil
  *************************/
 $app->get('[/]',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->getHomePage($rq, $rs, $args);
     })->setName("home");
@@ -44,7 +47,7 @@ $app->get('[/]',
 
 // connexion
 $app->get('/login',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->loginPage($rq, $rs, $args);
 
@@ -52,7 +55,7 @@ $app->get('/login',
 
 // inscription
 $app->get('/signUp',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->signUpPage($rq, $rs, $args);
 
@@ -60,7 +63,7 @@ $app->get('/signUp',
 
 // token access
 $app->get('/token',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->accessListToken($rq, $rs, $args);
 
@@ -68,7 +71,7 @@ $app->get('/token',
 
 // deconnexion
 $app->get('/logout',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->logout($rq, $rs, $args);
 
@@ -81,7 +84,7 @@ $app->get('/logout',
 
 // reception connexion
 $app->post('/loginConfirm',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->authentification($rq, $rs, $args);
 
@@ -89,7 +92,7 @@ $app->post('/loginConfirm',
 
 // reception inscription
 $app->post('/signupConfirm',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->newUser($rq, $rs, $args);
 
@@ -108,7 +111,7 @@ $app->post('/signupConfirm',
 
 // mon compte
 $app->get('/monCompte',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->monComptePage($rq, $rs, $args);
 
@@ -116,7 +119,7 @@ $app->get('/monCompte',
 
 // gestion mail 
 $app->get('/changeMail',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->changeMailPage($rq, $rs, $args);
 
@@ -124,7 +127,7 @@ $app->get('/changeMail',
 
 // gestion mot de passe 
 $app->get('/changePassword',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->changePswPage($rq, $rs, $args);
 
@@ -132,7 +135,7 @@ $app->get('/changePassword',
 
 // gestion supprimer compte
 $app->get('/deleteAccount',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->deleteAccountPage($rq, $rs, $args);
 
@@ -145,7 +148,7 @@ $app->get('/deleteAccount',
 
 // changement de mail 
 $app->post('/changeMailConfirm',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->changeMail($rq, $rs, $args);
 
@@ -153,7 +156,7 @@ $app->post('/changeMailConfirm',
 
 // changement de mot de passe
 $app->post('/changePasswordConfirm',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->changePsw($rq, $rs, $args);
 
@@ -161,7 +164,7 @@ $app->post('/changePasswordConfirm',
 
 // reception suppression compte
 $app->post('/deleteAccountConfirm',
-    function (Request $rq, Response $rs, $args) : Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new RegisterController($this);
         return $controller->deleteAccount($rq, $rs, $args);
     })->setName('delAccConfirm');
@@ -179,35 +182,35 @@ $app->post('/deleteAccountConfirm',
 
 // creation d'une liste
 $app->get('/formulaireListe',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->createList($rq, $rs, $args);
     })->setName("formulaireListCreate");
 
 // modification liste avec token
 $app->get('/list/edit',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->editListByToken($rq, $rs, $args);
     })->setName('listByTokenEdit');
 
 // modification item
 $app->get('/item/{id}/edit',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->editItemPage($rq, $rs, $args);
     })->setName('editItemPage');
 
 // liste des createurs
 $app->get('/createurs',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->createurs($rq, $rs, $args);
     })->setName('createurs');
 
 // listes d'un createur
 $app->get('/createurs/{username}',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->createur($rq, $rs, $args);
     })->setName('createur');
@@ -219,42 +222,42 @@ $app->get('/createurs/{username}',
 
 // reception creation d'un item vierge
 $app->post('/addItem',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->addItem($rq, $rs, $args);
     })->setName('itemVierge');
 
 // reception edition item
 $app->post('/editItem',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->editItem($rq, $rs, $args);
     })->setName('editItem');
 
 // reception suppression item
 $app->post('/removeItem',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->removeItem($rq, $rs, $args);
     })->setName('supprItem');
 
 // reception creation creation d'une liste
 $app->post('/newListe',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->newListe($rq, $rs, $args);
     })->setName('New_Liste');
 
 // reception ajout message
 $app->post('/addmsg',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->addMsg($rq, $rs, $args);
     })->setName('addmsg');
 
 // reception edition liste
 $app->post('/editList',
-    function (Request $rq, Response $rs, $args) {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->editList($rq, $rs, $args);
     })->setName('editList');
@@ -272,22 +275,21 @@ $app->post('/editList',
 
 // affichage de mes listes
 $app->get('/list',
-    function (Request $rq, Response $rs, $args):Response {
-        //$rs->getBody()->write("Liste des listes :");
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->getAllListe($rq, $rs, $args);
     })->setName('Listes');
 
 // affichage liste avec token
 $app->get('/list/view',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ListeController($this);
         return $controller->getListByToken($rq, $rs, $args);
     })->setName('listByTokenView');
 
 // affichage item avec id et token
 $app->get('/item/{id}/view',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->getItemById($rq, $rs, $args);
     })->setName('Item_ID');
@@ -299,7 +301,7 @@ $app->get('/item/{id}/view',
 
 // reception reservation d'un item
 $app->post('/reservation',
-    function (Request $rq, Response $rs, $args):Response {
+    function (Request $rq, Response $rs, array $args): Response {
         $controller = new ItemController($this);
         return $controller->reservation($rq, $rs, $args);
     })->setName('reservation');

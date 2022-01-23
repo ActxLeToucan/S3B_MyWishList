@@ -8,6 +8,8 @@ use wishlist\models\Liste;
 use wishlist\tools;
 use wishlist\vues\VueCreateur;
 use wishlist\vues\VueParticipant;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class ItemController {
     const ITEM_VIEW = 'item';
@@ -16,16 +18,27 @@ class ItemController {
     const ITEM_FORM_CREATE = 'form_item_create';
     const ITEM_EDIT = "item_edit";
 
-    private $c;
+    /**
+     * @var object container
+     */
+    private object $c;
 
     /**
-     * @param $c
+     * Constructeur d'ItemController
+     * @param object $c container
      */
-    public function __construct($c) {
+    public function __construct(object $c) {
         $this->c = $c;
     }
 
-    public function addItem($rq, $rs, $args) {
+    /**
+     * Traitement de l'ajout d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function addItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('itemVierge');
@@ -51,7 +64,14 @@ class ItemController {
         }
     }
 
-    public function editItem($rq, $rs, $args) {
+    /**
+     * Traitement modification d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('editItem');
@@ -121,7 +141,14 @@ class ItemController {
         }
     }
 
-    public function removeItem($rq, $rs, $args) {
+    /**
+     * Traitement suppression d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function removeItem(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('supprItem');
@@ -153,7 +180,14 @@ class ItemController {
         }
     }
 
-    public function getItemById($rq, $rs, $args) {
+    /**
+     * Affichage d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function getItemById(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('Item_ID', $args);
@@ -184,12 +218,18 @@ class ItemController {
             $affichage = ItemController::ITEM_VIEW;
             $v = new VueParticipant([$item], $affichage, $notif, $base);
         }
-
         $rs->getBody()->write($v->render());
         return $rs;
     }
 
-    public function editItemPage($rq, $rs, $args) {
+    /**
+     * Affichage de la page permettant d'éditer un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function editItemPage(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('editItemPage', $args);
@@ -221,17 +261,30 @@ class ItemController {
         return $rs;
     }
 
-    public function reservation($rq, $rs, $args) {
+    /**
+     * Traitement de la réservation d'un item
+     * @param Request $rq requête
+     * @param Response $rs réponse
+     * @param array $args arguments de la requête
+     * @return Response
+     */
+    public function reservation(Request $rq, Response $rs, array $args): Response {
         $container = $this->c;
         $base = $rq->getUri()->getBasePath();
         $route_uri = $container->router->pathFor('reservation');
         $url = $base . $route_uri;
 
         $content = $rq->getParsedBody();
-        $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING) : "Aucun message.";
+        $message = isset($content['message']) ? filter_var($content['message'], FILTER_SANITIZE_STRING): "Aucun message.";
         $item_id = $rq->getQueryParams('id');
+        $item = Item::where('id',$item_id)->first();
+        $list = $item->liste;
 
-        if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
+        if ($item->etat_reserv == 1) {
+            $notifMsg = urlencode("Cet item a déjà été réservé par quelqu'un.");
+        } else if (strtotime($list->expiration) < strtotime(date("Y-m-d"))) {
+            $notifMsg = urlencode("Vous ne pouvez pas réserver cet item car la liste a expirée.");
+        } else if (isset($_SESSION['username']) && isset($_SESSION['AccessRights'])) {
             $user = Authenticate::where("username", "=", $_SESSION['username'])->first();
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
             Item::where('id', $item_id)->update(['etat_reserv' => 1]);
@@ -240,7 +293,9 @@ class ItemController {
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
             $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" $avecOuSansMsg");
-        } else if (isset($content["pseudo"])) {
+        } else if (!isset($content["pseudo"])) {
+            $notifMsg = urlencode("Impossible de réserver l'item, pseudo non valide.");
+        } else {
             $pseudo = $content["pseudo"];
             Item::where('id', $item_id)->update(['msg_reserv' => $message]);
             Item::where('id', $item_id)->update(['etat_reserv' => 1]);
@@ -249,8 +304,6 @@ class ItemController {
             $item = Item::where('id',$item_id)->first();
             $avecOuSansMsg = $item->msg_reserv == "" ? "sans laisser de message." : "avec le message : $item->msg_reserv";
             $notifMsg = urlencode("Vous avez bien réservé l'item \"$item->nom\" avec le pseudo \"$item->pseudo\" $avecOuSansMsg");
-        } else {
-            $notifMsg = urlencode("Impossible de réserver l'item.");
         }
         $item = Item::where('id',$item_id)->first();
 

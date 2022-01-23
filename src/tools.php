@@ -2,10 +2,17 @@
 
 namespace wishlist;
 
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class tools {
-    public static function getRandomString(int $length = 10) : string {
+    /**
+     * Permet de générer une chaine aléatoire
+     * @param int $length taille de la chaine
+     * @return string
+     */
+    public static function getRandomString(int $length = 10): string {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randstring = '';
         for ($i = 0; $i < $length; $i++) {
@@ -14,16 +21,31 @@ class tools {
         return $randstring;
     }
 
-    public static function generateToken() : string {
+    /**
+     * Permet de générer un token unique
+     * @return string
+     */
+    public static function generateToken(): string {
         return time().self::getRandomString(20);
     }
 
-    public static function insertIntoBody(string $page, string $text) : string {
+    /**
+     * Permet d'ajouter un élément dans le corps de la page
+     * @param string $page page
+     * @param string $text Élément à ajouter
+     * @return string
+     */
+    public static function insertIntoBody(string $page, string $text): string {
         $positionBody = strpos($page, "<body>") + 6;
         return substr_replace($page, $text, $positionBody, 0);
     }
 
-    public static function messageBox(string $message) : string {
+    /**
+     * Génère une boîte avec un message
+     * @param string $message message
+     * @return string
+     */
+    public static function messageBox(string $message): string {
         return <<<END
         <script>
             window.addEventListener("load", () => {
@@ -94,14 +116,20 @@ class tools {
         END;
     }
 
-    public static function prepareNotif($rq) : array {
+    /**
+     * Autorise l'affichage des notifications (messageBox)
+     * @param Request $rq requete
+     * @return array
+     */
+    #[ArrayShape(["notif" => "null|string", "link" => "string|null"])] public static function prepareNotif(Request $rq): array {
         return array(
-            "notif" => isset($rq->getQueryParams()['notif']) ? urldecode($rq->getQueryParams('notif')["notif"]) : null,
+            "notif" => isset($rq->getQueryParams()['notif']) ? urldecode($rq->getQueryParams('notif')["notif"]): null,
             "link" => isset($rq->getQueryParams()['notif']) && isset($rq->getQueryParams()['link']) ? filter_var($rq->getQueryParams('link')["link"], FILTER_SANITIZE_ADD_SLASHES): null,
         );
     }
 
     /**
+     * Formate l'affichage
      * @param string $from
      * @param string $htmlPage
      * @param string $title
@@ -112,16 +140,16 @@ class tools {
      * @return string
      */
     #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $notifParams, string $base): string {
-        $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>" : "";
+        $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>": "";
         $connexion = !isset($_SESSION['username'])
             ? "<li><a href='$base/login'>Connexion</a></li>"
-            : <<<END
+           : <<<END
             <li><a href="$base/list">Mes listes</a></li>
             <li><a href='$base/monCompte'>👤 {$_SESSION['username']}</a></li>
             <li><a href='$base/logout'>Se déconnecter</a></li>
             END;
 
-        $html = $htmlPage != "" ? $htmlPage : <<<END
+        $html = $htmlPage != "" ? $htmlPage: <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">

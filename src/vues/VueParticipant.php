@@ -9,19 +9,42 @@ use wishlist\models\Message;
 use wishlist\tools;
 
 class VueParticipant {
-    private $tab;
-    private $selecteur;
+    /**
+     * @var iterable Tableau d'éléments à afficher
+     */
+    private iterable $tab;
+    /**
+     * @var string Sélecteur de l'affichage à fournir
+     */
+    private string $selecteur;
+    /**
+     * @var array Propriétés de la notification
+     */
     private array $notif;
+    /**
+     * @var string Base du site
+     */
     private string $base;
 
-    public function __construct(iterable $t, $s, array $n, string $b) {
+    /**
+     * Constructeur de la vue participant
+     * @param iterable $t Tableau d'éléments à afficher
+     * @param string $s Sélecteur de l'affichage à fournir
+     * @param array $n Propriétés de la notification
+     * @param string $b Base du site
+     */
+    public function __construct(iterable $t, string $s, array $n, string $b) {
         $this->tab = $t;
         $this->selecteur = $s;
         $this->notif = $n;
         $this->base = $b;
     }
 
-    private function affichageListe() : string {
+    /**
+     * Affichage d'une liste
+     * @return string
+     */
+    private function affichageListe(): string {
         $list = $this->tab[0];
         $msgs = Message::where("id_list", "=", $list->no)->get();
 
@@ -87,8 +110,11 @@ class VueParticipant {
         EOF;
     }
 
-
-    private function affichageItem() : string {
+    /**
+     * Affichage d'un item
+     * @return string
+     */
+    private function affichageItem(): string {
         $item = $this->tab[0];
         $list = $item->liste;
         $src = (isset($item->img)  ? "$this->base/img/$item->img" : "$this->base/img/giftbox2.png");
@@ -102,7 +128,7 @@ class VueParticipant {
         }
 
 
-        $formulaire = <<<END
+        $formulaire = (strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? "" : <<<END
             <form action='$this->base/reservation?id=$item->id' method='post' enctype='multipart/form-data'>
                 $username
                 <label for='message'>Entrez un message pour réserver l'item :</label>
@@ -120,6 +146,10 @@ class VueParticipant {
         return $str . "<h2>Réservation</h2>".($item->etat_reserv == 1 ? "Réservé par $reserveur." : "Réservé par personne.<br />$formulaire");
     }
 
+    /**
+     * Affichage des listes publiques
+     * @return string
+     */
     private function listesPubliques() :string{
         $listesPubliques = "";
         foreach ($this->tab as $value) {
@@ -132,7 +162,11 @@ class VueParticipant {
         END;
     }
 
-    private function createurs() : string {
+    /**
+     * Affichage de la liste des créateurs
+     * @return string
+     */
+    private function createurs(): string {
         $users = "";
         foreach ($this->tab as $user) {
             $users = $users . "<li><a href='$this->base/createurs/$user->username'>$user->username</a></li>";
@@ -144,7 +178,11 @@ class VueParticipant {
         END;
     }
 
-    private function createur() : string {
+    /**
+     * Affichage des listes d'un créateur
+     * @return string
+     */
+    private function createur(): string {
         $user = $this->tab[0];
         if (is_null($user)) {
             $lists = "Cet utilisateur n'existe pas, ou il ne possède aucune liste publique.";
@@ -157,7 +195,11 @@ class VueParticipant {
         return $lists;
     }
 
-    public function render() : string {
+    /**
+     * Retourne l'affichage sélectionné
+     * @return string
+     */
+    public function render(): string {
         $from = "";
         $htmlPage = "";
         $title = "";

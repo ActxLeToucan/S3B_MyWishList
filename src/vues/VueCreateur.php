@@ -9,29 +9,60 @@ use wishlist\models\Message;
 use wishlist\tools;
 
 class VueCreateur {
-    private $tab;
-    private $selecteur;
+    /**
+     * @var iterable Tableau d'éléments à afficher
+     */
+    private iterable $tab;
+    /**
+     * @var string Sélecteur de l'affichage à fournir
+     */
+    private string $selecteur;
+    /**
+     * @var array Propriétés de la notification
+     */
     private array $notif;
+    /**
+     * @var string Base du site
+     */
     private string $base;
 
-    public function __construct(iterable $t, $s, array $n, string $b) {
+    /**
+     * Constructeur de la vue créateur
+     * @param iterable $t Tableau d'éléments à afficher
+     * @param string $s Sélecteur de l'affichage à fournir
+     * @param array $n Propriétés de la notification
+     * @param string $b Base du site
+     */
+    public function __construct(iterable $t, string $s, array $n, string $b) {
         $this->tab = $t;
         $this->selecteur = $s;
         $this->notif = $n;
         $this->base = $b;
     }
 
-    private function itemCreate() : string {
+    /**
+     * Récupère l'affichage de la création d'un item
+     * @return string
+     */
+    private function itemCreate(): string {
         $file =  "HTML/FormItem.html";
         return file_get_contents($file);
     }
 
-    private function listCreate() : string {
+    /**
+     * Récupère l'affichage de la création d'une liste
+     * @return string
+     */
+    private function listCreate(): string {
         $file =  "HTML/FormListe.html";
         return file_get_contents($file);
     }
 
-    private function affichageListes() : string {
+    /**
+     * Affichage des listes d'un utilisateur
+     * @return string
+     */
+    private function affichageListes(): string {
         $mesListes = "";
         foreach ($this->tab as $value) {
             $mesListes = $mesListes . "<li><a href='$this->base/list/view?token=$value->token'>" . $value->titre . "</a></li>";
@@ -44,13 +75,19 @@ class VueCreateur {
         END;
     }
 
-    private function affichageListe() : string {
+    /**
+     * Affichage d'une liste
+     * @return string
+     */
+    private function affichageListe(): string {
         $list = $this->tab[0];
         $msgs = Message::where("id_list", "=", $list->no)->get();
 
 
         $listeVisible = ($list->validee == 1) ? "Liste visible" : "Liste invisible";
-        $tokenPartage = ($list->validee == 1) ? "<span id='tokenShare'>$list->token</span> <button id='buttonGetToken' onclick='copyToken()'>Copier le lien de partage</button>" : "<i>La liste doit être visible pour être partagée.</i>";
+        $tokenPartage = ($list->validee == 1)
+            ? "<span id='tokenShare'>$list->token</span> <button id='buttonGetToken' onclick='copyToken()'>Copier le lien de partage</button>"
+            : "<i>La liste doit être visible pour être partagée.</i>";
         $listeExpiree = ((strtotime($list->expiration) < strtotime(date("Y-m-d"))) ? " (expirée)" : " (en cours)");
         $items = "";
         foreach ($list->items as $item) {
@@ -128,6 +165,10 @@ class VueCreateur {
         EOF;
     }
 
+    /**
+     * Affichage d'un item se trouvant dans une liste expirée
+     * @return string
+     */
     private function affichageItemListeExpiree(): string {
         $item = $this->tab[0];
         $list = $item->liste;
@@ -165,6 +206,10 @@ class VueCreateur {
         END;
     }
 
+    /**
+     * Affichage d'un item dans une liste en cours
+     * @return string
+     */
     private function affichageItemListeEnCours(): string {
         $item = $this->tab[0]; 
         $list = $item->liste;
@@ -195,6 +240,10 @@ class VueCreateur {
         END;
     }
 
+    /**
+     * Affichage de l'édition d'une liste
+     * @return string
+     */
     private function editList(): string {
         $list = $this->tab[0];
         $listeVisible = $list->validee == 1 ? 'checked' : "";
@@ -263,11 +312,15 @@ class VueCreateur {
         END;
     }
 
-    private function editItem() : string {
+    /**
+     * Affichage de l'édition d'un item
+     * @return string
+     */
+    private function editItem(): string {
         $item = $this->tab[0];
         $list = $item->liste;
 
-        $image = is_null($item->img) || $item->img == ""
+        $image = $item->img == ""
             ? <<<END
             <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=addImg" method="post" enctype="multipart/form-data">
                 Image associée à l'item :<br />
@@ -353,7 +406,11 @@ class VueCreateur {
         END;
     }
 
-    public function render() : string {
+    /**
+     * Retourne l'affichage sélectionné
+     * @return string
+     */
+    public function render(): string {
         $from = "";
         $htmlPage = "";
         $title = "";
