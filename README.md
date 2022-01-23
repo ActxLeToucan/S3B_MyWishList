@@ -1,6 +1,11 @@
 # MyWishList | PHP
-Antoine CONTOUX, Lucas KEMMLER, Alexis LOPES VAZ, Paul TISSERANT
-S3B
+Classe : S3B
+* Antoine CONTOUX
+* Lucas KEMMLER
+* Alexis LOPES VAZ
+* Paul TISSERANT
+
+[Projet GitHub](https://github.com/ActxLeToucan/S3B_MyWishList)
 
 ## Déploiement sur Webetu
 * décommenter la ligne 4 dans ___.htaccess___
