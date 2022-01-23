@@ -157,9 +157,9 @@ class tools {
             <a href="$base/createurs">Créateurs</a>
             <a href="javascript:void(0);" class="icon" onclick="myFunction()">
                 <p class="fa fa-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
                 </p>
             </a>
             $connexion

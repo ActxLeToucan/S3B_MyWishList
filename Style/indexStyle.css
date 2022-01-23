@@ -83,7 +83,7 @@ body {
 
 
 
-span {
+.hamburger {
     display: block;
     width: 33px;
     height: 4px;
