@@ -265,26 +265,26 @@ class VueCreateur {
 
         return <<<END
         <form action="$this->base/editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
-            <h3>Nom actuelle : $list->titre.</h3>
+            <h3>Nom de la liste : </h3>
             <div class="input-group">
-                <label for="nom">Nom de la liste :</label>
+                <label for="nom">$list->titre</label>
                 <input type="text" id="nom" name="nom" value=""  />
             </div>
             
         
             <br>
             
-            <h3>Description actuelle : $list->description.</h3>
+            <h3>Description de la liste :</h3>
             <div class="input-group">
-                <label for="descr">Description de la liste :</label>
+                <label for="descr">$list->description</label>
                 <input type="text" id="descr" name="descr" />
             </div>
             
             <br>
         
-            <h3>Date d'expiration actuelle : $list->expiration</h3>
+            <h3>Date d'expiration de la liste : </h3>
             <div class="input-group">
-                <label for="dateExp">Date d'expiration</label>
+                <label for="dateExp">$list->expiration</label>
                 <input type="date" id="dateExp" name="dateExp" value=""  />
             </div>
             
@@ -380,7 +380,7 @@ class VueCreateur {
         
             <div class="input-group">
                 <label for="descr">Description de l'item :</label>
-                <input id="descr" name="descr">$item->descr</input>
+                <input id="descr" name="descr" value="$item->descr">
             </div>
         
         

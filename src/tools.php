@@ -144,9 +144,9 @@ class tools {
         $connexion = !isset($_SESSION['username'])
             ? "<li><a href='$base/login'>Connexion</a></li>"
            : <<<END
-            <li><a href="$base/list">Mes listes</a></li>
-            <li><a href='$base/monCompte'>👤 {$_SESSION['username']}</a></li>
-            <li><a href='$base/logout'>Se déconnecter</a></li>
+            <a href="$base/list">Mes listes</a>
+            <a href='$base/monCompte'>👤 {$_SESSION['username']}</a>
+            <a href='$base/logout'>Se déconnecter</a>
             END;
 
         $html = $htmlPage != "" ? $htmlPage: <<<END
@@ -159,26 +159,29 @@ class tools {
             </head>
             <body>
             $notif
-            <nav id="navbar" class="">
-                <div class="nav-wrapper">
-                    <!-- Navbar Logo -->
-                    <div class="logo">
-                        <!-- Logo Placeholder for Inlustration -->
-                        <a href="$base/"> MyWishList</a>
-                    </div>
-            
-            
-                    <ul id="menu">
-                        <li><a href="$base/formulaireListe">Créer ma liste</a></li>
-                        <li><a href="$base/token">Trouver une liste avec un token</a></li>
-                        <li><a href="$base/createurs">Créateurs</a></li>
+                    <div class="topnav" id="myTopnav">
+                        <a href="$base/" class="active"> MyWishList</a>
+                        <a href="$base/formulaireListe">Créer ma liste</a>
+                        <a href="$base/token">Trouver une liste avec un token</a>
+                        <a href="$base/createurs">Créateurs</a>
+                        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                            <i class="fa fa-bars"> Menu</i>
+                        </a>
                         $connexion
-                    </ul>
-                </div>
-            </nav>
+                    </div>
             <div class="content">
             $content
             </div>
+            <script>
+                function myFunction() {
+                  const x = document.getElementById("myTopnav");
+                  if (x.className === "topnav") {
+                    x.className += " responsive";
+                  } else {
+                    x.className = "topnav";
+                  }
+                }
+            </script>
             </body></html>
         END;
 

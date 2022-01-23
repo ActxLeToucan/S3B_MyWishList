@@ -8,22 +8,15 @@
 </head>
 <body>
 
-<nav id="navbar" class="">
-    <div class="nav-wrapper">
-        <!-- Navbar Logo -->
-        <div class="logo">
-            <!-- Logo Placeholder for Inlustration -->
-            <a href="./"> MyWishList</a>
-        </div>
-
-
-        <ul id="menu">
-            <li><a href="./list">Les listes</a></li>
-            <li><a href="./formulaireListe">Créer ma liste</a></li>
-
-        </ul>
-    </div>
-</nav>
+<div class="topnav" id="myTopnav">
+    <a href="$base/" class="active"> MyWishList</a>
+    <a href="$base/formulaireListe">Créer ma liste</a>
+    <a href="$base/token">Trouver une liste avec un token</a>
+    <a href="$base/createurs">Créateurs</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <i class="fa fa-bars"> Menu</i>
+    </a>
+</div>
 
 
 <div class="formulaire">
@@ -53,6 +46,17 @@
     </form>
 </div>
 
+
+<script>
+    function myFunction() {
+        var x = document.getElementById("myTopnav");
+        if (x.className === "topnav") {
+            x.className += " responsive";
+        } else {
+            x.className = "topnav";
+        }
+    }
+</script>
 
 
 </body>
