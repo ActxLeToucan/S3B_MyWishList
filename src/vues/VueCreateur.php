@@ -247,6 +247,7 @@ class VueCreateur {
     private function editList(): string {
         $list = $this->tab[0];
         $listeVisible = $list->validee == 1 ? 'checked' : "";
+        $listePublique = $list->publique == 1 ? 'checked' : "";
         $items = "";
         foreach ($list->items as $item) {
             $removeItem = <<<END
@@ -294,7 +295,7 @@ class VueCreateur {
             
             
            
-                <input type="checkbox" id="publique" name="publique" value="1" $listeVisible />
+                <input type="checkbox" id="publique" name="publique" value="1" $listePublique />
                 <label for="publique"> Rendre la liste publique</label>
           
             
