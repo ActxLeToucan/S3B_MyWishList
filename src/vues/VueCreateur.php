@@ -267,7 +267,6 @@ class VueCreateur {
         <form action="$this->base/editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
             <h3>Nom de la liste : </h3>
             <div class="input-group">
-                <label for="nom">$list->titre</label>
                 <input type="text" id="nom" name="nom" value="$list->titre" required />
             </div>
             
@@ -276,7 +275,6 @@ class VueCreateur {
             
             <h3>Description de la liste :</h3>
             <div class="input-group">
-                <label for="descr">$list->description</label>
                 <input type="text" id="descr" name="descr" value="$list->description" required />
             </div>
             
@@ -284,7 +282,6 @@ class VueCreateur {
         
             <h3>Date d'expiration de la liste : </h3>
             <div class="input-group">
-                <label for="dateExp">$list->expiration</label>
                 <input type="date" id="dateExp" name="dateExp" value="$list->expiration" required />
             </div>
             
@@ -336,9 +333,9 @@ class VueCreateur {
             </form>
             
             <script> 
-                var inputs = document.querySelectorAll('.file-input')
+                let inputs = document.querySelectorAll('.file-input')
 
-                for (var i = 0, len = inputs.length; i < len; i++) {
+                for (let i = 0, len = inputs.length; i < len; i++) {
                   customInput(inputs[i])
                 }
                 
@@ -370,31 +367,33 @@ class VueCreateur {
         $image
         <br /><br />
         <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=edit" method="post" enctype="multipart/form-data">
+            <br />
+            
+            <h3>Nom de l'item :</h3>
             <div class="input-group">
-                <label for="nom">Nom de l'item :</label>
                 <input type="text" id="nom" name="nom" value="$item->nom" required />
             </div>
         
         
             <br>
         
+            <h3>Description de l'item :</h3>
             <div class="input-group">
-                <label for="descr">Description de l'item :</label>
                 <input id="descr" name="descr" value="$item->descr">
             </div>
         
         
             <br>
         
+            <h3>Tarif de l'item :</h3>
             <div class="input-group">
-                <label for="tarif">Tarif de l'item :</label>
                 <input type="text" id="tarif" name="tarif" value="$item->tarif" />
             </div>
         
             <br>
         
+            <h3>Lien du vers un site vendant l'objet :</h3>
             <div class="input-group">
-                <label for="url">Lien du vers un site vendant l'objet :</label>
                 <input id="url" name="url" value="$item->url" />
             </div>
             
