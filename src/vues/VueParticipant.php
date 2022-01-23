@@ -118,8 +118,22 @@ class VueParticipant {
         $item = $this->tab[0];
         $list = $item->liste;
         $src = (isset($item->img)  ? "$this->base/img/$item->img" : "$this->base/img/giftbox2.png");
-        $str = "<h1>$item->nom</h1><img src=$src height='100px' alt='$item->nom' /><br />ID : $item->id<br />Description : $item->descr<br />Tarif : $item->tarif<br />URL : $item->url";
-        $str = $str . "<br />Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a>");
+        $str = "
+                <h1>$item->nom</h1>
+                <img src=$src height='100px' alt='$item->nom' />
+                <br />
+                <p>ID : $item->id</p>
+     
+                <br />
+                
+                <p>Description : $item->descr</p>
+                <br />
+                
+                <p>Tarif : $item->tarif</p>
+                <br />
+                <p>URL : $item->url</p>
+                ";
+        $str = $str . "<br /> <p>Liste : " . ($list == null ? "Aucune" : "<a href='$this->base/list/view?token=$list->token'>$list->titre</a></p>");
 
 
         $username = "";
@@ -215,6 +229,7 @@ class VueParticipant {
             case ItemController::ITEM_VIEW : {
                 $content = $this->affichageItem();
                 $title = 'Item';
+                $from = 'ItemsStyle.css';
                 break;
             }
             case ListeController::PUBLIC : {
@@ -232,6 +247,7 @@ class VueParticipant {
             case ListeController::CREATEUR : {
                 $content = $this->createur();
                 $title = 'Créateur';
+                $from = 'LesListesStyle.css';
                 break;
             }
         }

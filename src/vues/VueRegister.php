@@ -74,10 +74,12 @@ class VueRegister{
         return <<<END
         Nom d'utilisateur : $user->username<br />
         Adresse e-mail : $user->email<br />
+        <div class="compte">
+            <a href="./changeMail"><button>Changer d'adresse email</button></a>
+            <a href="./changePassword"><button>Changer de mot de passe</button></a>
+            <a href="./deleteAccount"><button>Supprimer mon compte</button></a>
+        </div>
         
-        <a href="./changeMail"><button>Changer d'adresse email</button></a>
-        <a href="./changePassword"><button>Changer de mot de passe</button></a>
-        <a href="./deleteAccount"><button>Supprimer mon compte</button></a>
         END;
     }
 
@@ -88,14 +90,14 @@ class VueRegister{
     private function changeMail(): string {
         return <<<END
         <form action="$this->base/changeMailConfirm" method="post" enctype="multipart/form-data">
-            <div class="email">
+            <div class="input-group">
                 <label for="email">Nouvel email : </label>
                 <input type=email required id="email" name="email" />
             </div>
             
             <br />
             
-            <div class="email_confirm">
+            <div class="input-group">
                 <label for="email_confirm">Confirmation de l'email : </label>
                 <input type=email required id="email_confirm" name="email_confirm" />
             </div>
@@ -114,29 +116,23 @@ class VueRegister{
     private function changePass(): string {
         return <<<END
         <form action="$this->base/changePasswordConfirm" method="post" enctype="multipart/form-data">
-            <div class="oldpass">
+            <div class="input-group">
                 <label for="oldpass">Mot de passe actuel : </label>
                 <input type="password" required id="oldpass" name="oldpass">
             </div>
             
             <br />
             
-            <div class="newpass1">
+            <div class="input-group">
                 <label for="newpass1">Nouveau mot de passe : </label>
                 <input type="password" required id="newpass1" name="newpass1">
             </div>
             
             <br />
             
-            <div class="newpass2">
+            <div class="input-group">
                 <label for="newpass2">Confirmer le nouveau mot de passe : </label>
                 <input type="password" required id="newpass2" name="newpass2">
-            </div>
-            
-            <br />
-            
-            <div class="show">
-                <input type="checkbox" onclick="showOrNot()"> Afficher le mot passe
             </div>
             
             <br />
@@ -144,19 +140,6 @@ class VueRegister{
             <button type="submit">Valider</button>
         </form>
 
-        <script>
-            function showOrNot() {
-                let pass = []; 
-                pass.push(document.getElementById("oldpass"));
-                pass.push(document.getElementById("newpass1"));
-                pass.push(document.getElementById("newpass2"));
-                
-                pass.forEach(p => {
-                    if (p.type === "password") p.type = "text";
-                    else p.type = "password";
-                });
-            }
-        </script>
         END;
     }
 
@@ -205,21 +188,25 @@ class VueRegister{
             case RegisterController::MONCOMPTE : {
                 $content = $this->monCompte();
                 $title = "Mon compte";
+                $from = 'EditStyle.css';
                 break;
             }
             case RegisterController::CHANGEMAIL : {
                 $content = $this->changeMail();
                 $title = "Changement email";
+                $from = 'EditStyle.css';
                 break;
             }
             case RegisterController::CHANGEPSW : {
                 $content = $this->changePass();
                 $title = "Changement mot de passe";
+                $from = 'EditStyle.css';
                 break;
             }
             case RegisterController::DELETE_ACCOUNT : {
                 $content = $this->deleteAccount();
                 $title = "Supprimer mon compte";
+                $from = 'EditStyle.css';
                 break;
             }
         }

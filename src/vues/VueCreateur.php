@@ -194,12 +194,12 @@ class VueCreateur {
         </h1>
         $visible <br />
         <img src=$src height='100px' alt='$item->nom' /> <br /> 
-        <br />
-        ID : $item->id <br />
-        Description : $item->descr <br />
-        Tarif : $item->tarif <br />
-        URL : $item->url <br />
-        Liste : $nomListe <br />
+        <br /> 
+        <p>ID : $item->id</p> <br />
+        <p>Description : $item->descr</p> <br />
+        <p>Tarif : $item->tarif</p> <br />
+        <p>URL : $item->url</p> <br />
+        <p>Liste : $nomListe</p> <br />
         <h2>Réservation</h2>
         $reservation
 
@@ -229,11 +229,11 @@ class VueCreateur {
         $visible <br />
         <img src=$src height='100px' alt='$item->nom' /> <br /> 
         <br /> 
-        ID : $item->id <br />
-        Description : $item->descr <br />
-        Tarif : $item->tarif <br />
-        URL : $item->url <br />
-        Liste : $nomListe <br />
+        <p>ID : $item->id</p> <br />
+        <p>Description : $item->descr</p> <br />
+        <p>Tarif : $item->tarif</p> <br />
+        <p>URL : $item->url</p> <br />
+        <p>Liste : $nomListe</p> <br />
         <h2>Réservation</h2>
         $reservation
 
@@ -268,7 +268,7 @@ class VueCreateur {
             <h3>Nom actuelle : $list->titre.</h3>
             <div class="input-group">
                 <label for="nom">Nom de la liste :</label>
-                <input type="text" id="nom" name="nom" value="" required />
+                <input type="text" id="nom" name="nom" value=""  />
             </div>
             
         
@@ -285,7 +285,7 @@ class VueCreateur {
             <h3>Date d'expiration actuelle : $list->expiration</h3>
             <div class="input-group">
                 <label for="dateExp">Date d'expiration</label>
-                <input type="date" id="dateExp" name="dateExp" value="" required />
+                <input type="date" id="dateExp" name="dateExp" value=""  />
             </div>
             
             
@@ -443,11 +443,13 @@ class VueCreateur {
             case ItemController::ITEM_VIEW_OWNER_EXPIRE : {
                 $content = $this->affichageItemListeExpiree();
                 $title = "Item";
+                $from = "ItemsStyle.css";
                 break;
             }
             case ItemController::ITEM_VIEW_OWNER_EN_COURS : {
                 $content = $this->affichageItemListeEnCours();
                 $title = "Item";
+                $from = "ItemsStyle.css";
                 break;
             }
             case ListeController::LIST_EDIT : {

@@ -1,10 +1,18 @@
 body {
     background: #2B3033FF;
+    color: white;
 }
 
+h1, h2{
+    color: #6d6b6b;
+    margin: 20px;
+}
 
-li {
-    display: flex;
-    margin-top: 20px;
-    border: #0E0E10 5px solid;
+p{
+    margin-left: 30px;
+    margin-top: 10px;
+}
+
+img {
+    margin: 20px;
 }
