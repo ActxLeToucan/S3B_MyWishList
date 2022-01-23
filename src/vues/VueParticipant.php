@@ -31,10 +31,28 @@ class VueParticipant {
         foreach ($list->items as $item) {
             $items = $items . "<li><a href='$this->base/item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
+
+        $iter = 0;
         $messages = "";
         foreach ($msgs as $message) {
+
+            $iter ++;
+
+            $messageType = ($iter % 2 == 0) ? 'my-message' : 'other-message';
+            $messageAlign = ($iter % 2 == 0) ? '' : 'align-right';
+            $messageFloat = ($iter % 2 == 0) ? '' : 'float-right';
+
             $author = ($message->id_user == 0 ? $message->pseudo : $message->user->username);
-            $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
+            $messages = $messages . "<li class='clearfix'> 
+                                        <div class='message-data $messageAlign'>
+                                            <span class='message-data-time' >$message->date</span>
+                                            <span class='message-data-name' >$author</span>
+                                                
+                                        </div>
+                                        <div class='message $messageType $messageFloat'>
+                                            $message->texte
+                                        </div>
+                                      </li>";
         }
         $username = "";
         if (!isset($_SESSION['username']) || !isset($_SESSION['AccessRights'])) {
@@ -49,14 +67,23 @@ class VueParticipant {
         Description : $list->description<br />
         Expiration : $list->expiration $listeExpiree<br />
         Items :
-        <section><ol>$items</ol></section>
-        Messages :
-        <section><ul>$messages</ul></section>
-        <form action='$this->base/addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
+        <section class="S1"><ul>$items</ul></section>
+                <form action='$this->base/addmsg?token=$list->token' method='post' enctype='multipart/form-data'>
             $username
             <textarea id='texte' name='texte'></textarea>
             <button type='submit'>Ajouter un message</button>
         </form>
+        Messages :
+        <section>
+            <div class="chat"> 
+                    <div class="chat-history"> 
+                        <ul>
+                            $messages
+                        </ul>
+                    </div>
+            </div>  
+        </section>
+
         EOF;
     }
 
@@ -101,7 +128,7 @@ class VueParticipant {
         return <<<END
         <h1>Listes publiques</h1>
         <br>
-        <section><ul>$listesPubliques</ul></section>
+        <section class="S1"><ul>$listesPubliques</ul></section>
         END;
     }
 
@@ -110,7 +137,11 @@ class VueParticipant {
         foreach ($this->tab as $user) {
             $users = $users . "<li><a href='$this->base/createurs/$user->username'>$user->username</a></li>";
         }
-        return $users;
+        return <<<END
+        <h1>Les créateurs :</h1> 
+        <br>
+        <section><ul>$users</ul></section>
+        END;
     }
 
     private function createur() : string {
@@ -136,7 +167,7 @@ class VueParticipant {
             case ListeController::LIST_VIEW : {
                 $content = $this->affichageListe();
                 $title = 'Liste';
-                $from = "LesListesStyle.css";
+                $from = "ListeInfoStyle.css";
                 break;
             }
             case ItemController::ITEM_VIEW : {
@@ -147,11 +178,13 @@ class VueParticipant {
             case ListeController::PUBLIC : {
                 $content = $this->listespubliques();
                 $title = 'MyWishList - Accueil';
+                $from = "LesListesStyle.css";
                 break;
             }
             case ListeController::CREATEURS : {
                 $content = $this->createurs();
                 $title = 'Créateurs';
+                $from = 'LesListesStyle.css';
                 break;
             }
             case ListeController::CREATEUR : {

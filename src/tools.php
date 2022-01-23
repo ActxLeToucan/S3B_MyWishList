@@ -118,7 +118,7 @@ class tools {
             : <<<END
             <li><a href="$base/list">Mes listes</a></li>
             <li><a href='$base/monCompte'>👤 {$_SESSION['username']}</a></li>
-            <li><a href='$base/logout'>Se déconnecter</a></li>"
+            <li><a href='$base/logout'>Se déconnecter</a></li>
             END;
 
         $html = $htmlPage != "" ? $htmlPage : <<<END

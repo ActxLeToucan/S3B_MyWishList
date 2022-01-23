@@ -56,10 +56,27 @@ class VueCreateur {
         foreach ($list->items as $item) {
             $items = $items . "<li><a href='$this->base/item/$item->id/view?token=$list->token'>$item->nom</a></li>";
         }
-        $messages = "";
+        $iter =0;
+        $messages = '';
         foreach ($msgs as $message) {
+
+            $iter ++;
+
+            $messageType = ($iter % 2 == 0) ? 'my-message' : 'other-message';
+            $messageAlign = ($iter % 2 == 0) ? '' : 'align-right';
+            $messageFloat = ($iter % 2 == 0) ? '' : 'float-right';
+
             $author = ($message->id_user == 0 ? $message->pseudo : $message->user->username);
-            $messages = $messages . "<li>($message->date) $author : $message->texte</li>";
+            $messages = $messages . "<li class='clearfix'> 
+                                        <div class='message-data $messageAlign'>
+                                            <span class='message-data-time' >$message->date</span>
+                                            <span class='message-data-name' >$author</span>
+                                                
+                                        </div>
+                                        <div class='message $messageType $messageFloat'>
+                                            $message->texte
+                                        </div>
+                                      </li>";
         }
 
 
@@ -72,9 +89,17 @@ class VueCreateur {
         Description : $list->description<br />
         Expiration : $list->expiration $listeExpiree<br />
         Items :
-        <section><ol>$items</ol></section>
+        <section class="S1"><ul>$items</ul></section>
         Messages :
-        <section><ul>$messages</ul></section>
+        <section>
+            <div class="chat"> 
+                <div class="chat-history"> 
+                    <ul>
+                        $messages
+                    </ul>
+                </div>
+            </div>  
+        </section>
         <script>
             let buttonToken = document.getElementById("buttonGetToken");
             let confirm = document.createElement("span");
@@ -191,36 +216,41 @@ class VueCreateur {
 
         return <<<END
         <form action="$this->base/editList?token=$list->token_edit" method="post" enctype="multipart/form-data">
-            <div class="nom">
+            <h3>Nom actuelle : $list->titre.</h3>
+            <div class="input-group">
                 <label for="nom">Nom de la liste :</label>
-                <input type="text" id="nom" name="nom" value="$list->titre" required />
+                <input type="text" id="nom" name="nom" value="" required />
             </div>
-        
-            <br>
-        
-            <div class="description">
-                <label for="descr">Description de la liste :</label>
-                <textarea id="descr" name="descr">$list->description</textarea>
-            </div>
-        
-            <br>
-        
-            <div class="date">
-                <label for="dateExp">Date d'expiration :</label>
-                <input type="date" id="dateExp" name="dateExp" value="$list->expiration" required />
-            </div>
+            
         
             <br>
             
-            <div class="liste_validee">
+            <h3>Description actuelle : $list->description.</h3>
+            <div class="input-group">
+                <label for="descr">Description de la liste :</label>
+                <input type="text" id="descr" name="descr" />
+            </div>
+            
+            <br>
+        
+            <h3>Date d'expiration actuelle : $list->expiration</h3>
+            <div class="input-group">
+                <label for="dateExp">Date d'expiration</label>
+                <input type="date" id="dateExp" name="dateExp" value="" required />
+            </div>
+            
+            
+            <br>
+            
+            
                 <input type="checkbox" id="validee" name="validee" value="1" $listeVisible />
                 <label for="validee"> Rendre la liste visible</label>
-            </div>
             
-            <div class="liste_publique">
+            
+           
                 <input type="checkbox" id="publique" name="publique" value="1" $listeVisible />
                 <label for="publique"> Rendre la liste publique</label>
-            </div>
+          
             
             <br />
         
@@ -241,12 +271,38 @@ class VueCreateur {
             ? <<<END
             <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=addImg" method="post" enctype="multipart/form-data">
                 Image associée à l'item :<br />
-                <input type="file"
-                       id="photo"
-                       name="photo"
-                       accept="image/png, image/jpeg, image/pdf" />
+                
+                <div class='file-input'>
+                    <input type="file" id="photo" name="photo" accept="image/png, image/jpeg, image/pdf" />
+                    <span class='button'>Choose</span>
+                    <span class='label' data-js-label>No file selected</label>
+                </div>
+                
+                
                 <input type="submit" name="addItem" value="Ajouter une image" />
             </form>
+            
+            <script> 
+                var inputs = document.querySelectorAll('.file-input')
+
+                for (var i = 0, len = inputs.length; i < len; i++) {
+                  customInput(inputs[i])
+                }
+                
+                function customInput (el) {
+                  const fileInput = el.querySelector('[type="file"]')
+                  const label = el.querySelector('[data-js-label]')
+                  
+                  fileInput.onchange =
+                  fileInput.onmouseout = function () {
+                    if (!fileInput.value) return
+                    
+                    var value = fileInput.value.replace(/^.*[\\\/]/, '')
+                    el.className += ' -chosen'
+                    label.innerText = value
+                  }
+                }
+            </script>
             END
             : <<<END
             Image associée à l'item :<br />
@@ -261,7 +317,7 @@ class VueCreateur {
         $image
         <br /><br />
         <form action="$this->base/editItem?token=$list->token_edit&id=$item->id&type=edit" method="post" enctype="multipart/form-data">
-            <div class="nom">
+            <div class="input-group">
                 <label for="nom">Nom de l'item :</label>
                 <input type="text" id="nom" name="nom" value="$item->nom" required />
             </div>
@@ -269,28 +325,28 @@ class VueCreateur {
         
             <br>
         
-            <div class="description">
+            <div class="input-group">
                 <label for="descr">Description de l'item :</label>
-                <textarea id="descr" name="descr">$item->descr</textarea>
+                <input id="descr" name="descr">$item->descr</input>
             </div>
         
         
             <br>
         
-            <div class="tarif">
+            <div class="input-group">
                 <label for="tarif">Tarif de l'item :</label>
                 <input type="text" id="tarif" name="tarif" value="$item->tarif" />
             </div>
         
             <br>
         
-            <div class="url">
+            <div class="input-group">
                 <label for="url">Lien du vers un site vendant l'objet :</label>
                 <input id="url" name="url" value="$item->url" />
             </div>
             
             <br />
-        
+            
             <button type="submit">Valider les changements sur cet item</button>
         </form>
         <a href="$this->base/item/$item->id/view?token=$list->token"><button>Annuler ❌</button></a>
@@ -340,11 +396,13 @@ class VueCreateur {
             case ListeController::LIST_EDIT : {
                 $content = $this->editList();
                 $title = "Modification liste";
+                $from = 'EditStyle.css';
                 break;
             }
             case ItemController::ITEM_EDIT : {
                 $content = $this->editItem();
                 $title = "Modification item";
+                $from = 'EditStyle.css';
                 break;
             }
         }

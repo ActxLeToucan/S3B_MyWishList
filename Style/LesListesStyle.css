@@ -19,10 +19,13 @@ body {
 }
 
 .content ul {
-    counter-reset: index;
-    padding: 0;
-    max-width: 400px;
-    font-size: 2rem;
+    padding-top: 10px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border: 4px solid #44907a;
+    overflow-y: scroll;
+    height: 300px;
+    background-color: #16272f;
 }
 
 /* List element */
@@ -47,7 +50,6 @@ body {
     font-variant-numeric: tabular-nums;
     align-self: flex-start;
     background-image: linear-gradient(to bottom, aquamarine, #e3850a);
-    background-attachment: fixed;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

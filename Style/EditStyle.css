@@ -1,0 +1,151 @@
+.content {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid #F1F1F1;
+    padding: 40px;
+    margin: 100px 50px;
+    min-width: 500px;
+    color: white;
+    border-radius: 6px;
+}
+
+.input-group {
+    width: 360px;
+    position: relative;
+    border: 3px solid #44907a;
+    border-radius: 8px;
+    margin: 32px;
+}
+.input-group input {
+    padding: 16px 24px;
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    color: #363636;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.input-group:hover,
+.input-group:focus-within {
+    border-color: #44907a;
+}
+
+.input-group input:focus,
+.input-group:hover input {
+    color: #44907a;
+}
+
+.input-group label {
+    position: absolute;
+    background-color: transparent;
+    padding: 16px 24px;
+    line-height: 24px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    color: #898989;
+    cursor: text;
+}
+
+.input-group:hover label {
+    color: #44907a;
+}
+
+.input-group:focus-within label,
+.input-group input:not(:placeholder-shown) ~ label {
+    padding: 0px 8px;
+    background-color: #111E25;
+    top: -12px;
+    left: 16px;
+    bottom: auto;
+    color: #44907a;
+}
+
+.file-input {
+    margin-top: 10px;
+    display: inline-block;
+    text-align: left;
+    background: #3c3d3d;
+    padding: 16px;
+    width: 450px;
+    position: relative;
+    border-radius: 8px;
+}
+
+.file-input > [type='file'] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.file-input > .button {
+    display: inline-block;
+    cursor: pointer;
+    background: #44907a;
+    padding: 8px 16px;
+    border-radius: 2px;
+    margin-right: 8px;
+}
+
+
+
+button {
+    display: inline-block;
+    cursor: pointer;
+    background: #3c3d3d;
+    padding: 8px 16px;
+    border-radius: 2px;
+    margin-right: 8px;
+}
+button:hover {
+    background-color: #44907a;
+    color: white;
+}
+
+.file-input > .label {
+    color: white;
+    white-space: nowrap;
+    opacity: .3;
+}
+
+.file-input.-chosen > .label {
+    opacity: 1;
+}
+
+.content li {
+    counter-increment: index;
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+}
+
+
+/* Element counter */
+.content li::before {
+    content: counters(index, ".", decimal-leading-zero);
+    font-size: 3rem;
+    text-align: right;
+    font-weight: bold;
+    min-width: 50px;
+    padding-right: 12px;
+    font-variant-numeric: tabular-nums;
+    align-self: flex-start;
+    background-image: linear-gradient(to bottom, aquamarine, #e3850a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* Element separation */
+.content li + li {
+    border-top: 1px solid rgba(255,255,255,0.2);
+}

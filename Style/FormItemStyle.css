@@ -73,7 +73,7 @@ input:focus + label .nav-dot:before {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 70%;
-    opacity: 0;
+    //opacity: 0;
     color: #fff;
     font-size: 0.875rem;
     font-weight: 300;
@@ -153,6 +153,7 @@ label[for="input-3"] .nav-dot {
 label[for="input-4"] .nav-dot {
     margin-top: -50px;
 }
+
 
 * {
     margin: 0;
