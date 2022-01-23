@@ -2,23 +2,10 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="Style/FormItemStyle.css">
-    <link rel="stylesheet" href="Style/indexStyle.css">
     <meta charset="UTF-8">
     <title>Nouvelle liste</title>
 </head>
 <body>
-
-<div class="topnav" id="myTopnav">
-    <a href="$base/" class="active"> MyWishList</a>
-    <a href="$base/formulaireListe">Créer ma liste</a>
-    <a href="$base/token">Trouver une liste avec un token</a>
-    <a href="$base/createurs">Créateurs</a>
-    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-        <i class="fa fa-bars"> Menu</i>
-    </a>
-</div>
-
-
 <div class="formulaire">
     <form action="./newListe" method="post" enctype="multipart/form-data">
         <input id="input-1" type="text" name="nom" required autofocus />
@@ -45,19 +32,5 @@
         <div class="create-button">Créer ma liste</div>
     </form>
 </div>
-
-
-<script>
-    function myFunction() {
-        var x = document.getElementById("myTopnav");
-        if (x.className === "topnav") {
-            x.className += " responsive";
-        } else {
-            x.className = "topnav";
-        }
-    }
-</script>
-
-
 </body>
 </html>

@@ -142,14 +142,43 @@ class tools {
     #[Pure] public static function getHtml(string $from, string $htmlPage, string $title, string $notif, string $content, array $notifParams, string $base): string {
         $style = $from != "" ? "<link rel='stylesheet' href='$base/Style/$from'>": "";
         $connexion = !isset($_SESSION['username'])
-            ? "<li><a href='$base/login'>Connexion</a></li>"
+            ? "<a href='$base/login'>Connexion</a>"
            : <<<END
             <a href="$base/list">Mes listes</a>
             <a href='$base/monCompte'>👤 {$_SESSION['username']}</a>
             <a href='$base/logout'>Se déconnecter</a>
             END;
 
-        $html = $htmlPage != "" ? $htmlPage: <<<END
+        $nav = <<<END
+        <div class="topnav" id="myTopnav">
+            <a href="$base/" class="active"> MyWishList</a>
+            <a href="$base/formulaireListe">Créer ma liste</a>
+            <a href="$base/token">Trouver une liste avec un token</a>
+            <a href="$base/createurs">Créateurs</a>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <p class="fa fa-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </p>
+            </a>
+            $connexion
+        </div>
+        <script>
+            function myFunction() {
+              const x = document.getElementById("myTopnav");
+              if (x.className === "topnav") {
+                x.className += " responsive";
+              } else {
+                x.className = "topnav";
+              }
+            }
+        </script>
+        END;
+
+
+        $html = $htmlPage != "" ? self::insertIntoBody($htmlPage, $nav.
+    "<link rel=\"stylesheet\" href=\"$base/Style/indexStyle.css\">") : <<<END
             <!DOCTYPE html> <html lang="fr">
             <head>
                 <meta charset="UTF-8">
@@ -159,29 +188,10 @@ class tools {
             </head>
             <body>
             $notif
-                    <div class="topnav" id="myTopnav">
-                        <a href="$base/" class="active"> MyWishList</a>
-                        <a href="$base/formulaireListe">Créer ma liste</a>
-                        <a href="$base/token">Trouver une liste avec un token</a>
-                        <a href="$base/createurs">Créateurs</a>
-                        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-                            <i class="fa fa-bars"> Menu</i>
-                        </a>
-                        $connexion
-                    </div>
+            $nav
             <div class="content">
             $content
             </div>
-            <script>
-                function myFunction() {
-                  const x = document.getElementById("myTopnav");
-                  if (x.className === "topnav") {
-                    x.className += " responsive";
-                  } else {
-                    x.className = "topnav";
-                  }
-                }
-            </script>
             </body></html>
         END;
 

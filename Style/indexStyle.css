@@ -11,7 +11,7 @@ body {
 }
 
 .content{
-    margin-top: 100px;
+    margin-top: 50px;
 }
 
 .content a {
@@ -20,95 +20,6 @@ body {
     font-size: inherit;
     text-decoration: none;
 }
-
-
-
-
-/**
-* Navbar
- */
-/*
-#navbar {
-    background: #44907AFF;
-    position: fixed;
-    top: 0;
-    height: 65px;
-    line-height: 65px;
-    width: 100vw;
-    z-index: 10;
-}
-
-
-
-
-.logo {
-    float: left;
-    font-size: 1.5em;
-    margin-left: 20px;
-    height: 60px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-
-}
-
-#navbar ul {
-    display: inline-block;
-    float: right;
-    list-style: none;
-    margin-top: -2px;
-    margin-right: 20px;
-    text-align: right;
-    transition: transform 0.5s ease-out;
-    -webkit-transition: transform 0.5s ease-out;
-}
-
-#navbar li {
-    display: inline-block;
-}
-
-#navbar li a {
-    color: #FFFF;
-    display: block;
-    font-size: 0.9em;
-    font-weight: bold;
-    height: 50px;
-    letter-spacing: 1px;
-    margin: 0 20px;
-    padding: 0 4px;
-    position: relative;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: all 0.5s ease;
-    -webkit-transition: all 0.5s ease;
-}
-
-
-
-/* Animated Bottom Line */
-/*
-#navbar li a:before, #navbar li a:after {
-    content: '';
-    position: absolute;
-    width: 0%;
-    height: 2px;
-    bottom: -1px;
-    background: #FFFF;
-}
-
-#navbar li a:before {
-    left: 0;
-    transition: 0.5s;
-}
-
-
-#navbar li a:hover:before {
-    background: #FFFF;
-    width: 100%;
-    transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-*/
-
-
 
 body {
     margin: 0;
@@ -129,6 +40,7 @@ body {
     text-decoration: none;
     font-size: 17px;
     transition: ease-out 0.5s;
+    height: 50px;
 }
 
 .topnav a:hover {
@@ -145,7 +57,7 @@ body {
     display: none;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .topnav a:not(:first-child) {display: none;}
     .topnav a.icon {
         float: right;
@@ -153,7 +65,7 @@ body {
     }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
     .topnav.responsive {position: relative;}
     .topnav.responsive .icon {
         position: absolute;
@@ -171,5 +83,21 @@ body {
 
 
 
+span {
+    display: block;
+    width: 33px;
+    height: 4px;
+    margin-bottom: 5px;
+    position: relative;
 
+    background: #cdcdcd;
+    border-radius: 3px;
 
+    z-index: 1;
+
+    transform-origin: 4px 0px;
+
+    transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+    background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+    opacity 0.55s ease;
+}
